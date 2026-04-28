@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Eisenhower Matrix</title>
+  <title>Eisenhower Matrix v7</title>
   <style>
     :root {
       --bg: #12162e;
@@ -38,6 +38,39 @@
       line-height: 1.5;
       overflow: hidden;
       height: 100vh;
+    }
+
+    /* ═══ RESPONSIVE — tablet & mobile ═══ */
+    @media (max-width: 900px) {
+      body { overflow: auto; height: auto; min-height: 100vh; }
+      #main { flex-direction: column; height: auto; }
+      #leftPanel { width: 100%; height: 70vw; min-height: 320px; max-height: 520px;
+        border-right: none; border-bottom: 1px solid var(--border); }
+      #rightPanel { width: 100%; flex: 1; min-height: 420px; }
+      #matrixWrap { padding: 6px 8px 10px; }
+      #addTagSection { padding: 8px 10px 7px; flex-wrap: wrap; }
+      #newTagInput { min-width: 0; }
+      #deadlineInput { width: 110px; }
+    }
+
+    @media (max-width: 600px) {
+      #header { height: auto; flex-wrap: wrap; padding: 8px 10px; gap: 6px; }
+      #hdrClock { display: none; }          /* too wide on phones */
+      #hdrGreeting { font-size: 12px; order: 2; flex-basis: 100%; }
+      #hdrEmoji   { order: 1; }
+      #moodBtn, #infoBtn, #copyBtn, #pasteBtn { order: 3; }
+      .hdr-btn { padding: 5px 9px; font-size: 11px; }
+      #leftPanel { height: 65vw; min-height: 280px; }
+      .tag { font-size: 10.5px; padding: 4px 7px 4px 8px; }
+      .modal { padding: 16px; max-width: 95vw; }
+    }
+
+    /* Minimum touch target size for interactive elements */
+    @media (hover: none) {
+      .tag-btn { width: 22px; height: 22px; font-size: 11px; }
+      .tab { padding: 13px 14px; }
+      .hdr-btn { min-height: 36px; }
+      .add-tag-btn { min-height: 36px; }
     }
 
     /* HEADER */
@@ -827,6 +860,24 @@
       transition: width 0.3s;
     }
 
+    /* MOOD PORTRAIT */
+    .mood-hero {
+      display: flex; align-items: center; gap: 16px;
+      padding-bottom: 14px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mood-portrait {
+      width: 76px; height: 76px; flex-shrink: 0;
+      object-fit: cover; object-position: center 15%;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      filter: grayscale(15%) contrast(1.05) brightness(0.95);
+      background: var(--surface2);
+    }
+    .mood-author-name  { font-size: 14px; font-weight: 700; color: var(--accent2); }
+    .mood-author-dates { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .mood-author-role  { font-size: 11px; color: var(--text-dim); font-style: italic; }
+
     /* SCROLLBAR */
     ::-webkit-scrollbar {
       width: 8px;
@@ -883,7 +934,7 @@
     <div id="addTagSection">
       <input id="newTagInput" type="text" placeholder="New task name… (max 100 chars)" maxlength="100" autocomplete="off">
       <input id="deadlineInput" type="date" title="Optional deadline">
-      <button class="add-tag-btn">+ Add Tag</button>
+      <button class="add-tag-btn">+ Add Task</button>
     </div>
 
     <!-- MATRIX with axis labels + free-float canvas -->
@@ -990,13 +1041,22 @@
 </div>
 
 <div id="moodModal" class="modal-backdrop">
-  <div class="modal">
-    <h2 id="moodTitle">Boredom? That's just your brain knocking.</h2>
+  <div class="modal" style="max-width:520px">
+    <h2 id="moodTitle" style="margin-bottom:14px"></h2>
+    <!-- Author portrait + info -->
+    <div class="mood-hero">
+      <img id="moodPortrait" class="mood-portrait" src="" alt="">
+      <div>
+        <div id="moodAuthorName" class="mood-author-name"></div>
+        <div id="moodAuthorDates" class="mood-author-dates"></div>
+        <div id="moodAuthorRole" class="mood-author-role"></div>
+      </div>
+    </div>
     <div class="modal-quote" id="moodQuote"></div>
-    <p id="moodBody"></p>
-    <p id="moodClosing"></p>
+    <p id="moodBody" style="font-size:13px;line-height:1.65;margin:12px 0;color:var(--text)"></p>
+    <p id="moodClosing" style="font-size:12.5px;color:var(--accent2);font-style:italic;margin-bottom:4px"></p>
     <div class="modal-buttons">
-      <button class="modal-btn primary" id="moodClose">Got it</button>
+      <button class="modal-btn primary" id="moodClose">Got it, on my way ✦</button>
     </div>
   </div>
 </div>
@@ -1005,7 +1065,7 @@
   <div class="modal">
     <h2>✨ Eisenhower Matrix</h2>
     <p style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">──────────────────────</p>
-    <p>🔢 Ver. 1.0.0</p>
+    <p>🔢 Ver. 1.1.0</p>
     <p>🤖 Built with: Claude Sonnet 4.6</p>
     <p>👩‍💻 Builder: Angela Pai 🌸✨💫</p>
     <p id="infoDate">🗓 Last updated: 2026/04/23 00:00</p>
@@ -1041,36 +1101,95 @@ const GREETINGS = [
   {pre:"Back again,", suf:" — marvellous! Still waters run deep, and a focused mind runs deeper."}
 ];
 
-const MOODS = [
-  {
-    key: 'bored',
-    title: "Boredom? That's just your brain knocking.",
-    quote: "Marcus Aurelius: \"The impediment to action advances action. What stands in the way becomes the way.\"",
-    body: "Boredom is your mind saying 'I have more to give.' It's not laziness—it's untapped potential knocking on your door. That restless feeling? It's a gift wrapped in static. Time to unwrap it.",
-    closing: "Go grab a drink, use the loo, take a 3-minute wander — then come back and start '[Q1]'. Boredom, meet purpose."
-  },
-  {
-    key: 'drained',
-    title: "Even the sharpest blade needs a whetstone.",
-    quote: "Marcus Aurelius: \"You have power over your mind, not outside events. Realise this and you will find strength.\"",
-    body: "Drained is real. You're human, not a machine. Every fibre being tired is proof you've already given your all today—or trying to. That's not weakness; that's the cost of caring about what you do.",
-    closing: "Hydrate, stretch those legs for 3 minutes, splash cold water — then come back and give '[Q1]' just 20 focused minutes."
-  },
-  {
-    key: 'tired',
-    title: "Tired minds have built empires.",
-    quote: "Marcus Aurelius: \"It is not death that a man should fear, but he should fear never beginning to live.\"",
-    body: "Tired means you've been working. That fog? It's the weight of effort, and effort is the only thing that ever changed anything. You're not behind; you're in it.",
-    closing: "Step away — grab a biscuit, some fresh air, 3 minutes of nothing — then open '[Q1]'. Just open it."
-  },
-  {
-    key: 'exhausted',
-    title: "Even emperors need rest.",
-    quote: "Marcus Aurelius: \"Confine yourself to the present.\"",
-    body: "Exhausted is a signal. Your body is speaking. Listen, but don't surrender. One step at a time. Not tomorrow's work, not yesterday's—just now. This breath. This moment.",
-    closing: "Stand up. Get a drink. Stare out a window for exactly 3 minutes. Then return and simply open '[Q1]'. The work knows how to begin once you show up."
-  }
-];
+// ── philosopher data (public-domain Wikimedia portraits) ──────────────────
+const PHI = {
+  marcus:      { name:'Marcus Aurelius',      dates:'121–180 AD',  role:'Roman Emperor · Stoic Philosopher',   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MSR-ra-1-1-d%C3%A9tail.jpg/256px-MSR-ra-1-1-d%C3%A9tail.jpg' },
+  aristotle:   { name:'Aristotle',            dates:'384–322 BC',  role:'Greek Philosopher',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Aristotle_Altemps_Inv8575.jpg/256px-Aristotle_Altemps_Inv8575.jpg' },
+  plato:       { name:'Plato',                dates:'428–348 BC',  role:'Greek Philosopher',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Plato_Silanion_Musei_Capitolini_MC1377.jpg/256px-Plato_Silanion_Musei_Capitolini_MC1377.jpg' },
+  socrates:    { name:'Socrates',             dates:'470–399 BC',  role:'Greek Philosopher',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Socrate_du_Louvre.jpg/256px-Socrate_du_Louvre.jpg' },
+  epicurus:    { name:'Epicurus',             dates:'341–270 BC',  role:'Greek Philosopher',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Epikouros_BM_1843.jpg/256px-Epikouros_BM_1843.jpg' },
+  shakespeare: { name:'William Shakespeare',  dates:'1564–1616',   role:'Playwright & Poet',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/256px-Shakespeare.jpg' },
+  wittgenstein:{ name:'Ludwig Wittgenstein',  dates:'1889–1951',   role:'Austrian Philosopher',                img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ludwig_Wittgenstein_by_Ben_Richards.jpg/256px-Ludwig_Wittgenstein_by_Ben_Richards.jpg' },
+  nietzsche:   { name:'Friedrich Nietzsche',  dates:'1844–1900',   role:'German Philosopher',                  img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nietzsche187a.jpg/256px-Nietzsche187a.jpg' },
+  seneca:      { name:'Seneca the Younger',   dates:'4 BC–65 AD',  role:'Roman Stoic Philosopher',             img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Pseudo-Seneca.jpg/256px-Pseudo-Seneca.jpg' },
+  epictetus:   { name:'Epictetus',            dates:'50–135 AD',   role:'Greek Stoic Philosopher',             img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg/256px-Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg' }
+};
+
+// ── 5 moods × up to 10 quotes each ────────────────────────────────────────
+const MOOD_POOLS = {
+  bored: [
+    { p:'marcus',       q:'"The impediment to action advances action. What stands in the way becomes the way."',              body:'Boredom is your mind saying it has more to give. That restless itch? Pure untapped potential. Time to scratch it.',                          closing:'Grab a drink, use the loo, take a 3-minute wander — then start \'[Q1]\'. Boredom, meet purpose.' },
+    { p:'aristotle',    q:'"The more you know, the more you know you don\'t know."',                                          body:'Your brain\'s bigger than the cage of routine. Boredom is the gap between what you are and what you could be. That gap is an invitation.',  closing:'Step outside for 3 minutes — fresh eyes, fresh air — then come back and crack open \'[Q1]\'.' },
+    { p:'nietzsche',    q:'"He who has a why to live can bear almost any how."',                                              body:'Boredom isn\'t emptiness — it\'s the prelude to purpose. The greatest breakthroughs began in the space between tasks.',                      closing:'Pour something nice, stretch, walk a lap — then return and make \'[Q1]\' your "why" for the next 20 minutes.' },
+    { p:'socrates',     q:'"An unexamined life is not worth living."',                                                        body:'When you\'re bored, you\'re examining. That\'s not nothing — that\'s philosophy in action. The examined moment is never wasted.',              closing:'Use 3 minutes wisely: water, toilet, air. Then examine \'[Q1]\' with fresh eyes.' },
+    { p:'epicurus',     q:'"Do not spoil what you have by desiring what you have not."',                                      body:'The grass looks greener elsewhere because you\'re not watering here. Boredom is an invitation to tend your own garden.',                      closing:'Refresh yourself — a drink, a stretch, 3 minutes away — then water \'[Q1]\' with your full attention.' },
+    { p:'plato',        q:'"The beginning is the most important part of the work."',                                          body:'Every great thing ever built started with a moment exactly like this one: undirected, aimless, faintly restless. That\'s the launchpad.',    closing:'Get up, walk a loop, come back — then make a beginning on \'[Q1]\'. Just a beginning.' },
+    { p:'shakespeare',  q:'"We know what we are, but know not what we may be."',                                              body:'Boredom is standing at the door of potential. Behind it: something better than scrolling. You already know this.',                           closing:'3-minute escape: drink, breathe, move. Then come back and find out what \'[Q1]\' can become in your hands.' },
+    { p:'seneca',       q:'"Nusquam est qui ubique est." (One who is everywhere is nowhere.)',                                 body:'Your attention is scattered — boredom is the symptom. Pick one thing. One corner of one task. Start there.',                                   closing:'Step away deliberately: water, toilet, three breaths outside — then return to \'[Q1]\'. Nowhere else.' },
+    { p:'wittgenstein', q:'"If a lion could speak, we could not understand him."',                                            body:'Most problems feel boring because you haven\'t learned their language yet. Lean in. Every task has a grammar worth mastering.',                closing:'3 minutes away — seriously, go. Then come back and translate \'[Q1]\' into something you can act on.' },
+    { p:'epictetus',    q:'"Seek not that the things which happen should happen as you wish."',                                body:'You can\'t always control the work in front of you. You can always control how fully you show up to it.',                                       closing:'Go grab something cold to drink, walk to the window for 3 minutes — then show up to \'[Q1]\' fully.' }
+  ],
+  tired: [
+    { p:'marcus',       q:'"It is not death that a man should fear, but he should fear never beginning to live."',            body:'Tired means you\'ve been working. That fog? The weight of effort. Effort is the only thing that ever changed anything.',                     closing:'Step away — biscuit, fresh air, 3 minutes of nothing — then open \'[Q1]\'. Just open it.' },
+    { p:'seneca',       q:'"Per aspera ad astra." (Through hardship to the stars.)',                                          body:'Hardship is the corridor. The stars are on the other side. You are not stuck — you are mid-corridor.',                                        closing:'Drink some water. Stretch your legs for 3 minutes. Then walk toward \'[Q1]\'. One step.' },
+    { p:'shakespeare',  q:'"Our doubts are traitors, and make us lose the good we oft might win, by fearing to attempt."',   body:'Tiredness makes the doubt louder. But doubt has never finished a single task. Action has.',                                                  closing:'3 minutes, eyes closed, out of the chair — then attempt \'[Q1]\'. Doubt can wait outside.' },
+    { p:'aristotle',    q:'"We are what we repeatedly do. Excellence, then, is not an act but a habit."',                    body:'Tired people built the pyramids, wrote symphonies, cured diseases. Tiredness is contextual. Excellence is structural.',                       closing:'Hydrate. A 3-minute walk. Then return to \'[Q1]\' as a practitioner of excellence, not a passenger of mood.' },
+    { p:'nietzsche',    q:'"That which does not kill us, makes us stronger."',                                                body:'You\'re not broken — you\'re being tempered. The tiredness is the process, not the verdict.',                                                 closing:'Go outside for exactly 3 minutes. Come back, sit down, and show \'[Q1]\' what you\'re made of.' },
+    { p:'plato',        q:'"Courage is knowing what not to fear."',                                                           body:'Tiredness feels fearsome. It isn\'t. It\'s biological. Temporary. The work is permanent. Start anyway.',                                      closing:'Water. Toilet. Sunlight for 3 minutes. Then courageously open \'[Q1]\'.' },
+    { p:'wittgenstein', q:'"The limits of my language mean the limits of my world."',                                         body:'Stop telling yourself "I\'m too tired." Change the language: "I am mid-effort." Different words, different world.',                           closing:'Take 3 minutes — move, breathe, drink — then come back and redefine \'[Q1]\' as something conquerable.' },
+    { p:'epictetus',    q:'"Make the best use of what is in your power, and take the rest as it happens."',                   body:'You cannot control how tired you feel. You can control what you do in the next 20 minutes. Use them well.',                                  closing:'3-minute break: walk, water, window. Then use the next 20 minutes on \'[Q1]\'. Just 20.' },
+    { p:'epicurus',     q:'"It is not what we have but what we enjoy that constitutes our abundance."',                       body:'The work ahead of you is also a gift — proof that your skills are needed, that your time has value. Tired but needed.',                     closing:'Enjoy a 3-minute respite: drink something, breathe deeply, stroll around. Then enjoy tackling \'[Q1]\'.' },
+    { p:'socrates',     q:'"The secret of change is to focus all your energy not on fighting the old, but on building the new."', body:'Don\'t fight the tiredness. Don\'t resist it. Just build one small new thing: one sentence, one step, one line of code.',               closing:'3 minutes to reset — body, mind, posture — then build one thing in \'[Q1]\'.' }
+  ],
+  drained: [
+    { p:'marcus',       q:'"You have power over your mind, not outside events. Realise this and you will find strength."',    body:'Drained is real. You\'re human, not a machine. Fatigue is the cost of caring. That\'s not weakness — that\'s investment.',                  closing:'Hydrate, stretch, 3 minutes cold air — then invest just 20 more minutes in \'[Q1]\'.' },
+    { p:'aristotle',    q:'"Pleasure in the job puts perfection in the work."',                                               body:'When you\'re drained, perfectionism is the enemy. Just make it good. Good is enough. Good ships.',                                              closing:'Step away — drink, walk, breathe — then come back and make \'[Q1]\' good. Not perfect. Good.' },
+    { p:'epictetus',    q:'"Seek not the good in external things; seek it in yourselves."',                                   body:'External drains are real: meetings, noise, people, screens. The well inside you isn\'t empty — it just needs a moment\'s quiet to refill.',   closing:'3 minutes of genuine quiet: no phone, no screen. Then draw from the well and give \'[Q1]\' what it needs.' },
+    { p:'seneca',       q:'"He suffers more than necessary, who suffers before it is necessary."',                            body:'You\'re anticipating the drain more than experiencing it. Much of what feels exhausting is the anticipation of exhaustion.',                  closing:'Stop anticipating. Grab a drink, use the toilet, walk around — then begin \'[Q1]\' without predicting how it goes.' },
+    { p:'plato',        q:'"The first and greatest victory is to conquer yourself."',                                         body:'The drained feeling is the voice saying "not now." Conquering yourself is doing it anyway — even poorly, even slowly. Forward counts.',      closing:'3 minutes to step outside yourself: move, breathe, reset — then conquer the first paragraph of \'[Q1]\'.' },
+    { p:'shakespeare',  q:'"This above all: to thine own self be true."',                                                     body:'Draining yourself pretending to be okay isn\'t noble — it\'s costly. Be true: take the break you need. Then return.',                       closing:'Be true to what you need: 3 minutes away, honestly. Then be true to \'[Q1]\': give it your actual best.' },
+    { p:'nietzsche',    q:'"In individuals, insanity is rare; but in groups, parties, nations and epochs, it is the rule."',  body:'The world is noisy. No wonder you\'re drained. You\'ve been carrying the weight of the collective. Put it down for three minutes.',           closing:'Escape the collective for 3 minutes: walk alone, no input. Then return to \'[Q1]\', which is yours alone.' },
+    { p:'epicurus',     q:'"The greatest wealth is to live content with little."',                                            body:'Contentment is a renewable resource. Drain is the consequence of chasing too much at once. Simplify. One task. This task.',                  closing:'3 minutes of wanting nothing — just a drink and a walk. Then come back content to do one thing: \'[Q1]\'.' },
+    { p:'wittgenstein', q:'"A serious and good philosophical work could be written consisting entirely of jokes."',           body:'Being drained doesn\'t mean being serious. Lighten up. The task doesn\'t require your gravity — just your presence.',                       closing:'3 laughing minutes if you can find them, or just 3 light ones. Then show up lightly to \'[Q1]\'.' },
+    { p:'socrates',     q:'"Know thyself."',                                                                                  body:'You know what drains you. You know what restores you. Use that knowledge. Take the break that actually works for you.',                      closing:'Take the break that works for YOU — 3 minutes, your way. Then come back and work on \'[Q1]\' as yourself.' }
+  ],
+  lazy: [
+    { p:'aristotle',    q:'"Excellence is never an accident. It is always the result of high intention and sincere effort."', body:'Laziness is efficiency waiting for a direction. Point it at something that matters and it becomes strategy.',                                  closing:'3 minutes to stretch and recalibrate — then point your efficiency squarely at \'[Q1]\'.' },
+    { p:'marcus',       q:'"Do not indulge in such dreams: I shall live in safety, I shall be rich, I shall have leisure."', body:'The leisure you\'re seeking is the reward for work done. It\'s on the other side of \'[Q1]\', not in front of it.',                         closing:'Get up, walk around, use the facilities — then earn the leisure by finishing \'[Q1]\' first.' },
+    { p:'shakespeare',  q:'"Action is eloquence."',                                                                           body:'All the thinking in the world says nothing. One sentence written, one thing shipped, one call made — that speaks volumes.',                   closing:'3 minutes to move your body — then speak eloquently by doing one thing on \'[Q1]\'.' },
+    { p:'nietzsche',    q:'"The higher we soar, the smaller we appear to those who cannot fly."',                             body:'The lazy feeling is ground-level perspective. From up there, the task looks manageable. Let\'s get you airborne.',                             closing:'Walk to a window and look out for 3 minutes — perspective shift. Then fly at \'[Q1]\'.' },
+    { p:'seneca',       q:'"Luck is what happens when preparation meets opportunity."',                                       body:'You can\'t be lucky sitting still. Preparation is motion. Even slow motion counts. Begin somewhere.',                                         closing:'Prepare yourself: water, toilet, 3 minutes upright — then meet the opportunity called \'[Q1]\'.' },
+    { p:'plato',        q:'"You can discover more about a person in an hour of play than in a year of conversation."',       body:'If it feels like work, reframe: it\'s a puzzle. It\'s a game. You\'re the protagonist and the solution is hidden in \'[Q1]\'.',            closing:'3 playful minutes away — then come back and treat \'[Q1]\' like a puzzle worth solving.' },
+    { p:'socrates',     q:'"Let him who would move the world first move himself."',                                           body:'The world won\'t move until you do. The smallest action — one sentence, one click — is a movement. Start the chain reaction.',               closing:'Move yourself: 3 minutes of actual walking. Then move \'[Q1]\' forward by one concrete step.' },
+    { p:'epicurus',     q:'"Of all the things which wisdom provides to make us entirely happy, much the greatest is the possession of friendship."', body:'Your future self is your best friend. Don\'t leave them with today\'s undone work.',                      closing:'3 minutes to be kind to yourself (drink, breathe, stretch) — then be kind to your future self: do \'[Q1]\'.' },
+    { p:'epictetus',    q:'"First say to yourself what you would be; and then do what you have to do."',                     body:'Say it: I am someone who ships. I am someone who finishes. Now do what that person does.',                                                     closing:'Say it out loud if you need to — then stand up, walk 3 minutes, come back, and do what \'[Q1]\' requires.' },
+    { p:'wittgenstein', q:'"The world is everything that is the case."',                                                      body:'Right now, the case is: you\'re reading a philosophy quote instead of working. The world is waiting for the other case: you started.',       closing:'3 minutes to reset the case — walk, water, breathe — then make the case for finishing \'[Q1]\'.' }
+  ],
+  down: [
+    { p:'marcus',       q:'"The soul becomes dyed with the colour of its thoughts."',                                         body:'Your thoughts are painting your world right now. You have more brushes than you think. Pick a different colour.',                              closing:'3 minutes outside, no phone, look at something real — then return and paint one small thing in \'[Q1]\'.' },
+    { p:'plato',        q:'"Every heart sings a song, incomplete, until another heart whispers back."',                       body:'Feeling down is often feeling alone in a task. The work isn\'t meant to be solved in isolation — you\'re figuring it out in real time.',     closing:'Get up, be around air and light for 3 minutes — then come back and know you\'re not the first to tackle \'[Q1]\'.' },
+    { p:'shakespeare',  q:'"What a piece of work is a man! How noble in reason, how infinite in faculty!"',                   body:'You are, objectively, remarkable. Down days are data points, not verdicts. You\'ve had good days. More are coming.',                          closing:'3 minutes to acknowledge you\'re a piece of work worth something — then give that something to \'[Q1]\'.' },
+    { p:'seneca',       q:'"If you wish to be loved, love."',                                                                 body:'When you\'re down, the instinct is to withdraw. The antidote is almost always engagement. Start small. Start with the work in front of you.', closing:'3 minutes of self-care (drink, air, stretch) — then engage with \'[Q1]\' as an act of self-respect.' },
+    { p:'epicurus',     q:'"Death is nothing to us. When we are, death has not come, and when death has come, we are not."',  body:'Zoomed out this far, today\'s task is both completely insignificant and also worth doing well. There\'s freedom in that.',                   closing:'Take 3 minutes to zoom out: sky, breath, space. Then zoom back in and do \'[Q1]\' with freedom.' },
+    { p:'aristotle',    q:'"Happiness depends upon ourselves."',                                                              body:'Not on the outcome. Not on others\' approval. On what you choose to do with this particular hour of this particular day.',                   closing:'Choose this: 3 minutes away from the screen, then 20 minutes choosing to do \'[Q1]\' well.' },
+    { p:'nietzsche',    q:'"There is always some madness in love. But there is also always some reason in madness."',         body:'Feeling down is the heart being loud. There\'s reason inside that madness — let it speak, then set it aside and make something.',            closing:'3 minutes to let the feeling be what it is — then make something. Start with \'[Q1]\'.' },
+    { p:'socrates',     q:'"The unexamined life is not worth living."',                                                       body:'You\'re examining. That\'s the hardest part — most people never stop to feel this at all. You\'re already doing the deep work.',             closing:'Honour the examination: 3 minutes of honest rest — then continue with \'[Q1]\', which is part of a life worth living.' },
+    { p:'wittgenstein', q:'"Whereof one cannot speak, thereof one must be silent."',                                          body:'Some things can\'t be solved by talking — or by thinking about them more. Sometimes the only answer is to make something.',                  closing:'3 silent minutes: no input, no thinking. Then make something with \'[Q1]\'.' },
+    { p:'epictetus',    q:'"We cannot choose our external circumstances, but we can always choose how we respond to them."',  body:'Down is a circumstance. The response is yours to choose. History remembers the response, never the circumstance.',                            closing:'Choose your response: 3 minutes of movement, then return and respond to \'[Q1]\' with your full self.' }
+  ]
+};
+
+const MOOD_KEYS   = ['bored','tired','drained','lazy','down'];
+const MOOD_TITLES = {
+  bored:  "Boredom? That's just your brain knocking.",
+  tired:  "Tired minds have built empires.",
+  drained:"Even the sharpest blade needs a whetstone.",
+  lazy:   "Laziness is efficiency without a direction.",
+  down:   "The valley is what makes the mountain."
+};
+
+// Legacy array (kept so existing moodIndex references don't break)
+const MOODS = MOOD_KEYS.map(k => ({ key: k }));
 
 // ============= STATE =============
 let state = {
@@ -1111,6 +1230,7 @@ function init() {
     applyUserName(state.userName);
   }
 
+  updateMoodBtn();
   renderMatrix();
   renderCurrentTab();
   renderDeadlineBar();
@@ -1227,7 +1347,7 @@ function setupGlobalDrag() {
     }
   });
 
-  // Cancel drag on any escape
+  // Cancel drag on Escape
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape' && _dragState) {
       const { el, origLeft, origTop } = _dragState;
@@ -1236,6 +1356,40 @@ function setupGlobalDrag() {
       document.body.classList.remove('dragging');
       _dragState = null;
     }
+  });
+
+  // ── Touch drag (iPhone / iPad) ──────────────────────────────────────────
+  function touchPos(e) { return e.touches[0] || e.changedTouches[0]; }
+
+  document.addEventListener('touchmove', e => {
+    if(!_dragState) return;
+    e.preventDefault();   // stop page scroll while dragging tag
+    const t = touchPos(e);
+    const dx = t.clientX - _dragState.sx, dy = t.clientY - _dragState.sy;
+    if(!_dragState.moved && Math.hypot(dx, dy) < DRAG_THRESH) return;
+    if(!_dragState.moved) {
+      _dragState.moved = true;
+      _dragState.el.classList.add('dragging-active-tag');
+    }
+    const r = _dragState.canvasRect;
+    _dragState.el.style.left = Math.max(2, Math.min(98, ((t.clientX - r.left) / r.width) * 100)) + '%';
+    _dragState.el.style.top  = Math.max(2, Math.min(98, ((t.clientY - r.top)  / r.height) * 100)) + '%';
+  }, { passive: false });
+
+  document.addEventListener('touchend', e => {
+    if(!_dragState) return;
+    const { tagId, moved, el } = _dragState;
+    const canvasRect = _dragState.canvasRect;
+    _dragState = null;
+    el.classList.remove('dragging-active-tag');
+    if(!moved) return;
+
+    const t = touchPos(e);
+    const nx = Math.max(2, Math.min(98, ((t.clientX - canvasRect.left) / canvasRect.width) * 100));
+    const ny = Math.max(2, Math.min(98, ((t.clientY - canvasRect.top)  / canvasRect.height) * 100));
+    const tag = state.tags.find(t2 => t2.id === tagId);
+    if(tag) { tag.x = nx; tag.y = ny; saveData(); renderMatrix(); renderDeadlineBar(); }
+    renderCurrentTab();
   });
 }
 
@@ -1356,12 +1510,6 @@ function setupEventListeners() {
     renderCurrentTab();
   });
 
-  document.getElementById('moodClose').addEventListener('click', () => {
-    closeModal('moodModal');
-    ui.moodIndex = (ui.moodIndex + 1) % MOODS.length;
-    updateMoodBtn();
-  });
-
   document.getElementById('infoClose').addEventListener('click', () => closeModal('infoModal'));
 
   // Menu close on outside click
@@ -1423,20 +1571,29 @@ function createTagEl(tag) {
   el.appendChild(textEl);
   el.appendChild(controls);
 
-  // ── DRAG: start global drag state ──
-  el.addEventListener('mousedown', e => {
-    if(e.target.closest('.tag-controls')) return;
-    if(el.classList.contains('editing')) return;
-    e.preventDefault(); e.stopPropagation();
+  // ── DRAG: start global drag state (mouse + touch) ──
+  function startDrag(cx, cy) {
     const canvas = document.getElementById('matrixCanvas');
     _dragState = {
       tagId: tag.id, el,
-      sx: e.clientX, sy: e.clientY,
+      sx: cx, sy: cy,
       origLeft: el.style.left, origTop: el.style.top,
       canvasRect: canvas.getBoundingClientRect(),
       moved: false
     };
+  }
+  el.addEventListener('mousedown', e => {
+    if(e.target.closest('.tag-controls')) return;
+    if(el.classList.contains('editing')) return;
+    e.preventDefault(); e.stopPropagation();
+    startDrag(e.clientX, e.clientY);
   });
+  el.addEventListener('touchstart', e => {
+    if(e.target.closest('.tag-controls')) return;
+    if(el.classList.contains('editing')) return;
+    e.stopPropagation();
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
 
   // ── CLICK → inline edit (only when there was no real drag) ──
   el.addEventListener('click', e => {
@@ -2209,14 +2366,23 @@ function showEndOfDayModal() {
 }
 
 function showMoodModal() {
-  const mood = MOODS[ui.moodIndex];
-  document.getElementById('moodTitle').textContent = mood.title;
-  document.getElementById('moodQuote').textContent = mood.quote;
-  document.getElementById('moodBody').textContent = mood.body;
+  const key   = MOOD_KEYS[ui.moodIndex % MOOD_KEYS.length];
+  const pool  = MOOD_POOLS[key];
+  const entry = pool[Math.floor(Math.random() * pool.length)];
+  const phi   = PHI[entry.p];
 
-  const q1 = state.tags.find(t => !t.resolved && !t.archived && quadrantKey(t) === 'q1');
-  const closingText = mood.closing.replace('[Q1]', q1 ? q1.text : 'something on your list');
-  document.getElementById('moodClosing').textContent = closingText;
+  document.getElementById('moodTitle').textContent = MOOD_TITLES[key];
+  document.getElementById('moodPortrait').src = phi.img;
+  document.getElementById('moodPortrait').alt = phi.name;
+  document.getElementById('moodAuthorName').textContent  = phi.name;
+  document.getElementById('moodAuthorDates').textContent = phi.dates;
+  document.getElementById('moodAuthorRole').textContent  = phi.role;
+  document.getElementById('moodQuote').textContent       = entry.q;
+  document.getElementById('moodBody').textContent        = entry.body;
+
+  const q1tag = state.tags.find(t => !t.resolved && !t.archived && quadrantKey(t) === 'q1');
+  document.getElementById('moodClosing').textContent =
+    entry.closing.replace('[Q1]', q1tag ? `"${q1tag.text}"` : 'something from your DO list');
 
   openModal('moodModal');
 }
@@ -2231,9 +2397,15 @@ function rotateGreeting() {
 }
 
 function updateMoodBtn() {
-  const moodTexts = ['I\'m bored', 'I\'m drained', 'I\'m tired', 'I\'m exhausted'];
-  document.getElementById('moodBtn').textContent = moodTexts[ui.moodIndex];
+  const labels = { bored:"I'm bored", tired:"I'm tired", drained:"I'm drained", lazy:"I'm lazy", down:"I'm down" };
+  document.getElementById('moodBtn').textContent = labels[MOOD_KEYS[ui.moodIndex % MOOD_KEYS.length]];
 }
+// Cycle through 5 moods on close
+document.getElementById('moodClose').addEventListener('click', () => {
+  closeModal('moodModal');
+  ui.moodIndex = (ui.moodIndex + 1) % MOOD_KEYS.length;
+  updateMoodBtn();
+});
 
 function startClock() {
   function updateClock() {
