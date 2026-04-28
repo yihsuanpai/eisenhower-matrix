@@ -29,6 +29,164 @@
       --radius: 8px;
     }
 
+    /* ═══ LIGHT MODE — city-pop / vaporwave palette ═══════════════════════ */
+    [data-theme="light"] {
+      --bg:       #F7F9FF;
+      --surface:  #EEF3FF;
+      --surface2: #DCE4FF;
+      --surface3: #C8D5FF;
+      --border:   #B8CAFE;
+      --text:     #2D2F3A;
+      --text-dim: #6B6F85;
+      /* Primary brand */
+      --accent:        #7A6FF0;
+      --accent2:       #5B7CFA;
+      --accent3:       #FF6EC7;
+      --accent4:       #E052CF;
+      --lavender:      #7A6FF0;
+      --mint:          #5B7CFA;
+      --accent-glow:   rgba(122,111,240,.18);
+      --accent2-glow:  rgba(91,124,250,.15);
+      --accent3-glow:  rgba(255,110,199,.18);
+      /* Quadrant fills — softer on white */
+      --q1: rgba(255,110,199,.22);
+      --q2: rgba(91,124,250,.18);
+      --q3: rgba(122,111,240,.14);
+      --q4: rgba(107,114,128,.07);
+    }
+
+    /* Light-mode element overrides for hardcoded colours */
+    [data-theme="light"] body   { color-scheme: light; }
+    [data-theme="light"] #header {
+      background: linear-gradient(135deg,#EEF3FF 0%,#DCE4FF 100%) !important;
+      border-bottom: 1px solid #B8CAFE;
+      box-shadow: 0 2px 12px rgba(91,124,250,.12);
+    }
+    [data-theme="light"] #hdrGreeting { color: #2D2F3A; }
+    [data-theme="light"] #hdrClock    { color: #5B7CFA; background: #DCE4FF; border-color: #B8CAFE; }
+    [data-theme="light"] .hdr-btn     { background:#DCE4FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .hdr-btn:hover { background:#C8D5FF; border-color:#7A6FF0; color:#5B7CFA; }
+    [data-theme="light"] #hdrMenuDropdown { background:#EEF3FF; border-color:#B8CAFE;
+      box-shadow:-4px 6px 24px rgba(91,124,250,.15); }
+    [data-theme="light"] #hdrMenuClock   { background:#F7F9FF; color:#5B7CFA; border-color:#B8CAFE; }
+    [data-theme="light"] .hdr-menu-item  { color:#2D2F3A; border-color:#B8CAFE; }
+    [data-theme="light"] .hdr-menu-item:hover { background:#DCE4FF; color:#5B7CFA; }
+
+    [data-theme="light"] .add-tag-btn {
+      background: linear-gradient(135deg,#7A6FF0,#5B7CFA) !important;
+      box-shadow: 0 2px 10px rgba(122,111,240,.25) !important;
+      color: #fff !important;
+    }
+    [data-theme="light"] #newTagInput,
+    [data-theme="light"] #deadlineInput {
+      background:#EEF3FF; color:#2D2F3A; border-color:#B8CAFE;
+    }
+    [data-theme="light"] #newTagInput:focus   { border-color:#7A6FF0; box-shadow:0 0 0 2px rgba(122,111,240,.15); }
+    [data-theme="light"] #deadlineInput:focus { border-color:#5B7CFA; }
+    [data-theme="light"] #newTagInput::placeholder,
+    [data-theme="light"] #deadlineInput::placeholder { color:#6B6F85; }
+
+    /* Matrix */
+    [data-theme="light"] #matrixCanvas { background:#F7F9FF; border-color:#B8CAFE; }
+    [data-theme="light"] .qdiv-v,
+    [data-theme="light"] .qdiv-h  { background: #B8CAFE; }
+    [data-theme="light"] .qcorner { opacity:.35; }
+    [data-theme="light"] .qcorner.q1 { color:#E052CF; }
+    [data-theme="light"] .qcorner.q2 { color:#5B7CFA; }
+    [data-theme="light"] .qcorner.q3 { color:#7A6FF0; }
+    [data-theme="light"] .qcorner.q4 { color:#6B6F85; }
+    [data-theme="light"] .mx-col-lbl.urgent   { color:#5B7CFA; }
+    [data-theme="light"] .mx-row-lbl.important{ color:#7A6FF0; }
+
+    /* Tags stay colorful on both themes — no override needed */
+
+    /* Tabs + tables */
+    [data-theme="light"] #tabBar    { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .tab.active { color:#7A6FF0; border-bottom-color:#7A6FF0; background:#F7F9FF; }
+    [data-theme="light"] .tab:hover  { color:#2D2F3A; }
+    [data-theme="light"] .task-table th { background:#DCE4FF; color:#6B6F85; border-color:#B8CAFE; }
+    [data-theme="light"] .task-table td { border-bottom-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .task-table tr:hover td { background:#EEF3FF !important; }
+    [data-theme="light"] #tabContent { background:#F7F9FF; }
+
+    /* Today tab */
+    [data-theme="light"] .today-btn  { background:#DCE4FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .today-btn:hover { background:#C8D5FF; border-color:#7A6FF0; color:#5B7CFA; }
+    [data-theme="light"] .today-item { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .today-item:hover { background:#DCE4FF; border-color:#7A6FF0; }
+    [data-theme="light"] .today-date { color:#6B6F85; }
+    [data-theme="light"] .today-text { color:#2D2F3A; }
+    [data-theme="light"] .today-icon-btn { color:#6B6F85; }
+    [data-theme="light"] .today-icon-btn:hover { color:#7A6FF0; }
+    [data-theme="light"] .today-empty { color:#6B6F85; }
+
+    /* Quadrant badges in light mode */
+    [data-theme="light"] .quadrant-badge.q1 { background:rgba(224,82,207,.15); color:#E052CF; }
+    [data-theme="light"] .quadrant-badge.q2 { background:rgba(91,124,250,.15); color:#5B7CFA; }
+    [data-theme="light"] .quadrant-badge.q3 { background:rgba(122,111,240,.15); color:#7A6FF0; }
+    [data-theme="light"] .quadrant-badge.q4 { background:rgba(107,114,128,.12); color:#6B6F85; }
+
+    /* Modals */
+    [data-theme="light"] .modal {
+      background:#F7F9FF; border-color:#B8CAFE;
+      box-shadow:0 8px 32px rgba(91,124,250,.15), 0 0 0 1px rgba(122,111,240,.08);
+    }
+    [data-theme="light"] .modal h2  { color:#2D2F3A; }
+    [data-theme="light"] .modal p   { color:#6B6F85; }
+    [data-theme="light"] .modal-quote { border-color:#5B7CFA; color:#5B7CFA; }
+    [data-theme="light"] .modal-btn   { background:#DCE4FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .modal-btn:hover { background:#C8D5FF; border-color:#7A6FF0; }
+    [data-theme="light"] .modal-btn.primary { background:linear-gradient(135deg,#7A6FF0,#5B7CFA); color:#fff; border:none; }
+    [data-theme="light"] .modal-btn.primary:hover { background:linear-gradient(135deg,#6559e0,#4a6ce0); }
+    [data-theme="light"] .modal-input,
+    [data-theme="light"] .modal-textarea { background:#EEF3FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .modal-input:focus { border-color:#7A6FF0; box-shadow:0 0 0 2px rgba(122,111,240,.15); }
+    [data-theme="light"] .modal-list { }
+    [data-theme="light"] .modal-item { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .stat-box   { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .stat-value { color:#5B7CFA; }
+    [data-theme="light"] .stat-label { color:#6B6F85; }
+    [data-theme="light"] .progress-bar { background:#DCE4FF; }
+    [data-theme="light"] .progress-fill { background:linear-gradient(90deg,#7A6FF0,#5B7CFA); }
+
+    /* Note modal */
+    [data-theme="light"] .note-modal-box { background:#F7F9FF; border-color:#B8CAFE;
+      box-shadow:0 8px 32px rgba(91,124,250,.15); }
+    [data-theme="light"] .note-hdr  { background:linear-gradient(90deg,#DCE4FF,#EEF3FF); border-color:#B8CAFE; }
+    [data-theme="light"] .note-hdr-title { color:#7A6FF0; }
+    [data-theme="light"] .note-toolbar { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .note-tb-btn { background:#DCE4FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .note-tb-btn:hover { background:#C8D5FF; border-color:#7A6FF0; color:#7A6FF0; }
+    [data-theme="light"] .note-editor { color:#2D2F3A; caret-color:#7A6FF0; }
+    [data-theme="light"] .note-footer { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .note-discard-btn { background:#DCE4FF; color:#6B6F85; border-color:#B8CAFE; }
+    [data-theme="light"] .note-save-btn { background:linear-gradient(135deg,#7A6FF0,#5B7CFA); }
+
+    /* Deadline bar */
+    [data-theme="light"] #deadlineBar {
+      background:linear-gradient(90deg,#FFF1E8,#FFC6A8) !important;
+      border-color:rgba(224,82,207,.3) !important;
+      box-shadow:0 0 12px rgba(255,198,168,.3) !important;
+    }
+    [data-theme="light"] .dl-label { color:#7A6FF0 !important; }
+    [data-theme="light"] .dl-timer { color:#E052CF !important; background:rgba(224,82,207,.12) !important; }
+
+    /* Archive tab */
+    [data-theme="light"] .archive-group-header { background:#EEF3FF; }
+    [data-theme="light"] .archive-group-header:hover { background:#DCE4FF; }
+    [data-theme="light"] .archive-item:hover { background:#EEF3FF; }
+
+    /* Scrollbar light */
+    [data-theme="light"] ::-webkit-scrollbar-thumb { background:#B8CAFE; }
+    [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background:#7A6FF0; }
+
+    /* Menu dropdown */
+    [data-theme="light"] .menu-dropdown { background:#EEF3FF; border-color:#B8CAFE; }
+    [data-theme="light"] .menu-item     { color:#2D2F3A; border-color:#B8CAFE; }
+    [data-theme="light"] .menu-item:hover { background:#DCE4FF; color:#5B7CFA; }
+
+    /* ════════════════════════════════════════════════════════════════════ */
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -1031,6 +1189,7 @@
   <div id="hdrClock">2026/04/23 Thu 00:00:00</div>
   <button class="hdr-btn" id="moodBtn">I'm bored</button>
   <button class="hdr-btn" id="infoBtn">ℹ</button>
+  <button class="hdr-btn hdr-icon-btn" id="themeBtn" aria-label="Toggle theme"><span class="hdr-icon-inner">☀️<span class="hdr-tooltip">Light Mode</span></span></button>
   <button class="hdr-btn hdr-icon-btn" id="copyBtn" aria-label="Copy Data"><span class="hdr-icon-inner">📋<span class="hdr-tooltip">Copy Data</span></span></button>
   <button class="hdr-btn hdr-icon-btn" id="pasteBtn" aria-label="Import Data"><span class="hdr-icon-inner">📥<span class="hdr-tooltip">Import Data</span></span></button>
   <!-- Hamburger — visible on mobile only -->
@@ -1040,6 +1199,7 @@
 <!-- HAMBURGER DROPDOWN (mobile) -->
 <div id="hdrMenuDropdown">
   <div id="hdrMenuClock"></div>
+  <button class="hdr-menu-item" id="themeBtnM">☀️  Light Mode</button>
   <button class="hdr-menu-item" id="moodBtnM">😮‍💨 I'm bored</button>
   <button class="hdr-menu-item" id="infoBtnM">ℹ  About</button>
   <button class="hdr-menu-item" id="copyBtnM">📋  Copy Data</button>
@@ -1187,7 +1347,7 @@
   <div class="modal">
     <h2>✨ Eisenhower Matrix</h2>
     <p style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">──────────────────────</p>
-    <p>🔢 Ver. 1.1.0</p>
+    <p>🔢 Ver. 1.2.0</p>
     <p>🤖 Built with: Claude Sonnet 4.6</p>
     <p>👩‍💻 Builder: Angela Pai 🌸✨💫</p>
     <p id="infoDate">🗓 Last updated: 2026/04/23 00:00</p>
@@ -1201,6 +1361,34 @@
 </div>
 
 <script>
+// ============= THEME (light / dark) =============
+(function initTheme() {
+  const saved = localStorage.getItem('ei_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+})();
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const next   = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('ei_theme', next);
+  updateThemeBtns();
+}
+
+function updateThemeBtns() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const icon   = isDark ? '☀️' : '🌙';
+  const label  = isDark ? 'Light Mode' : 'Dark Mode';
+  const desktopInner = document.querySelector('#themeBtn .hdr-icon-inner');
+  if(desktopInner) {
+    desktopInner.childNodes[0].textContent = icon;
+    const tip = desktopInner.querySelector('.hdr-tooltip');
+    if(tip) tip.textContent = label;
+  }
+  const mobileBtn = document.getElementById('themeBtnM');
+  if(mobileBtn) mobileBtn.textContent = `${icon}  ${label}`;
+}
+
 // ============= CONSTANTS =============
 const STORAGE_KEY = 'eisenhower_v7';
 const DRAG_THRESH = 4;
@@ -1372,6 +1560,7 @@ function init() {
   }
 
   updateMoodBtn();
+  updateThemeBtns();
   renderMatrix();
   renderCurrentTab();
   renderDeadlineBar();
@@ -1671,10 +1860,14 @@ function setupEventListeners() {
       action();
     });
   }
+  mirrorBtn('themeBtnM', toggleTheme);
   mirrorBtn('moodBtnM',  showMoodModal);
   mirrorBtn('infoBtnM',  () => openModal('infoModal'));
   mirrorBtn('copyBtnM',  copyData);
   mirrorBtn('pasteBtnM', pasteData);
+
+  // Desktop theme button
+  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
 
   // Keep mobile clock in sync
   setInterval(() => {
