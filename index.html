@@ -66,11 +66,7 @@
     [data-theme="light"] #hdrClock    { color: #5B7CFA; background: #DCE4FF; border-color: #B8CAFE; }
     [data-theme="light"] .hdr-btn     { background:#DCE4FF; border-color:#B8CAFE; color:#2D2F3A; }
     [data-theme="light"] .hdr-btn:hover { background:#C8D5FF; border-color:#7A6FF0; color:#5B7CFA; }
-    [data-theme="light"] #hdrMenuDropdown { background:#EEF3FF; border-color:#B8CAFE;
-      box-shadow:-4px 6px 24px rgba(91,124,250,.15); }
-    [data-theme="light"] #hdrMenuClock   { background:#F7F9FF; color:#5B7CFA; border-color:#B8CAFE; }
-    [data-theme="light"] .hdr-menu-item  { color:#2D2F3A; border-color:#B8CAFE; }
-    [data-theme="light"] .hdr-menu-item:hover { background:#DCE4FF; color:#5B7CFA; }
+    /* profile dropdown light-mode covered in dropdown CSS block */
 
     [data-theme="light"] .add-tag-btn {
       background: linear-gradient(135deg,#7A6FF0,#5B7CFA) !important;
@@ -198,32 +194,97 @@
       height: 100vh;
     }
 
-    /* ═══ HAMBURGER MENU (mobile only — always hidden on desktop) ═══ */
-    #hdrMenuBtn { display: none; font-size: 20px; padding: 5px 11px; flex-shrink: 0; }
+    /* ═══ PROFILE DROPDOWN ═══════════════════════════════════════ */
+    #profileAvatar {
+      cursor: pointer !important;
+    }
 
-    #hdrMenuDropdown {
-      display: none; position: fixed;
-      top: 52px; right: 0; min-width: 220px; z-index: 600;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-top: none; border-radius: 0 0 0 10px;
-      box-shadow: -4px 6px 24px rgba(0,0,0,.5);
+    #profileDropdown {
+      display: none;
+      position: fixed;
+      top: 56px; right: 10px;
+      min-width: 220px; z-index: 700;
+      background: var(--surface2);
+      border: 1px solid var(--accent3);
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px var(--accent3),
+                  0 0 24px var(--accent3-glow),
+                  0 8px 32px rgba(0,0,0,.5);
       overflow: hidden;
+      animation: pdFadeIn .15s ease;
     }
-    #hdrMenuDropdown.open { display: block; }
-    .hdr-menu-item {
-      display: flex; align-items: center; gap: 10px;
-      width: 100%; background: none; border: none;
+    @keyframes pdFadeIn {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    #profileDropdown.open { display: block; }
+
+    /* Dropdown profile header */
+    #pdHeader {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: var(--surface3);
       border-bottom: 1px solid var(--border);
-      color: var(--text); padding: 14px 16px;
-      text-align: left; cursor: pointer; font-size: 13px;
-      transition: background .15s;
     }
-    .hdr-menu-item:last-child { border-bottom: none; }
-    .hdr-menu-item:hover, .hdr-menu-item:active { background: var(--surface3); color: var(--accent2); }
-    #hdrMenuClock {
-      padding: 10px 16px; font-family: 'Monaco','Courier New',monospace;
-      font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--border);
-      background: var(--surface);
+    #pdAvatar {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 50%; overflow: hidden;
+      border: 2px solid transparent;
+      background: linear-gradient(var(--surface3),var(--surface3)) padding-box,
+                  linear-gradient(135deg,#FF6EC7,#5B7CFA) border-box;
+    }
+    #pdAvatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    #pdName { font-size: 13px; font-weight: 700; color: var(--text); }
+    #pdSub  { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+    .pd-divider { height: 1px; background: var(--border); }
+
+    /* Dropdown items */
+    .pd-item {
+      padding: 11px 16px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background .12s, color .12s, text-shadow .12s;
+      letter-spacing: .1px;
+    }
+    .pd-item:last-child { border-bottom: none; }
+    .pd-item:hover {
+      background: var(--surface3);
+      color: var(--accent3);
+      text-shadow: 0 0 10px var(--accent3-glow);
+    }
+    .pd-item.pd-disabled {
+      opacity: .45; cursor: default; pointer-events: none;
+    }
+
+    /* Mood button — same neon hover as profile */
+    #moodBtn:hover {
+      border-color: var(--accent3) !important;
+      color: var(--accent3) !important;
+      box-shadow: 0 0 0 1px var(--accent3), 0 0 14px var(--accent3-glow) !important;
+    }
+
+    /* Light-mode overrides */
+    [data-theme="light"] #profileDropdown {
+      border-color: #7A6FF0;
+      box-shadow: 0 0 0 1px #7A6FF0,
+                  0 0 20px rgba(122,111,240,.2),
+                  0 8px 24px rgba(91,124,250,.15);
+    }
+    [data-theme="light"] #pdHeader { background: #DCE4FF; border-color: #B8CAFE; }
+    [data-theme="light"] #pdName   { color: #2D2F3A; }
+    [data-theme="light"] #pdSub    { color: #6B6F85; }
+    [data-theme="light"] .pd-item  { color: #2D2F3A; border-color: #B8CAFE; }
+    [data-theme="light"] .pd-item:hover {
+      background: #DCE4FF; color: #7A6FF0;
+      text-shadow: 0 0 8px rgba(122,111,240,.3);
+    }
+    [data-theme="light"] #moodBtn:hover {
+      border-color: #7A6FF0 !important;
+      color: #7A6FF0 !important;
+      box-shadow: 0 0 0 1px #7A6FF0, 0 0 12px rgba(122,111,240,.25) !important;
     }
 
     /* ═══════════════════════════════════════════════════════
@@ -239,9 +300,8 @@
       #header { position: sticky !important; top: 0; z-index: 400;
                 width: 100% !important; box-sizing: border-box; }
 
-      /* Show hamburger, hide desktop-only items */
-      #hdrMenuBtn { display: flex !important; }
-      #hdrClock, #moodBtn, #infoBtn, #copyBtn, #pasteBtn { display: none !important; }
+      /* On mobile: hide clock to save space — all actions in profile dropdown */
+      #hdrClock { display: none !important; }
 
       /* ── MAIN: single column, full width ─────────────── */
       #main {
@@ -395,31 +455,7 @@
       color: var(--accent2);
     }
 
-    /* Icon-only header buttons with hover tooltip */
-    .hdr-icon-btn { padding: 6px 10px; font-size: 16px; position: relative; }
-    .hdr-icon-inner { position: relative; display: inline-flex; align-items: center; }
-    .hdr-tooltip {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%; transform: translateX(-50%);
-      background: var(--surface3);
-      color: var(--text);
-      font-size: 11px; font-weight: 500;
-      padding: 4px 9px; border-radius: 5px;
-      border: 1px solid var(--border);
-      white-space: nowrap;
-      pointer-events: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,.4);
-      z-index: 500;
-    }
-    .hdr-tooltip::after {
-      content: '';
-      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-      border: 5px solid transparent;
-      border-top-color: var(--border);
-    }
-    .hdr-icon-btn:hover .hdr-tooltip { display: block; }
+
 
     /* MAIN LAYOUT */
     #main {
@@ -1178,32 +1214,76 @@
       border-color: var(--accent3);
       background: rgba(255, 110, 199, 0.1);
     }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    #appFooter {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 22px; z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--text-dim);
+      background: var(--surface); border-top: 1px solid var(--border);
+      opacity: 0.65; letter-spacing: .3px;
+    }
+    [data-theme="light"] #appFooter { background:#EEF3FF; border-color:#B8CAFE; color:#6B6F85; }
+
+    /* Account for footer height in main layout */
+    #main { padding-bottom: 22px; }
+    @media (max-width:1024px) { #main { padding-bottom: 22px; } }
+
+    /* icon-btn class removed — buttons consolidated into profile dropdown */
+
+    /* ── PROFILE AVATAR ──────────────────────────────────── */
+    #profileAvatar {
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 50%; overflow: hidden;
+      border: 2px solid transparent;
+      background: linear-gradient(var(--surface),var(--surface)) padding-box,
+                  linear-gradient(135deg,#FF6EC7,#5B7CFA) border-box;
+      cursor: default;
+      transition: transform .2s, box-shadow .2s;
+    }
+    #profileAvatar:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 12px rgba(255,110,199,.4);
+    }
+    #profileAvatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    [data-theme="light"] #profileAvatar {
+      background: linear-gradient(#F7F9FF,#F7F9FF) padding-box,
+                  linear-gradient(135deg,#FF6EC7,#7A6FF0) border-box;
+      box-shadow: 0 2px 8px rgba(122,111,240,.2);
+    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- HEADER: ✦ | greeting | clock | mood | profile-avatar -->
 <div id="header">
-  <div id="hdrEmoji" title="Rotate greeting">✨</div>
-  <div id="hdrGreeting" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">Hey! Welcome</div>
-  <div id="hdrClock">2026/04/23 Thu 00:00:00</div>
+  <div id="hdrEmoji" title="Rotate greeting">✦</div>
+  <div id="hdrGreeting" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">Hey!</div>
+  <div id="hdrClock">2026/04/28 Mon 00:00:00</div>
   <button class="hdr-btn" id="moodBtn">I'm bored</button>
-  <button class="hdr-btn" id="infoBtn">ℹ</button>
-  <button class="hdr-btn hdr-icon-btn" id="themeBtn" aria-label="Toggle theme"><span class="hdr-icon-inner">☀️<span class="hdr-tooltip">Light Mode</span></span></button>
-  <button class="hdr-btn hdr-icon-btn" id="copyBtn" aria-label="Copy Data"><span class="hdr-icon-inner">📋<span class="hdr-tooltip">Copy Data</span></span></button>
-  <button class="hdr-btn hdr-icon-btn" id="pasteBtn" aria-label="Import Data"><span class="hdr-icon-inner">📥<span class="hdr-tooltip">Import Data</span></span></button>
-  <!-- Hamburger — visible on mobile only -->
-  <button class="hdr-btn" id="hdrMenuBtn" aria-label="Menu">☰</button>
+  <div id="profileAvatar" title="Open menu" role="button" tabindex="0">
+    <img id="profileImg" src="" alt="profile">
+  </div>
 </div>
 
-<!-- HAMBURGER DROPDOWN (mobile) -->
-<div id="hdrMenuDropdown">
-  <div id="hdrMenuClock"></div>
-  <button class="hdr-menu-item" id="themeBtnM">☀️  Light Mode</button>
-  <button class="hdr-menu-item" id="moodBtnM">😮‍💨 I'm bored</button>
-  <button class="hdr-menu-item" id="infoBtnM">ℹ  About</button>
-  <button class="hdr-menu-item" id="copyBtnM">📋  Copy Data</button>
-  <button class="hdr-menu-item" id="pasteBtnM">📥  Import Data</button>
+<!-- PROFILE DROPDOWN (click profile avatar to open) -->
+<div id="profileDropdown">
+  <div id="pdHeader">
+    <div id="pdAvatar"><img id="pdAvatarImg" src="" alt=""></div>
+    <div id="pdInfo">
+      <div id="pdName">Angela Pai</div>
+      <div id="pdSub">◉ Personal workspace</div>
+    </div>
+  </div>
+  <div class="pd-divider"></div>
+  <div class="pd-item pd-disabled" id="pdProfile">◉&ensp;Profile</div>
+  <div class="pd-item" id="pdCopy">⊙&ensp;Copy Data</div>
+  <div class="pd-item" id="pdImport">⊞&ensp;Import Data</div>
+  <div class="pd-item" id="pdTheme">◑&ensp;Dark Mode</div>
+  <div class="pd-item" id="pdInfoBtn">ⓘ&ensp;Information</div>
 </div>
 
 <!-- MAIN -->
@@ -1347,7 +1427,7 @@
   <div class="modal">
     <h2>✨ Eisenhower Matrix</h2>
     <p style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">──────────────────────</p>
-    <p>🔢 Ver. 1.2.0</p>
+    <p>🔢 Ver. 1.3.0</p>
     <p>🤖 Built with: Claude Sonnet 4.6</p>
     <p>👩‍💻 Builder: Angela Pai 🌸✨💫</p>
     <p id="infoDate">🗓 Last updated: 2026/04/23 00:00</p>
@@ -1361,6 +1441,19 @@
 </div>
 
 <script>
+
+// ── Profile avatar images (dark / light mode) ──────────────────────────
+const PROFILE_DARK  = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KPGRlZnM+CiAgPGNsaXBQYXRoIGlkPSJjcCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5MiIvPjwvY2xpcFBhdGg+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9IjUwJSIgY3k9IjM1JSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNhMWU2ZSIvPgogICAgPHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiMxYTBjNDAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNzA1MWEiLz48L3JhZGlhbEdyYWRpZW50PgogIDxsaW5lYXJHcmFkaWVudCBpZD0icmluZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY2RUM3Ii8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNhNTZiZmYiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzVCN0NGQSIvPjwvbGluZWFyR3JhZGllbnQ+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJwbGFuZXQiIGN4PSI0MCUiIGN5PSI0MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM5YTZmZDgiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRhMjA4MCIvPjwvcmFkaWFsR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5OSIgZmlsbD0idXJsKCNyaW5nKSIvPgo8ZyBjbGlwLXBhdGg9InVybCgjY3ApIj4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkyIiBmaWxsPSJ1cmwoI2JnKSIvPgogIDwhLS0gc3RhcnMgLS0+CiAgPGNpcmNsZSBjeD0iMTQ4IiBjeT0iMjIiIHI9IjIiIGZpbGw9IndoaXRlIi8+PGNpcmNsZSBjeD0iMTYzIiBjeT0iNDIiIHI9IjEuNSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgPGNpcmNsZSBjeD0iMzgiIGN5PSIzNSIgcj0iMS41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjciLz48Y2lyY2xlIGN4PSIxNzAiIGN5PSI3OCIgcj0iMSIgZmlsbD0id2hpdGUiLz4KICA8Y2lyY2xlIGN4PSIyOCIgY3k9IjkwIiByPSIxIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjYiLz48Y2lyY2xlIGN4PSI1MiIgY3k9IjYyIiByPSIxIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjUiLz4KICA8Y2lyY2xlIGN4PSIxNDAiIGN5PSI1OCIgcj0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii42Ii8+CiAgPCEtLSBzcGFya2xlIHRvcC1yaWdodCAtLT4KICA8cGF0aCBkPSJNMTYzIDMwIGwyIDUgbDItNSBsLTItNXoiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIuOSIvPgogIDxwYXRoIGQ9Ik0xNTkgMzAgbDQgMCBNMTYzIDI2IGwwIDQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iLjgiLz4KICA8IS0tIHNob290aW5nIHN0YXIgLS0+CiAgPGxpbmUgeDE9IjEzMCIgeTE9IjI4IiB4Mj0iMTY1IiB5Mj0iMTgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPCEtLSBwbGFuZXQgLS0+CiAgPGVsbGlwc2UgY3g9IjUyIiBjeT0iNTIiIHJ4PSIyMSIgcnk9IjE1IiBmaWxsPSJ1cmwoI3BsYW5ldCkiLz4KICA8ZWxsaXBzZSBjeD0iNTIiIGN5PSI1MiIgcng9IjMzIiByeT0iNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzlhMGYwIiBzdHJva2Utd2lkdGg9IjIuNSIgb3BhY2l0eT0iLjciLz4KICA8IS0tIGNsb3VkcyAtLT4KICA8ZWxsaXBzZSBjeD0iMTgiIGN5PSIxNjUiIHJ4PSIzOCIgcnk9IjI2IiBmaWxsPSIjNzAzM2IwIiBvcGFjaXR5PSIuNTUiLz4KICA8ZWxsaXBzZSBjeD0iMTc1IiBjeT0iMTcyIiByeD0iNDIiIHJ5PSIyOCIgZmlsbD0iIzgwNDBjMCIgb3BhY2l0eT0iLjUiLz4KICA8ZWxsaXBzZSBjeD0iMTAwIiBjeT0iMTgyIiByeD0iNTgiIHJ5PSIyMiIgZmlsbD0iIzVhMjg5MCIgb3BhY2l0eT0iLjY1Ii8+CiAgPGVsbGlwc2UgY3g9IjYwIiBjeT0iMTc1IiByeD0iMzIiIHJ5PSIyMCIgZmlsbD0iIzZhMzBhOCIgb3BhY2l0eT0iLjUiLz4KICA8IS0tIGhlbG1ldCByaW5nICh3aGl0ZSBnbG93KSAtLT4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMTgiIHI9IjQwIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9Ii44NSIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjExOCIgcj0iNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgb3BhY2l0eT0iLjE1Ii8+CiAgPCEtLSBib2R5L3N1aXQgLS0+CiAgPGVsbGlwc2UgY3g9IjEwMCIgY3k9IjE2MiIgcng9IjMyIiByeT0iMjgiIGZpbGw9IiMwODA2MTgiLz4KICA8IS0tIGhlYWQgLS0+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTE1IiByPSIyNyIgZmlsbD0iIzA4MDYxOCIvPgogIDwhLS0gZWFycyAtLT4KICA8cG9seWdvbiBwb2ludHM9IjgwLDk0IDc0LDc0IDkyLDkwIiBmaWxsPSIjMDgwNjE4Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSIxMjAsOTQgMTI2LDc0IDEwOCw5MCIgZmlsbD0iIzA4MDYxOCIvPgogIDwhLS0gYmFja3BhY2sgZGV0YWlsIC0tPgogIDxyZWN0IHg9IjExNCIgeT0iMTQ4IiB3aWR0aD0iMTQiIGhlaWdodD0iMTkiIHJ4PSIzIiBmaWxsPSIjMTIxMDJhIiBzdHJva2U9IiMyYTI1NDUiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxjaXJjbGUgY3g9IjEyMSIgY3k9IjE1OSIgcj0iNCIgZmlsbD0iIzFlMWMzYSIvPgo8L2c+Cjwvc3ZnPg==";
+const PROFILE_LIGHT = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KPGRlZnM+CiAgPGNsaXBQYXRoIGlkPSJjcGwiPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTIiLz48L2NsaXBQYXRoPgogIDxsaW5lYXJHcmFkaWVudCBpZD0ic2t5IiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNiOGQ0ZmYiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2Q0YjhmZiIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZiOGUwIi8+PC9saW5lYXJHcmFkaWVudD4KICA8bGluZWFyR3JhZGllbnQgaWQ9InJpbmdsIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGRjZFQzciLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2IwNmFmZiIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNUI3Q0ZBIi8+PC9saW5lYXJHcmFkaWVudD4KICA8cmFkaWFsR3JhZGllbnQgaWQ9InBsYW5ldGwiIGN4PSI0MCUiIGN5PSIzNSUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNlOGMwZjgiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2MwOTBlOCIvPjwvcmFkaWFsR3JhZGllbnQ+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJjYXRsIiBjeD0iNTAlIiBjeT0iNDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOTA2MGQ4Ii8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM2MDQwYjAiLz48L3JhZGlhbEdyYWRpZW50Pgo8L2RlZnM+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iOTkiIGZpbGw9InVybCgjcmluZ2wpIi8+CjxnIGNsaXAtcGF0aD0idXJsKCNjcGwpIj4KICA8cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMTg0IiBoZWlnaHQ9IjE4NCIgZmlsbD0idXJsKCNza3kpIi8+CiAgPCEtLSBzdGFycy9zcGFya2xlcyAtLT4KICA8cGF0aCBkPSJNMTQ4IDIyIGwyIDUgbDItNSBsLTItNXoiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIuOSIvPgogIDxwYXRoIGQ9Ik0xNDQgMjIgbDQgMCBNMTQ4IDE4IGwwIDQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIuOCIvPgogIDxwYXRoIGQ9Ik0xNjggNDggbDEuNSA0IGwxLjUtNCBsLTEuNS00eiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgPGNpcmNsZSBjeD0iMzgiIGN5PSIzNSIgcj0iMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii44Ii8+CiAgPGNpcmNsZSBjeD0iMTcwIiBjeT0iNzgiIHI9IjEuNSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii43Ii8+CiAgPGNpcmNsZSBjeD0iNTIiIGN5PSI1NSIgcj0iMSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii42Ii8+CiAgPCEtLSBzaG9vdGluZyBzdGFyIC0tPgogIDxsaW5lIHgxPSIxMjUiIHkxPSIzMCIgeDI9IjE2MiIgeTI9IjIwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIgb3BhY2l0eT0iLjciIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gcGxhbmV0IC0tPgogIDxlbGxpcHNlIGN4PSI1MiIgY3k9IjUyIiByeD0iMjEiIHJ5PSIxNSIgZmlsbD0idXJsKCNwbGFuZXRsKSIvPgogIDxlbGxpcHNlIGN4PSI1MiIgY3k9IjUyIiByeD0iMzMiIHJ5PSI3IiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGIwZjgiIHN0cm9rZS13aWR0aD0iMi41IiBvcGFjaXR5PSIuNzUiLz4KICA8IS0tIGNsb3VkcyAtLT4KICA8ZWxsaXBzZSBjeD0iMTUiIGN5PSIxNjgiIHJ4PSI0MCIgcnk9IjI3IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjciLz4KICA8ZWxsaXBzZSBjeD0iMTc4IiBjeT0iMTc0IiByeD0iNDQiIHJ5PSIyOSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9Ii42NSIvPgogIDxlbGxpcHNlIGN4PSIxMDAiIGN5PSIxODQiIHJ4PSI2MCIgcnk9IjIzIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iLjciLz4KICA8ZWxsaXBzZSBjeD0iNjAiIGN5PSIxNzgiIHJ4PSIzNCIgcnk9IjIxIiBmaWxsPSIjZmZkOGYwIiBvcGFjaXR5PSIuNSIvPgogIDwhLS0gaGVsbWV0IHJpbmcgLS0+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTE4IiByPSI0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBvcGFjaXR5PSIuOSIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjExOCIgcj0iNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iNiIgb3BhY2l0eT0iLjIiLz4KICA8IS0tIGJvZHkvc3VpdCAtLT4KICA8ZWxsaXBzZSBjeD0iMTAwIiBjeT0iMTYyIiByeD0iMzIiIHJ5PSIyOCIgZmlsbD0idXJsKCNjYXRsKSIvPgogIDwhLS0gaGVhZCAtLT4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMTUiIHI9IjI3IiBmaWxsPSJ1cmwoI2NhdGwpIi8+CiAgPCEtLSBlYXJzIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iODAsOTQgNzQsNzQgOTIsOTAiIGZpbGw9IiM3MDUwYzgiLz4KICA8cG9seWdvbiBwb2ludHM9IjEyMCw5NCAxMjYsNzQgMTA4LDkwIiBmaWxsPSIjNzA1MGM4Ii8+CiAgPCEtLSBiYWNrcGFjayBkZXRhaWwgLS0+CiAgPHJlY3QgeD0iMTE0IiB5PSIxNDgiIHdpZHRoPSIxNCIgaGVpZ2h0PSIxOSIgcng9IjMiIGZpbGw9IiM4MDYwYzgiIHN0cm9rZT0iI2EwODBlMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPGNpcmNsZSBjeD0iMTIxIiBjeT0iMTU5IiByPSI0IiBmaWxsPSIjYTA4MGUwIi8+CjwvZz4KPC9zdmc+";
+
+function updateProfileAvatar() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const src = isDark ? PROFILE_DARK : PROFILE_LIGHT;
+  const img = document.getElementById('profileImg');
+  if(img) img.src = src;
+  const pdImg = document.getElementById('pdAvatarImg');
+  if(pdImg) pdImg.src = src;
+}
 // ============= THEME (light / dark) =============
 (function initTheme() {
   const saved = localStorage.getItem('ei_theme') || 'dark';
@@ -1373,20 +1466,14 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('ei_theme', next);
   updateThemeBtns();
+  updateProfileAvatar();
 }
 
 function updateThemeBtns() {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  const icon   = isDark ? '☀️' : '🌙';
   const label  = isDark ? 'Light Mode' : 'Dark Mode';
-  const desktopInner = document.querySelector('#themeBtn .hdr-icon-inner');
-  if(desktopInner) {
-    desktopInner.childNodes[0].textContent = icon;
-    const tip = desktopInner.querySelector('.hdr-tooltip');
-    if(tip) tip.textContent = label;
-  }
-  const mobileBtn = document.getElementById('themeBtnM');
-  if(mobileBtn) mobileBtn.textContent = `${icon}  ${label}`;
+  const pdItem = document.getElementById('pdTheme');
+  if(pdItem) pdItem.textContent = `◑ ${label}`;
 }
 
 // ============= CONSTANTS =============
@@ -1561,6 +1648,7 @@ function init() {
 
   updateMoodBtn();
   updateThemeBtns();
+  updateProfileAvatar();
   renderMatrix();
   renderCurrentTab();
   renderDeadlineBar();
@@ -1759,9 +1847,7 @@ function setupEventListeners() {
   // Header
   document.getElementById('hdrEmoji').addEventListener('click', () => rotateGreeting());
   document.getElementById('moodBtn').addEventListener('click', showMoodModal);
-  document.getElementById('infoBtn').addEventListener('click', () => openModal('infoModal'));
-  document.getElementById('copyBtn').addEventListener('click', copyData);
-  document.getElementById('pasteBtn').addEventListener('click', pasteData);
+  // copy/paste/info now handled via profile dropdown pdAction calls above
 
   // Tabs
   document.querySelectorAll('.tab').forEach(tab => {
@@ -1843,37 +1929,28 @@ function setupEventListeners() {
 
   document.getElementById('infoClose').addEventListener('click', () => closeModal('infoModal'));
 
-  // ── Hamburger menu (mobile) ───────────────────────────────────────────
-  const hdrDrop = document.getElementById('hdrMenuDropdown');
-  document.getElementById('hdrMenuBtn').addEventListener('click', e => {
+  // ── Profile dropdown ──────────────────────────────────────────────────
+  const pdDrop = document.getElementById('profileDropdown');
+
+  function toggleProfileDropdown(e) {
     e.stopPropagation();
-    hdrDrop.classList.toggle('open');
-  });
-  // Close on outside click
-  document.addEventListener('click', () => hdrDrop.classList.remove('open'));
-  hdrDrop.addEventListener('click', e => e.stopPropagation());
-
-  // Mirror the mobile menu buttons to their desktop counterparts
-  function mirrorBtn(mobileId, action) {
-    document.getElementById(mobileId).addEventListener('click', () => {
-      hdrDrop.classList.remove('open');
-      action();
-    });
+    pdDrop.classList.toggle('open');
   }
-  mirrorBtn('themeBtnM', toggleTheme);
-  mirrorBtn('moodBtnM',  showMoodModal);
-  mirrorBtn('infoBtnM',  () => openModal('infoModal'));
-  mirrorBtn('copyBtnM',  copyData);
-  mirrorBtn('pasteBtnM', pasteData);
+  document.getElementById('profileAvatar').addEventListener('click', toggleProfileDropdown);
+  document.getElementById('profileAvatar').addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') toggleProfileDropdown(e);
+  });
+  document.addEventListener('click', () => pdDrop.classList.remove('open'));
+  pdDrop.addEventListener('click', e => e.stopPropagation());
 
-  // Desktop theme button
-  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-
-  // Keep mobile clock in sync
-  setInterval(() => {
-    const el = document.getElementById('hdrMenuClock');
-    if(el) el.textContent = document.getElementById('hdrClock').textContent;
-  }, 1000);
+  function pdAction(id, fn) {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('click', () => { pdDrop.classList.remove('open'); fn(); });
+  }
+  pdAction('pdCopy',    copyData);
+  pdAction('pdImport',  pasteData);
+  pdAction('pdTheme',   toggleTheme);
+  pdAction('pdInfoBtn', () => openModal('infoModal'));
 
   // Menu close on outside click
   document.addEventListener('click', e => {
@@ -2937,5 +3014,6 @@ function addTag(text, deadline) {
 
 </script>
 
+<footer id="appFooter">© 2026 Angela Pai · Eisenhower Matrix · All Rights Reserved</footer>
 </body>
 </html>
