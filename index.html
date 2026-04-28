@@ -40,15 +40,15 @@
       height: 100vh;
     }
 
-    /* ═══ HAMBURGER MENU (mobile only) ═══ */
+    /* ═══ HAMBURGER MENU (mobile only — always hidden on desktop) ═══ */
     #hdrMenuBtn { display: none; font-size: 20px; padding: 5px 11px; flex-shrink: 0; }
 
     #hdrMenuDropdown {
       display: none; position: fixed;
-      top: 52px; right: 0; min-width: 210px; z-index: 600;
+      top: 52px; right: 0; min-width: 220px; z-index: 600;
       background: var(--surface2); border: 1px solid var(--border);
       border-top: none; border-radius: 0 0 0 10px;
-      box-shadow: -4px 6px 24px rgba(0,0,0,.45);
+      box-shadow: -4px 6px 24px rgba(0,0,0,.5);
       overflow: hidden;
     }
     #hdrMenuDropdown.open { display: block; }
@@ -56,62 +56,123 @@
       display: flex; align-items: center; gap: 10px;
       width: 100%; background: none; border: none;
       border-bottom: 1px solid var(--border);
-      color: var(--text); padding: 13px 16px;
+      color: var(--text); padding: 14px 16px;
       text-align: left; cursor: pointer; font-size: 13px;
       transition: background .15s;
     }
     .hdr-menu-item:last-child { border-bottom: none; }
-    .hdr-menu-item:hover { background: var(--surface3); color: var(--accent2); }
+    .hdr-menu-item:hover, .hdr-menu-item:active { background: var(--surface3); color: var(--accent2); }
     #hdrMenuClock {
       padding: 10px 16px; font-family: 'Monaco','Courier New',monospace;
       font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--border);
       background: var(--surface);
     }
 
-    /* ═══ RESPONSIVE — 3 independent sections stacked vertically ═══ */
-    @media (max-width: 860px) {
-      body   { overflow: auto; height: auto; }
-      #main  { flex-direction: column; height: auto; overflow: visible; }
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE — breakpoint 1024px covers iPhone + iPad
+       !important beats the later desktop rules in this file
+    ═══════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
 
-      /* Section 2: Matrix — standalone block, fixed height */
-      #leftPanel {
-        width: 100%; height: auto;
-        border-right: none; border-bottom: 1px solid var(--border);
-        overflow: visible;
-      }
-      #addTagSection { padding: 8px 10px; flex-wrap: wrap; }
-      #newTagInput  { min-width: 0; }
-      #deadlineInput { width: 105px; }
-      #matrixWrap {
-        padding: 6px 8px 10px;
-        height: 72vw; min-height: 300px; max-height: 480px;
-      }
+      /* Page scrolls vertically, no horizontal overflow */
+      html, body { height: auto !important; overflow-x: hidden !important; overflow-y: auto !important; }
 
-      /* Section 3: Tabs — standalone block, auto-height (natural scroll) */
-      #rightPanel {
-        width: 100%; height: auto; overflow: visible;
-      }
-      #tabContent { overflow: visible; height: auto; padding-bottom: 40px; }
+      /* Header sticky, always full width */
+      #header { position: sticky !important; top: 0; z-index: 400;
+                width: 100% !important; box-sizing: border-box; }
 
-      /* Show hamburger, hide secondary header items */
-      #hdrMenuBtn { display: flex; }
+      /* Show hamburger, hide desktop-only items */
+      #hdrMenuBtn { display: flex !important; }
       #hdrClock, #moodBtn, #infoBtn, #copyBtn, #pasteBtn { display: none !important; }
+
+      /* ── MAIN: single column, full width ─────────────── */
+      #main {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* ── SECTION 2: Add-task bar + Matrix ───────────── */
+      #leftPanel {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        border-right: none !important;
+        border-bottom: 2px solid var(--border);
+        box-sizing: border-box;
+      }
+      #addTagSection {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 8px 10px !important;
+        flex-wrap: wrap !important;
+      }
+      #newTagInput   { flex: 1 !important; min-width: 100px !important; }
+      #deadlineInput { width: 105px !important; }
+
+      /* Matrix canvas: fixed height so it doesn't collapse */
+      #matrixWrap {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 6px 10px 10px !important;
+        height: 70vw !important;
+        min-height: 260px !important;
+        max-height: 440px !important;
+      }
+      #mxColHeaders { flex-shrink: 0 !important; width: 100% !important; }
+      #mxBody       { flex: 1 !important; min-height: 0 !important;
+                      display: flex !important; width: 100% !important; }
+      #mxRowLabels  { flex-shrink: 0 !important; }
+      #matrixCanvas { flex: 1 !important; min-width: 0 !important;
+                      min-height: 0 !important; position: relative !important; }
+
+      /* ── SECTION 3: Tab bar + content ────────────────── */
+      #rightPanel {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      #tabBar {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+      }
+      #tabContent {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        height: auto !important;
+        overflow: visible !important;
+        min-height: 55vh;
+        padding-bottom: 64px !important;
+      }
+      /* Horizontal scroll for wide tables */
+      .task-table { min-width: 460px; }
+      #tabContent > div { overflow-x: auto; width: 100%; }
     }
 
+    /* ── Phone tweaks ≤480px ────────────────────────────── */
     @media (max-width: 480px) {
-      #header { gap: 8px; padding: 0 10px; }
+      #header      { padding: 0 10px !important; gap: 8px; }
       #hdrGreeting { font-size: 12px; }
-      #matrixWrap { height: 80vw; min-height: 280px; }
-      .tag { font-size: 10.5px; padding: 4px 7px 4px 8px; }
-      .modal { padding: 14px; max-width: 96vw; }
+      #matrixWrap  { height: 82vw !important; min-height: 230px !important; }
+      .tag         { font-size: 10.5px; padding: 4px 7px 4px 8px; max-width: 150px; }
+      .modal       { padding: 14px 12px; max-width: 96vw; }
+      .mood-hero   { gap: 10px; }
+      .mood-portrait, .mood-portrait-fb { width: 58px !important; height: 58px !important; }
     }
 
-    /* Touch targets */
+    /* ── Touch targets ──────────────────────────────────── */
     @media (hover: none) {
-      .tag-btn  { width: 22px; height: 22px; font-size: 11px; }
-      .tab      { padding: 13px 14px; }
-      .hdr-btn  { min-height: 38px; }
-      .add-tag-btn { min-height: 38px; }
+      .tag-btn     { width: 22px; height: 22px; font-size: 11px; }
+      .tab         { padding: 14px 13px; }
+      .hdr-btn     { min-height: 40px; }
+      .add-tag-btn { min-height: 40px; }
     }
 
     /* HEADER */
