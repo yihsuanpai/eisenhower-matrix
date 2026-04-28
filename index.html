@@ -1376,6 +1376,7 @@ function init() {
   renderCurrentTab();
   renderDeadlineBar();
 
+
   // Greeting auto-rotation every 5 min
   setInterval(() => { rotateGreeting(); }, 5 * 60 * 1000);
 }
@@ -1693,13 +1694,10 @@ function setupEventListeners() {
 // ============= MATRIX =============
 function renderMatrix() {
   const canvas = document.getElementById('matrixCanvas');
-  // Remove old tag elements (leave static bg/divider/corner elements)
   Array.from(canvas.querySelectorAll('.tag')).forEach(el => el.remove());
 
-  // Only active (not resolved, not archived) tags appear on the canvas
   state.tags.filter(t => !t.resolved && !t.archived).forEach(tag => {
     const el = createTagEl(tag);
-    // Position by x (urgency, 0=left, 100=right) and y (0=top/important, 100=bottom)
     el.style.left = Math.max(2, Math.min(98, tag.x)) + '%';
     el.style.top  = Math.max(2, Math.min(98, tag.y)) + '%';
     canvas.appendChild(el);
@@ -1795,7 +1793,7 @@ function createTagEl(tag) {
     inp.addEventListener('blur', () => setTimeout(doSave, 150));
   });
 
-  // Tooltip
+  // Tooltip (desktop)
   el.title = tag.notes ? `${tag.text}\n\n${tag.notes}` : (tag.text.length > 18 ? tag.text : '');
 
   return el;
