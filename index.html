@@ -40,37 +40,78 @@
       height: 100vh;
     }
 
-    /* ═══ RESPONSIVE — tablet & mobile ═══ */
-    @media (max-width: 900px) {
-      body { overflow: auto; height: auto; min-height: 100vh; }
-      #main { flex-direction: column; height: auto; }
-      #leftPanel { width: 100%; height: 70vw; min-height: 320px; max-height: 520px;
-        border-right: none; border-bottom: 1px solid var(--border); }
-      #rightPanel { width: 100%; flex: 1; min-height: 420px; }
-      #matrixWrap { padding: 6px 8px 10px; }
-      #addTagSection { padding: 8px 10px 7px; flex-wrap: wrap; }
-      #newTagInput { min-width: 0; }
-      #deadlineInput { width: 110px; }
+    /* ═══ HAMBURGER MENU (mobile only) ═══ */
+    #hdrMenuBtn { display: none; font-size: 20px; padding: 5px 11px; flex-shrink: 0; }
+
+    #hdrMenuDropdown {
+      display: none; position: fixed;
+      top: 52px; right: 0; min-width: 210px; z-index: 600;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-top: none; border-radius: 0 0 0 10px;
+      box-shadow: -4px 6px 24px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+    #hdrMenuDropdown.open { display: block; }
+    .hdr-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; background: none; border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text); padding: 13px 16px;
+      text-align: left; cursor: pointer; font-size: 13px;
+      transition: background .15s;
+    }
+    .hdr-menu-item:last-child { border-bottom: none; }
+    .hdr-menu-item:hover { background: var(--surface3); color: var(--accent2); }
+    #hdrMenuClock {
+      padding: 10px 16px; font-family: 'Monaco','Courier New',monospace;
+      font-size: 11px; color: var(--text-dim); border-bottom: 1px solid var(--border);
+      background: var(--surface);
     }
 
-    @media (max-width: 600px) {
-      #header { height: auto; flex-wrap: wrap; padding: 8px 10px; gap: 6px; }
-      #hdrClock { display: none; }          /* too wide on phones */
-      #hdrGreeting { font-size: 12px; order: 2; flex-basis: 100%; }
-      #hdrEmoji   { order: 1; }
-      #moodBtn, #infoBtn, #copyBtn, #pasteBtn { order: 3; }
-      .hdr-btn { padding: 5px 9px; font-size: 11px; }
-      #leftPanel { height: 65vw; min-height: 280px; }
+    /* ═══ RESPONSIVE — 3 independent sections stacked vertically ═══ */
+    @media (max-width: 860px) {
+      body   { overflow: auto; height: auto; }
+      #main  { flex-direction: column; height: auto; overflow: visible; }
+
+      /* Section 2: Matrix — standalone block, fixed height */
+      #leftPanel {
+        width: 100%; height: auto;
+        border-right: none; border-bottom: 1px solid var(--border);
+        overflow: visible;
+      }
+      #addTagSection { padding: 8px 10px; flex-wrap: wrap; }
+      #newTagInput  { min-width: 0; }
+      #deadlineInput { width: 105px; }
+      #matrixWrap {
+        padding: 6px 8px 10px;
+        height: 72vw; min-height: 300px; max-height: 480px;
+      }
+
+      /* Section 3: Tabs — standalone block, auto-height (natural scroll) */
+      #rightPanel {
+        width: 100%; height: auto; overflow: visible;
+      }
+      #tabContent { overflow: visible; height: auto; padding-bottom: 40px; }
+
+      /* Show hamburger, hide secondary header items */
+      #hdrMenuBtn { display: flex; }
+      #hdrClock, #moodBtn, #infoBtn, #copyBtn, #pasteBtn { display: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      #header { gap: 8px; padding: 0 10px; }
+      #hdrGreeting { font-size: 12px; }
+      #matrixWrap { height: 80vw; min-height: 280px; }
       .tag { font-size: 10.5px; padding: 4px 7px 4px 8px; }
-      .modal { padding: 16px; max-width: 95vw; }
+      .modal { padding: 14px; max-width: 96vw; }
     }
 
-    /* Minimum touch target size for interactive elements */
+    /* Touch targets */
     @media (hover: none) {
-      .tag-btn { width: 22px; height: 22px; font-size: 11px; }
-      .tab { padding: 13px 14px; }
-      .hdr-btn { min-height: 36px; }
-      .add-tag-btn { min-height: 36px; }
+      .tag-btn  { width: 22px; height: 22px; font-size: 11px; }
+      .tab      { padding: 13px 14px; }
+      .hdr-btn  { min-height: 38px; }
+      .add-tag-btn { min-height: 38px; }
     }
 
     /* HEADER */
@@ -861,6 +902,14 @@
     }
 
     /* MOOD PORTRAIT */
+    .mood-portrait-fb {
+      width: 76px; height: 76px; flex-shrink: 0;
+      border-radius: 8px; border: 2px solid var(--border);
+      background: linear-gradient(135deg, var(--surface3), var(--surface2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 800; color: var(--accent2);
+      letter-spacing: -1px;
+    }
     .mood-hero {
       display: flex; align-items: center; gap: 16px;
       padding-bottom: 14px; margin-bottom: 14px;
@@ -923,6 +972,17 @@
   <button class="hdr-btn" id="infoBtn">ℹ</button>
   <button class="hdr-btn hdr-icon-btn" id="copyBtn" aria-label="Copy Data"><span class="hdr-icon-inner">📋<span class="hdr-tooltip">Copy Data</span></span></button>
   <button class="hdr-btn hdr-icon-btn" id="pasteBtn" aria-label="Import Data"><span class="hdr-icon-inner">📥<span class="hdr-tooltip">Import Data</span></span></button>
+  <!-- Hamburger — visible on mobile only -->
+  <button class="hdr-btn" id="hdrMenuBtn" aria-label="Menu">☰</button>
+</div>
+
+<!-- HAMBURGER DROPDOWN (mobile) -->
+<div id="hdrMenuDropdown">
+  <div id="hdrMenuClock"></div>
+  <button class="hdr-menu-item" id="moodBtnM">😮‍💨 I'm bored</button>
+  <button class="hdr-menu-item" id="infoBtnM">ℹ  About</button>
+  <button class="hdr-menu-item" id="copyBtnM">📋  Copy Data</button>
+  <button class="hdr-menu-item" id="pasteBtnM">📥  Import Data</button>
 </div>
 
 <!-- MAIN -->
@@ -1045,7 +1105,8 @@
     <h2 id="moodTitle" style="margin-bottom:14px"></h2>
     <!-- Author portrait + info -->
     <div class="mood-hero">
-      <img id="moodPortrait" class="mood-portrait" src="" alt="">
+      <div id="moodPortraitFallback" class="mood-portrait-fb">?</div>
+      <img id="moodPortrait" class="mood-portrait" src="" alt="" style="display:none">
       <div>
         <div id="moodAuthorName" class="mood-author-name"></div>
         <div id="moodAuthorDates" class="mood-author-dates"></div>
@@ -1101,7 +1162,26 @@ const GREETINGS = [
   {pre:"Back again,", suf:" — marvellous! Still waters run deep, and a focused mind runs deeper."}
 ];
 
-// ── philosopher data (public-domain Wikimedia portraits) ──────────────────
+// ── Wikipedia REST API — portrait loader ──────────────────────────────────
+const WIKI_PAGES = {
+  marcus:'Marcus_Aurelius', aristotle:'Aristotle', plato:'Plato',
+  socrates:'Socrates', epicurus:'Epicurus', shakespeare:'William_Shakespeare',
+  wittgenstein:'Ludwig_Wittgenstein', nietzsche:'Friedrich_Nietzsche',
+  seneca:'Seneca_the_Younger', epictetus:'Epictetus'
+};
+const _portraitCache = {};
+async function fetchPortrait(key) {
+  if(_portraitCache[key] !== undefined) return _portraitCache[key];
+  try {
+    const r  = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${WIKI_PAGES[key]}`);
+    const d  = await r.json();
+    const url = d.thumbnail?.source || null;
+    _portraitCache[key] = url;
+    return url;
+  } catch(e) { _portraitCache[key] = null; return null; }
+}
+
+// ── philosopher metadata ───────────────────────────────────────────────────
 const PHI = {
   marcus:      { name:'Marcus Aurelius',      dates:'121–180 AD',  role:'Roman Emperor · Stoic Philosopher',   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MSR-ra-1-1-d%C3%A9tail.jpg/256px-MSR-ra-1-1-d%C3%A9tail.jpg' },
   aristotle:   { name:'Aristotle',            dates:'384–322 BC',  role:'Greek Philosopher',                   img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Aristotle_Altemps_Inv8575.jpg/256px-Aristotle_Altemps_Inv8575.jpg' },
@@ -1511,6 +1591,34 @@ function setupEventListeners() {
   });
 
   document.getElementById('infoClose').addEventListener('click', () => closeModal('infoModal'));
+
+  // ── Hamburger menu (mobile) ───────────────────────────────────────────
+  const hdrDrop = document.getElementById('hdrMenuDropdown');
+  document.getElementById('hdrMenuBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    hdrDrop.classList.toggle('open');
+  });
+  // Close on outside click
+  document.addEventListener('click', () => hdrDrop.classList.remove('open'));
+  hdrDrop.addEventListener('click', e => e.stopPropagation());
+
+  // Mirror the mobile menu buttons to their desktop counterparts
+  function mirrorBtn(mobileId, action) {
+    document.getElementById(mobileId).addEventListener('click', () => {
+      hdrDrop.classList.remove('open');
+      action();
+    });
+  }
+  mirrorBtn('moodBtnM',  showMoodModal);
+  mirrorBtn('infoBtnM',  () => openModal('infoModal'));
+  mirrorBtn('copyBtnM',  copyData);
+  mirrorBtn('pasteBtnM', pasteData);
+
+  // Keep mobile clock in sync
+  setInterval(() => {
+    const el = document.getElementById('hdrMenuClock');
+    if(el) el.textContent = document.getElementById('hdrClock').textContent;
+  }, 1000);
 
   // Menu close on outside click
   document.addEventListener('click', e => {
@@ -2365,26 +2473,40 @@ function showEndOfDayModal() {
   openModal('endOfDayModal');
 }
 
-function showMoodModal() {
+async function showMoodModal() {
   const key   = MOOD_KEYS[ui.moodIndex % MOOD_KEYS.length];
   const pool  = MOOD_POOLS[key];
   const entry = pool[Math.floor(Math.random() * pool.length)];
   const phi   = PHI[entry.p];
 
-  document.getElementById('moodTitle').textContent = MOOD_TITLES[key];
-  document.getElementById('moodPortrait').src = phi.img;
-  document.getElementById('moodPortrait').alt = phi.name;
-  document.getElementById('moodAuthorName').textContent  = phi.name;
-  document.getElementById('moodAuthorDates').textContent = phi.dates;
-  document.getElementById('moodAuthorRole').textContent  = phi.role;
-  document.getElementById('moodQuote').textContent       = entry.q;
-  document.getElementById('moodBody').textContent        = entry.body;
+  document.getElementById('moodTitle').textContent        = MOOD_TITLES[key];
+  document.getElementById('moodAuthorName').textContent   = phi.name;
+  document.getElementById('moodAuthorDates').textContent  = phi.dates;
+  document.getElementById('moodAuthorRole').textContent   = phi.role;
+  document.getElementById('moodQuote').textContent        = entry.q;
+  document.getElementById('moodBody').textContent         = entry.body;
 
   const q1tag = state.tags.find(t => !t.resolved && !t.archived && quadrantKey(t) === 'q1');
   document.getElementById('moodClosing').textContent =
     entry.closing.replace('[Q1]', q1tag ? `"${q1tag.text}"` : 'something from your DO list');
 
+  // Reset portrait: show initial letter while loading
+  const imgEl = document.getElementById('moodPortrait');
+  const fbEl  = document.getElementById('moodPortraitFallback');
+  imgEl.style.display = 'none';
+  fbEl.style.display  = 'flex';
+  fbEl.textContent    = phi.name[0];   // first letter as placeholder
+
   openModal('moodModal');
+
+  // Load portrait from Wikipedia asynchronously (doesn't block modal opening)
+  fetchPortrait(entry.p).then(url => {
+    if(url && document.getElementById('moodModal').classList.contains('active')) {
+      imgEl.src           = url;
+      imgEl.style.display = 'block';
+      fbEl.style.display  = 'none';
+    }
+  });
 }
 
 // ============= HEADER =============
