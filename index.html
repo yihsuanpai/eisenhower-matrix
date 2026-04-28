@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eisenhower Matrix v7</title>
+  <style>
+    :root {
+      --bg: #12162e;
+      --surface: #1a1f42;
+      --surface2: #21284f;
+      --surface3: #29305c;
+      --border: #343c74;
+      --text: #eaecff;
+      --text-dim: #7880c0;
+      --accent: #D94CFF;
+      --accent2: #4FF0D1;
+      --accent3: #FF6EC7;
+      --accent4: #7CFF9B;
+      --lavender: #B8A8FF;
+      --mint: #8FFFD1;
+      --accent-glow: rgba(217, 76, 255, 0.22);
+      --accent2-glow: rgba(79, 240, 209, 0.18);
+      --accent3-glow: rgba(255, 110, 199, 0.2);
+      --q1: rgba(255, 110, 199, 0.26);   /* DO — top-right, brighter */
+      --q2: rgba(79, 240, 209, 0.22);    /* SCHEDULE — top-left, brighter */
+      --q3: rgba(217, 76, 255, 0.10);
+      --q4: rgba(47, 79, 162, 0.07);
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* HEADER */
+    #header {
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      flex-wrap: nowrap;
+    }
+
+    #hdrEmoji {
+      font-size: 24px;
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 4px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+
+    #hdrEmoji:hover {
+      background: var(--surface2);
+    }
+
+    #hdrGreeting {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #hdrClock {
+      font-family: "Monaco", "Courier New", monospace;
+      font-size: 11px;
+      color: #c8ccff;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .hdr-btn {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .hdr-btn:hover {
+      background: var(--surface3);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* Icon-only header buttons with hover tooltip */
+    .hdr-icon-btn { padding: 6px 10px; font-size: 16px; position: relative; }
+    .hdr-icon-inner { position: relative; display: inline-flex; align-items: center; }
+    .hdr-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      background: var(--surface3);
+      color: var(--text);
+      font-size: 11px; font-weight: 500;
+      padding: 4px 9px; border-radius: 5px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4);
+      z-index: 500;
+    }
+    .hdr-tooltip::after {
+      content: '';
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--border);
+    }
+    .hdr-icon-btn:hover .hdr-tooltip { display: block; }
+
+    /* MAIN LAYOUT */
+    #main {
+      display: flex;
+      height: calc(100vh - 52px);
+      gap: 0;
+    }
+
+    #leftPanel {
+      width: 54%;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── ADD TAG BAR (top of left panel) ── */
+    #addTagSection {
+      flex-shrink: 0;
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* ── MATRIX WRAP (fills remaining height) ── */
+    #matrixWrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px 12px;
+      min-height: 0;
+    }
+
+    /* column-label header row */
+    #mxColHeaders {
+      display: flex;
+      flex-shrink: 0;
+      height: 20px;
+      margin-bottom: 1px;
+    }
+    .mx-corner { width: 26px; flex-shrink: 0; }
+    .mx-col-lbl {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .mx-col-lbl.urgent { color: var(--accent2); text-shadow: 0 0 8px var(--accent2-glow); }
+
+    /* body = row labels + canvas */
+    #mxBody {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+    #mxRowLabels {
+      width: 26px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .mx-row-lbl {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .mx-row-lbl.important { color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
+
+    /* THE CANVAS — tags float here at absolute x%,y% */
+    #matrixCanvas {
+      flex: 1;
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Quadrant background overlays — purely decorative, no pointer-events */
+    .qbg {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      pointer-events: none;
+    }
+    /* urgent=RIGHT → q1 DO top-right, q2 SCHEDULE top-left, q3 DELEGATE bottom-right, q4 ELIMINATE bottom-left */
+    .qbg.q2 { top:0; left:0;    background: var(--q2); box-shadow: inset 0 0 40px rgba(79,240,209,.08); }
+    .qbg.q1 { top:0; right:0;   background: var(--q1); box-shadow: inset 0 0 40px rgba(255,110,199,.10); }
+    .qbg.q4 { bottom:0; left:0;  background: var(--q4); }
+    .qbg.q3 { bottom:0; right:0; background: var(--q3); }
+
+    /* Grid dividers */
+    .qdiv-v {
+      position: absolute; left:50%; top:0; bottom:0; width:1px;
+      background: var(--border); pointer-events: none;
+    }
+    .qdiv-h {
+      position: absolute; top:50%; left:0; right:0; height:1px;
+      background: var(--border); pointer-events: none;
+    }
+
+    /* Quadrant corner labels */
+    .qcorner {
+      position: absolute;
+      font-size: 8px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      opacity: 0.28; pointer-events: none; padding: 5px 6px;
+    }
+    .qcorner.q2 { top:0; left:0;    color: var(--accent2); }
+    .qcorner.q1 { top:0; right:0;   color: var(--accent3); text-align:right; }
+    .qcorner.q4 { bottom:0; left:0;  color: var(--text-dim); }
+    .qcorner.q3 { bottom:0; right:0; color: var(--accent);  text-align:right; }
+
+    #rightPanel {
+      width: 46%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* old matrix styles removed — replaced by #matrixCanvas / .qbg / .qcorner above */
+
+    /* TAGS — absolutely positioned on the canvas */
+    .tag {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 8px 5px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff !important;
+      text-shadow: 0 1px 3px rgba(0,0,0,.7);
+      cursor: grab;
+      user-select: none;
+      border: 1.5px solid rgba(255,255,255,.2);
+      box-shadow: 0 2px 10px rgba(0,0,0,.4);
+      transition: box-shadow .15s;
+      white-space: nowrap;
+      max-width: 190px;
+      z-index: 10;
+    }
+
+    .tag.dragging-active-tag {
+      opacity: .55;
+      cursor: grabbing;
+    }
+
+    .tag.resolved {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+
+    .tag:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,.5), 0 0 0 1.5px rgba(255,255,255,.22);
+    }
+
+    .tag-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 120px;
+      pointer-events: none;
+    }
+
+    .tag-text-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      outline: none;
+      width: 100px;
+      padding: 0;
+      text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    }
+
+    .tag-color-dot {
+      width: 0; height: 0; /* hidden — color is the background */
+    }
+
+    .tag-controls {
+      display: none;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .tag:hover .tag-controls {
+      display: flex;
+    }
+
+    .tag-btn {
+      background: rgba(0,0,0,.28);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+
+    .tag-btn:hover {
+      background: rgba(255,255,255,.35);
+    }
+
+    /* drag ghost */
+    body.dragging * { cursor: grabbing !important; user-select: none !important; }
+
+    /* TABS */
+    #tabBar {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0 8px;
+    }
+
+    .tab {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-dim);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: var(--accent2);
+      border-bottom-color: var(--accent2);
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    #tabContent {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+    }
+
+    /* TODAY TAB */
+    .today-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .today-date {
+      font-size: 14px;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .today-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .today-btn {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .today-btn:hover {
+      background: var(--surface3);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .today-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .today-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      position: relative;
+      draggable: true;
+    }
+
+    .today-item:hover {
+      background: var(--surface3);
+      border-color: var(--accent2);
+    }
+
+    .today-item.dragging {
+      opacity: 0.6;
+    }
+
+    .today-drag {
+      cursor: grab;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .today-drag:active {
+      cursor: grabbing;
+    }
+
+    .today-check {
+      accent-color: var(--accent2);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .today-text {
+      flex: 1;
+      min-width: 0;
+      font-size: 13px;
+    }
+
+    .today-item.completed .today-text {
+      text-decoration: line-through;
+      color: var(--accent2);
+    }
+
+    .today-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .today-actions-inline {
+      display: none;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .today-item:hover .today-actions-inline {
+      display: flex;
+    }
+
+    .today-icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.2s;
+      padding: 2px 4px;
+    }
+
+    .today-icon-btn:hover {
+      color: var(--accent);
+    }
+
+    .today-empty {
+      text-align: center;
+      color: var(--text-dim);
+      padding: 32px 16px;
+      font-size: 13px;
+    }
+
+    /* ACTIVE/DONE TABS TABLE */
+    .task-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .task-table th {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-dim);
+      position: sticky;
+      top: 0;
+    }
+
+    .task-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      position: relative;
+    }
+
+    .task-table tr:hover {
+      background: var(--surface2);
+    }
+
+    .task-table input[type="date"] {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .quadrant-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .quadrant-badge.q1 { background: rgba(255, 110, 199, 0.2); color: var(--accent3); }
+    .quadrant-badge.q2 { background: rgba(79, 240, 209, 0.2); color: var(--accent2); }
+    .quadrant-badge.q3 { background: rgba(217, 76, 255, 0.2); color: var(--accent); }
+    .quadrant-badge.q4 { background: rgba(47, 79, 162, 0.2); color: var(--text-dim); }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0 4px;
+      transition: color 0.2s;
+    }
+
+    .menu-btn:hover {
+      color: var(--text);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      top: 24px;
+      right: 4px;
+      min-width: 120px;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .menu-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: var(--surface3);
+      color: var(--accent2);
+    }
+
+    /* ADD TAG — inputs share the row */
+    #newTagInput {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 11px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    #newTagInput::placeholder { color: var(--text-dim); }
+    #newTagInput:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+    #deadlineInput {
+      width: 128px;
+      flex-shrink: 0;
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 8px;
+      border-radius: var(--radius);
+      font-size: 11.5px;
+      outline: none;
+      cursor: pointer;
+      color-scheme: dark;
+      transition: border-color .18s;
+    }
+    #deadlineInput:focus { border-color: var(--accent2); }
+
+    .add-tag-btn {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), #a020cc);
+      color: #fff;
+      border: none;
+      padding: 7px 15px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      white-space: nowrap;
+      transition: opacity .15s, box-shadow .15s;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+    .add-tag-btn:hover { opacity: .88; box-shadow: 0 4px 16px var(--accent-glow); }
+
+    /* MODALS */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow: auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .modal p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .modal-quote {
+      font-style: italic;
+      color: var(--accent2);
+      margin: 12px 0;
+      padding-left: 12px;
+      border-left: 2px solid var(--accent2);
+      font-size: 12px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .modal-btn.primary {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .modal-btn:hover {
+      background: var(--surface3);
+      border-color: var(--accent2);
+    }
+
+    .modal-btn.primary:hover {
+      background: var(--accent3);
+    }
+
+    .modal-list {
+      max-height: 300px;
+      overflow: auto;
+      margin: 12px 0;
+    }
+
+    .modal-item {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+    }
+
+    .modal-item input[type="checkbox"] {
+      accent-color: var(--accent2);
+      cursor: pointer;
+    }
+
+    .modal-item-label {
+      flex: 1;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .stat-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--surface);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent2);
+      transition: width 0.3s;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent2);
+    }
+
+    .deadline-bar {
+      margin-bottom: 12px;
+      padding: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 11px;
+    }
+
+    .deadline-bar.urgent {
+      border-color: var(--accent3);
+      background: rgba(255, 110, 199, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="hdrEmoji" title="Rotate greeting">✨</div>
+  <div id="hdrGreeting" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">Hey! Welcome</div>
+  <div id="hdrClock">2026/04/23 Thu 00:00:00</div>
+  <button class="hdr-btn" id="moodBtn">I'm bored</button>
+  <button class="hdr-btn" id="infoBtn">ℹ</button>
+  <button class="hdr-btn hdr-icon-btn" id="copyBtn" aria-label="Copy Data"><span class="hdr-icon-inner">📋<span class="hdr-tooltip">Copy Data</span></span></button>
+  <button class="hdr-btn hdr-icon-btn" id="pasteBtn" aria-label="Import Data"><span class="hdr-icon-inner">📥<span class="hdr-tooltip">Import Data</span></span></button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- LEFT PANEL: ADD + MATRIX -->
+  <div id="leftPanel">
+
+    <!-- ADD TAG (above matrix) -->
+    <div id="addTagSection">
+      <input id="newTagInput" type="text" placeholder="New task name… (max 100 chars)" maxlength="100" autocomplete="off">
+      <input id="deadlineInput" type="date" title="Optional deadline">
+      <button class="add-tag-btn">+ Add Tag</button>
+    </div>
+
+    <!-- MATRIX with axis labels + free-float canvas -->
+    <div id="matrixWrap">
+
+      <!-- Column headers: [corner] [Not Urgent] [Urgent] -->
+      <div id="mxColHeaders">
+        <div class="mx-corner"></div>
+        <div class="mx-col-lbl">← Not Urgent</div>
+        <div class="mx-col-lbl urgent">Urgent →</div>
+      </div>
+
+      <!-- Body: [row labels] [canvas] -->
+      <div id="mxBody">
+        <div id="mxRowLabels">
+          <div class="mx-row-lbl important">Important</div>
+          <div class="mx-row-lbl">Not Important</div>
+        </div>
+
+        <!-- THE CANVAS — tags are absolutely positioned here -->
+        <div id="matrixCanvas">
+          <!-- quadrant bg overlays (pointer-events:none) -->
+          <div class="qbg q2"></div>
+          <div class="qbg q1"></div>
+          <div class="qbg q4"></div>
+          <div class="qbg q3"></div>
+          <!-- dividers -->
+          <div class="qdiv-v"></div>
+          <div class="qdiv-h"></div>
+          <!-- corner labels -->
+          <div class="qcorner q2">Schedule</div>
+          <div class="qcorner q1">Do</div>
+          <div class="qcorner q4">Eliminate</div>
+          <div class="qcorner q3">Delegate</div>
+          <!-- tags injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: TABS -->
+  <div id="rightPanel">
+    <div id="tabBar">
+      <div class="tab active" data-tab="today">Today ✦</div>
+      <div class="tab" data-tab="active">Active</div>
+      <div class="tab" data-tab="done">Done</div>
+      <div class="tab" data-tab="archived">Archived</div>
+    </div>
+    <div id="deadlineBar"></div>
+    <div id="tabContent">
+      <!-- Content rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div id="nameModal" class="modal-backdrop active">
+  <div class="modal" style="text-align:center">
+    <div style="font-size:36px;margin-bottom:8px">✨</div>
+    <h2>Welcome to your Eisenhower Matrix!</h2>
+    <p>What shall I call you?</p>
+    <input id="nameInput" type="text" maxlength="100" placeholder="Your name…"
+      style="width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border);
+      padding:10px 14px;border-radius:var(--radius);font-size:14px;outline:none;
+      margin:12px 0;text-align:center;box-sizing:border-box">
+    <button class="modal-btn primary" id="nameSubmitBtn" style="width:100%">Let's crack on →</button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="confirmModal" class="modal-backdrop">
+  <div class="modal">
+    <h2 id="confirmTitle">Confirm</h2>
+    <p id="confirmMessage"></p>
+    <div class="modal-buttons">
+      <button class="modal-btn" id="confirmCancel">Cancel</button>
+      <button class="modal-btn primary" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="pickTasksModal" class="modal-backdrop">
+  <div class="modal">
+    <h2>Pick Tasks</h2>
+    <div class="modal-list" id="pickTasksList"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn" id="pickTasksCancel">Cancel</button>
+      <button class="modal-btn primary" id="pickTasksAdd">Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<div id="endOfDayModal" class="modal-backdrop">
+  <div class="modal">
+    <h2 id="endOfDayTitle">🌙 Day's End</h2>
+    <div class="modal-stats" id="endOfDayStats"></div>
+    <p id="endOfDayPraise"></p>
+    <div id="endOfDayTasks"></div>
+    <p id="endOfDayClosing">Rest well. Tomorrow is a fresh canvas. ✨</p>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="endOfDayClose">Close & Reset Day</button>
+    </div>
+  </div>
+</div>
+
+<div id="moodModal" class="modal-backdrop">
+  <div class="modal">
+    <h2 id="moodTitle">Boredom? That's just your brain knocking.</h2>
+    <div class="modal-quote" id="moodQuote"></div>
+    <p id="moodBody"></p>
+    <p id="moodClosing"></p>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="moodClose">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div id="infoModal" class="modal-backdrop">
+  <div class="modal">
+    <h2>✨ Eisenhower Matrix</h2>
+    <p style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">──────────────────────</p>
+    <p>🔢 Ver. 1.0.0</p>
+    <p>🤖 Built with: Claude Sonnet 4.6</p>
+    <p>👩‍💻 Builder: Angela Pai 🌸✨💫</p>
+    <p id="infoDate">🗓 Last updated: 2026/04/23 00:00</p>
+    <p style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">──────────────────────</p>
+    <p>🌃 Stay focused, stay fabulous.</p>
+    <p>💾 Your tasks are saved locally in your browser.</p>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="infoClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============= CONSTANTS =============
+const STORAGE_KEY = 'eisenhower_v7';
+const DRAG_THRESH = 4;
+const PALETTE = [
+  '#D94CFF','#4FF0D1','#FF6EC7','#7CFF9B','#B8A8FF',
+  '#8FFFD1','#FF9060','#60BFFF','#FFD060','#A060FF',
+  '#FF6090','#40E0C0','#E060FF','#60FF80','#FFA0B8'
+];
+
+const GREETINGS = [
+  {pre:"Lovely to see you back,", suf:"! A rolling stone gathers no moss — shall we crack on?"},
+  {pre:"Brilliant timing,", suf:"! Well begun is half done, as they say."},
+  {pre:"Ah, there you are,", suf:"! The early bird catches the worm, after all."},
+  {pre:"Splendid to have you back,", suf:"! Your tasks are waiting."},
+  {pre:"Good to see you,", suf:" — as Churchill put it: if you're going through it, keep going."},
+  {pre:"Right then,", suf:" — let's get cracking! Fortune favours the prepared mind."},
+  {pre:"Ah, just the person I wanted to see —", suf:"! Here's what's on your plate."},
+  {pre:"Top of the day to you,", suf:"! A stitch in time saves nine."},
+  {pre:"Wonderful to see you,", suf:"! Strike while the iron is hot."},
+  {pre:"Back again,", suf:" — marvellous! Still waters run deep, and a focused mind runs deeper."}
+];
+
+const MOODS = [
+  {
+    key: 'bored',
+    title: "Boredom? That's just your brain knocking.",
+    quote: "Marcus Aurelius: \"The impediment to action advances action. What stands in the way becomes the way.\"",
+    body: "Boredom is your mind saying 'I have more to give.' It's not laziness—it's untapped potential knocking on your door. That restless feeling? It's a gift wrapped in static. Time to unwrap it.",
+    closing: "Go grab a drink, use the loo, take a 3-minute wander — then come back and start '[Q1]'. Boredom, meet purpose."
+  },
+  {
+    key: 'drained',
+    title: "Even the sharpest blade needs a whetstone.",
+    quote: "Marcus Aurelius: \"You have power over your mind, not outside events. Realise this and you will find strength.\"",
+    body: "Drained is real. You're human, not a machine. Every fibre being tired is proof you've already given your all today—or trying to. That's not weakness; that's the cost of caring about what you do.",
+    closing: "Hydrate, stretch those legs for 3 minutes, splash cold water — then come back and give '[Q1]' just 20 focused minutes."
+  },
+  {
+    key: 'tired',
+    title: "Tired minds have built empires.",
+    quote: "Marcus Aurelius: \"It is not death that a man should fear, but he should fear never beginning to live.\"",
+    body: "Tired means you've been working. That fog? It's the weight of effort, and effort is the only thing that ever changed anything. You're not behind; you're in it.",
+    closing: "Step away — grab a biscuit, some fresh air, 3 minutes of nothing — then open '[Q1]'. Just open it."
+  },
+  {
+    key: 'exhausted',
+    title: "Even emperors need rest.",
+    quote: "Marcus Aurelius: \"Confine yourself to the present.\"",
+    body: "Exhausted is a signal. Your body is speaking. Listen, but don't surrender. One step at a time. Not tomorrow's work, not yesterday's—just now. This breath. This moment.",
+    closing: "Stand up. Get a drink. Stare out a window for exactly 3 minutes. Then return and simply open '[Q1]'. The work knows how to begin once you show up."
+  }
+];
+
+// ============= STATE =============
+let state = {
+  tags: [],
+  userName: 'Friend',
+  todayItems: []
+};
+
+let ui = {
+  currentTab: 'today',
+  greetingIndex: 0,
+  moodIndex: 0,
+  dragStart: null,
+  dragDelta: null,
+  openMenuId: null,
+  activeSort: { col: 'createdAt', dir: 'desc' }
+};
+
+// ============= INIT =============
+window.addEventListener('DOMContentLoaded', init);
+
+function init() {
+  loadData();
+  setupEventListeners();
+  setupGlobalDrag();
+  startClock();
+
+  // Info date
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('infoDate').textContent = `🗓 Last updated: ${dateStr}`;
+
+  if(!state.userName || state.userName === 'Friend') {
+    document.getElementById('nameModal').classList.add('active');
+    setTimeout(() => document.getElementById('nameInput').focus(), 100);
+  } else {
+    document.getElementById('nameModal').classList.remove('active');
+    applyUserName(state.userName);
+  }
+
+  renderMatrix();
+  renderCurrentTab();
+  renderDeadlineBar();
+
+  // Greeting auto-rotation every 5 min
+  setInterval(() => { rotateGreeting(); }, 5 * 60 * 1000);
+}
+
+function applyUserName(name) {
+  state.userName = name.trim() || 'Friend';
+  document.title = `Eisenhower Matrix — ${state.userName}`;
+  rotateGreeting();
+  saveData();
+}
+
+function nextColor() {
+  const usedColors = new Set(state.tags.map(t => t.color));
+  for(const c of PALETTE) if(!usedColors.has(c)) return c;
+  return PALETTE[state.tags.length % PALETTE.length];
+}
+
+// ============= DATA =============
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved) {
+    state = JSON.parse(saved);
+  } else {
+    const oldV6 = localStorage.getItem('eisenhower_v6');
+    const oldV5 = localStorage.getItem('eisenhower_v5');
+    if(oldV6) state = JSON.parse(oldV6);
+    else if(oldV5) state = JSON.parse(oldV5);
+  }
+
+  if(!state.tags) state.tags = [];
+  if(!state.todayItems) state.todayItems = [];
+
+  // Normalise each tag — fill in missing fields, fix old date formats
+  state.tags.forEach(t => {
+    if(!t.id) t.id = Math.random().toString(36).substr(2,9);
+    if(t.x === undefined) t.x = 50;
+    if(t.y === undefined) t.y = 50;
+    if(!t.color) t.color = PALETTE[Math.floor(Math.random()*PALETTE.length)];
+    if(!t.createdAt) t.createdAt = new Date().toISOString();
+    if(t.resolved === undefined) t.resolved = false;
+    if(t.archived === undefined) t.archived = false;
+    // Normalise old YYYY/MM/DD deadline format to ISO
+    if(t.deadline && !t.deadline.includes('T')) {
+      t.deadline = t.deadline.replace(/\//g,'-') + 'T00:00:00.000Z';
+    }
+  });
+
+  saveData();
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function genId() {
+  return Math.random().toString(36).substr(2, 9);
+}
+
+// ============= GLOBAL DRAG (matrix tags — absolute positioning) =============
+let _dragState = null; // { tagId, el, canvasRect, sx, sy, origLeft, origTop, moved }
+
+function setupGlobalDrag() {
+  document.addEventListener('mousemove', e => {
+    if(!_dragState) return;
+    const dx = e.clientX - _dragState.sx, dy = e.clientY - _dragState.sy;
+    if(!_dragState.moved && Math.hypot(dx, dy) < DRAG_THRESH) return;
+    if(!_dragState.moved) {
+      _dragState.moved = true;
+      _dragState.el.classList.add('dragging-active-tag');
+      document.body.classList.add('dragging');
+    }
+    // Move the element visually while dragging
+    const r = _dragState.canvasRect;
+    const nx = Math.max(2, Math.min(98, ((e.clientX - r.left) / r.width) * 100));
+    const ny = Math.max(2, Math.min(98, ((e.clientY - r.top) / r.height) * 100));
+    _dragState.el.style.left = nx + '%';
+    _dragState.el.style.top  = ny + '%';
+  });
+
+  document.addEventListener('mouseup', e => {
+    if(!_dragState) return;
+    const { tagId, moved, el } = _dragState;
+    const canvasRect = _dragState.canvasRect;
+    _dragState = null;
+    el.classList.remove('dragging-active-tag');
+    document.body.classList.remove('dragging');
+
+    if(!moved) return; // click is handled by the click listener on el
+
+    // Compute final position clamped to canvas
+    const nx = Math.max(2, Math.min(98, ((e.clientX - canvasRect.left) / canvasRect.width) * 100));
+    const ny = Math.max(2, Math.min(98, ((e.clientY - canvasRect.top) / canvasRect.height) * 100));
+
+    const tag = state.tags.find(t => t.id === tagId);
+    if(tag) {
+      tag.x = nx;
+      tag.y = ny;
+      saveData();    // persist immediately
+      renderMatrix();
+      renderDeadlineBar();
+    }
+
+    // If dragged over right panel while Today tab active → also add to today
+    const rp = document.getElementById('rightPanel');
+    const rpRect = rp.getBoundingClientRect();
+    if(ui.currentTab === 'today' && e.clientX >= rpRect.left) {
+      if(tag) addToToday(tagId);
+    } else {
+      renderCurrentTab();
+    }
+  });
+
+  // Cancel drag on any escape
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && _dragState) {
+      const { el, origLeft, origTop } = _dragState;
+      el.style.left = origLeft; el.style.top = origTop;
+      el.classList.remove('dragging-active-tag');
+      document.body.classList.remove('dragging');
+      _dragState = null;
+    }
+  });
+}
+
+// ============= EVENT LISTENERS =============
+function setupEventListeners() {
+  // Name modal
+  function submitName() {
+    const v = document.getElementById('nameInput').value.trim();
+    if(!v) return;
+    document.getElementById('nameModal').classList.remove('active');
+    applyUserName(v);
+  }
+  document.getElementById('nameSubmitBtn').addEventListener('click', submitName);
+  document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') submitName(); });
+
+  // Clickable name in greeting — click the bold name to edit
+  document.getElementById('hdrGreeting').addEventListener('click', e => {
+    if(!e.target.closest('strong')) return;
+    const span = document.getElementById('hdrGreeting');
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.value = state.userName; inp.maxLength = 100;
+    inp.style.cssText = 'background:var(--surface2);color:var(--text);border:1px solid var(--accent);padding:2px 7px;border-radius:4px;font:inherit;font-weight:600;outline:none;width:150px';
+    let saved = false;
+    function doSave() {
+      if(saved) return; saved = true;
+      applyUserName(inp.value || state.userName);
+      renderCurrentTab();
+    }
+    inp.addEventListener('keydown', e => { if(e.key==='Enter') doSave(); if(e.key==='Escape'){saved=true;rotateGreeting();} });
+    inp.addEventListener('blur', () => setTimeout(doSave, 150));
+    span.innerHTML = '';
+    span.appendChild(inp);
+    inp.focus(); inp.select();
+  });
+
+  // Header
+  document.getElementById('hdrEmoji').addEventListener('click', () => rotateGreeting());
+  document.getElementById('moodBtn').addEventListener('click', showMoodModal);
+  document.getElementById('infoBtn').addEventListener('click', () => openModal('infoModal'));
+  document.getElementById('copyBtn').addEventListener('click', copyData);
+  document.getElementById('pasteBtn').addEventListener('click', pasteData);
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+
+  // Add tag — ONLY the button triggers creation (no Enter key shortcut)
+  document.querySelector('.add-tag-btn').addEventListener('click', () => {
+    const input = document.getElementById('newTagInput');
+    const text = input.value.trim();
+    if(!text) { input.focus(); input.style.borderColor = 'var(--accent3)'; setTimeout(() => input.style.borderColor = '', 1000); return; }
+    const dl = document.getElementById('deadlineInput').value;
+    addTag(text, dl ? dl + 'T00:00:00.000Z' : null);
+    input.value = '';
+    document.getElementById('deadlineInput').value = '';
+    input.focus();
+  });
+
+  // Today items reorder
+  document.addEventListener('dragstart', e => {
+    if(e.target.closest('.today-item')) {
+      e.target.closest('.today-item').classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+  });
+
+  document.addEventListener('dragend', e => {
+    if(e.target.closest('.today-item')) {
+      e.target.closest('.today-item').classList.remove('dragging');
+    }
+  });
+
+  document.addEventListener('dragover', e => {
+    if(e.target.closest('.today-item')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+  });
+
+  document.addEventListener('drop', e => {
+    const todayItem = e.target.closest('.today-item');
+    if(todayItem) {
+      e.preventDefault();
+      const dragged = document.querySelector('.today-item.dragging');
+      if(dragged && dragged !== todayItem) {
+        const items = Array.from(document.querySelectorAll('.today-item'));
+        const dragIdx = items.indexOf(dragged);
+        const dropIdx = items.indexOf(todayItem);
+        if(dragIdx !== -1 && dropIdx !== -1) {
+          const moved = state.todayItems.splice(dragIdx, 1)[0];
+          state.todayItems.splice(dropIdx, 0, moved);
+          saveData();
+          renderCurrentTab();
+        }
+      }
+    }
+  });
+
+  // Modals
+  document.getElementById('confirmCancel').addEventListener('click', () => closeModal('confirmModal'));
+  document.getElementById('confirmOk').addEventListener('click', () => {
+    closeModal('confirmModal');
+    if(window._confirmCallback) window._confirmCallback();
+  });
+
+  document.getElementById('pickTasksCancel').addEventListener('click', () => closeModal('pickTasksModal'));
+  document.getElementById('pickTasksAdd').addEventListener('click', addPickedTasks);
+
+  document.getElementById('endOfDayClose').addEventListener('click', () => {
+    closeModal('endOfDayModal');
+    // Keep only INCOMPLETE tasks — they carry over to the next day
+    state.todayItems = state.todayItems.filter(ti => {
+      const tag = state.tags.find(t => t.id === ti.tagId);
+      return tag && !tag.resolved;
+    });
+    saveData();
+    renderCurrentTab();
+  });
+
+  document.getElementById('moodClose').addEventListener('click', () => {
+    closeModal('moodModal');
+    ui.moodIndex = (ui.moodIndex + 1) % MOODS.length;
+    updateMoodBtn();
+  });
+
+  document.getElementById('infoClose').addEventListener('click', () => closeModal('infoModal'));
+
+  // Menu close on outside click
+  document.addEventListener('click', e => {
+    if(!e.target.closest('.menu-btn') && !e.target.closest('.menu-dropdown')) {
+      document.querySelectorAll('.menu-dropdown').forEach(m => m.remove());
+      ui.openMenuId = null;
+    }
+  });
+}
+
+// ============= MATRIX =============
+function renderMatrix() {
+  const canvas = document.getElementById('matrixCanvas');
+  // Remove old tag elements (leave static bg/divider/corner elements)
+  Array.from(canvas.querySelectorAll('.tag')).forEach(el => el.remove());
+
+  // Only active (not resolved, not archived) tags appear on the canvas
+  state.tags.filter(t => !t.resolved && !t.archived).forEach(tag => {
+    const el = createTagEl(tag);
+    // Position by x (urgency, 0=left, 100=right) and y (0=top/important, 100=bottom)
+    el.style.left = Math.max(2, Math.min(98, tag.x)) + '%';
+    el.style.top  = Math.max(2, Math.min(98, tag.y)) + '%';
+    canvas.appendChild(el);
+  });
+}
+
+function createTagEl(tag) {
+  const el = document.createElement('div');
+  el.className = 'tag';
+  el.id = `tag-${tag.id}`;
+
+  const color = tag.color || PALETTE[0];
+  el.style.background = color;
+  el.style.borderColor = color + '55';
+  el.style.boxShadow = `0 2px 10px ${color}55`;
+
+  const textEl = document.createElement('span');
+  textEl.className = 'tag-text';
+  textEl.textContent = tag.text;
+
+  const controls = document.createElement('div');
+  controls.className = 'tag-controls';
+
+  function mkBtn(html, title, onClick) {
+    const b = document.createElement('button');
+    b.className = 'tag-btn'; b.innerHTML = html; b.title = title;
+    b.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
+    b.addEventListener('click', e => { e.stopPropagation(); onClick(); });
+    return b;
+  }
+
+  controls.appendChild(mkBtn('✓', 'Mark done', () => resolveTag(tag.id)));
+  controls.appendChild(mkBtn('🗒', tag.notes ? 'Edit note' : 'Add note', () => editNote(tag)));
+  controls.appendChild(mkBtn('×', 'Delete', () =>
+    showConfirm('Delete task?', `Remove "${tag.text}" forever?`, () => hardDeleteTag(tag.id))
+  ));
+
+  el.appendChild(textEl);
+  el.appendChild(controls);
+
+  // ── DRAG: start global drag state ──
+  el.addEventListener('mousedown', e => {
+    if(e.target.closest('.tag-controls')) return;
+    if(el.classList.contains('editing')) return;
+    e.preventDefault(); e.stopPropagation();
+    const canvas = document.getElementById('matrixCanvas');
+    _dragState = {
+      tagId: tag.id, el,
+      sx: e.clientX, sy: e.clientY,
+      origLeft: el.style.left, origTop: el.style.top,
+      canvasRect: canvas.getBoundingClientRect(),
+      moved: false
+    };
+  });
+
+  // ── CLICK → inline edit (only when there was no real drag) ──
+  el.addEventListener('click', e => {
+    if(e.target.closest('.tag-controls')) return;
+    // If a drag just ended, ignore
+    if(el.classList.contains('dragging-active-tag')) return;
+
+    el.classList.add('editing');
+    const inp = document.createElement('input');
+    inp.className = 'tag-text-input'; inp.type = 'text';
+    inp.value = tag.text; inp.maxLength = 100;
+    textEl.style.display = 'none';
+    el.insertBefore(inp, controls);
+    inp.focus(); inp.select();
+
+    let saved = false;
+    function doSave() {
+      if(saved) return; saved = true;
+      const v = inp.value.trim();
+      if(v) { tag.text = v; saveData(); }
+      el.classList.remove('editing');
+      renderMatrix(); renderCurrentTab();
+    }
+    inp.addEventListener('keydown', ev => {
+      ev.stopPropagation();
+      if(ev.key === 'Enter') doSave();
+      if(ev.key === 'Escape') { saved = true; el.classList.remove('editing'); renderMatrix(); }
+    });
+    inp.addEventListener('mousedown', ev => ev.stopPropagation());
+    inp.addEventListener('blur', () => setTimeout(doSave, 150));
+  });
+
+  // Tooltip
+  el.title = tag.notes ? `${tag.text}\n\n${tag.notes}` : (tag.text.length > 18 ? tag.text : '');
+
+  return el;
+}
+
+function hardDeleteTag(id) {
+  state.tags = state.tags.filter(t => t.id !== id);
+  state.todayItems = state.todayItems.filter(ti => ti.tagId !== id);
+  saveData();
+  renderMatrix();
+  renderCurrentTab();
+  renderDeadlineBar();
+}
+
+function resolveTag(id) {
+  const tag = state.tags.find(t => t.id === id);
+  if(tag) {
+    tag.resolved = !tag.resolved;
+    tag.resolvedAt = tag.resolved ? new Date().toISOString() : null;
+    saveData();
+    renderMatrix();
+    renderCurrentTab();
+    renderDeadlineBar();
+  }
+}
+
+function editNote(tag) {
+  // Use a simple inline prompt-style modal
+  const backdrop = document.createElement('div');
+  backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.5)';
+  box.innerHTML = `
+    <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px">🗒 Note — ${tag.text.slice(0,40)}${tag.text.length>40?'…':''}</div>
+    <textarea id="_noteTA" style="width:100%;height:120px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:10px;font:13px/1.5 inherit;outline:none;resize:vertical;box-sizing:border-box" placeholder="Leave your thoughts, links or reminders…">${tag.notes||''}</textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button id="_noteCancel" style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px">Discard</button>
+      <button id="_noteSave" style="background:var(--accent);color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">Save Note</button>
+    </div>`;
+  backdrop.appendChild(box);
+  document.body.appendChild(backdrop);
+  const ta = box.querySelector('#_noteTA');
+  ta.focus();
+  box.querySelector('#_noteCancel').addEventListener('click', () => backdrop.remove());
+  box.querySelector('#_noteSave').addEventListener('click', () => {
+    tag.notes = ta.value.trim();
+    saveData(); renderMatrix(); backdrop.remove();
+  });
+  backdrop.addEventListener('click', e => { if(e.target===backdrop) backdrop.remove(); });
+}
+
+// ============= QUADRANT LOGIC =============
+function quadrantKey(t) {
+  const urgent = t.x >= 50;
+  const important = t.y < 50;
+  if(urgent && important) return 'q1';
+  if(!urgent && important) return 'q2';
+  if(urgent && !important) return 'q3';
+  return 'q4';
+}
+
+function urgency(t) { return Math.round(t.x); }
+function importance(t) { return Math.round(100 - t.y); }
+
+// ============= TABS =============
+function switchTab(tab) {
+  ui.currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  const content = document.getElementById('tabContent');
+  content.innerHTML = '';
+
+  if(ui.currentTab === 'today') {
+    renderTodayTab(content);
+  } else if(ui.currentTab === 'active') {
+    renderActiveTab(content);
+  } else if(ui.currentTab === 'done') {
+    renderDoneTab(content);
+  } else if(ui.currentTab === 'archived') {
+    renderArchivedTab(content);
+  }
+}
+
+function renderTodayTab(container) {
+  const header = document.createElement('div');
+  header.className = 'today-header';
+
+  const date = new Date();
+  const dateStr = date.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
+  const dateEl = document.createElement('div');
+  dateEl.className = 'today-date';
+  dateEl.textContent = dateStr;
+
+  const actions = document.createElement('div');
+  actions.className = 'today-actions';
+
+  const pickBtn = document.createElement('button');
+  pickBtn.className = 'today-btn';
+  pickBtn.textContent = '+ Pick Tasks';
+  pickBtn.addEventListener('click', showPickTasksModal);
+
+  const dayBtn = document.createElement('button');
+  dayBtn.className = 'today-btn';
+  dayBtn.textContent = '🌙 Call it a day';
+  dayBtn.addEventListener('click', showEndOfDayModal);
+
+  actions.appendChild(pickBtn);
+  actions.appendChild(dayBtn);
+  header.appendChild(dateEl);
+  header.appendChild(actions);
+  container.appendChild(header);
+
+  const list = document.createElement('div');
+  list.className = 'today-list';
+
+  if(state.todayItems.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'today-empty';
+    empty.textContent = "Nothing planned yet — click '+ Pick Tasks' to load up your day!";
+    container.appendChild(empty);
+    return;
+  }
+
+  state.todayItems.forEach((item, idx) => {
+    const tag = state.tags.find(t => t.id === item.tagId);
+    if(!tag) return;
+
+    const el = document.createElement('div');
+    el.className = 'today-item';
+    if(tag.resolved) el.classList.add('completed');
+    el.draggable = true;
+
+    const drag = document.createElement('div');
+    drag.className = 'today-drag';
+    drag.textContent = '⠿';
+
+    const check = document.createElement('input');
+    check.type = 'checkbox';
+    check.className = 'today-check';
+    check.checked = tag.resolved;
+    check.addEventListener('change', () => resolveTag(tag.id));
+
+    const text = document.createElement('div');
+    text.className = 'today-text';
+    text.textContent = item.renamedText || tag.text;
+
+    const badge = document.createElement('div');
+    badge.className = `today-badge`;
+    const quad = quadrantKey(tag);
+    badge.classList.add(quad);
+    badge.style.background = `rgba(${quad === 'q1' ? '255,110,199' : quad === 'q2' ? '79,240,209' : quad === 'q3' ? '217,76,255' : '47,79,162'}, 0.2)`;
+    badge.style.color = quad === 'q1' ? '#FF6EC7' : quad === 'q2' ? '#4FF0D1' : quad === 'q3' ? '#D94CFF' : '#7880c0';
+    badge.textContent = quad.toUpperCase();
+
+    const actions = document.createElement('div');
+    actions.className = 'today-actions-inline';
+
+    const renameBtn = document.createElement('button');
+    renameBtn.className = 'today-icon-btn';
+    renameBtn.innerHTML = '✎';
+    renameBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newName = prompt('Rename task:', item.renamedText || tag.text);
+      if(newName !== null) {
+        item.renamedText = newName;
+        saveData();
+        renderCurrentTab();
+      }
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'today-icon-btn';
+    removeBtn.innerHTML = '×';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.todayItems = state.todayItems.filter(ti => ti !== item);
+      saveData();
+      renderCurrentTab();
+    });
+
+    actions.appendChild(renameBtn);
+    actions.appendChild(removeBtn);
+
+    el.appendChild(drag);
+    el.appendChild(check);
+    el.appendChild(text);
+    el.appendChild(badge);
+    el.appendChild(actions);
+    list.appendChild(el);
+  });
+
+  container.appendChild(list);
+}
+
+function renderActiveTab(container) {
+  let active = state.tags.filter(t => !t.resolved && !t.archived);
+  if(active.length === 0) {
+    container.innerHTML = '<div class="today-empty">No active tasks — great job, or add one above!</div>';
+    return;
+  }
+
+  // Apply sort
+  const { col, dir } = ui.activeSort;
+  active = active.slice().sort((a, b) => {
+    let av, bv;
+    if(col === 'text')      { av = a.text.toLowerCase(); bv = b.text.toLowerCase(); }
+    else if(col === 'quad') { av = quadrantKey(a); bv = quadrantKey(b); }
+    else if(col === 'urg')  { av = urgency(a);  bv = urgency(b); }
+    else if(col === 'imp')  { av = importance(a); bv = importance(b); }
+    else if(col === 'createdAt') { av = a.createdAt || ''; bv = b.createdAt || ''; }
+    else if(col === 'deadline')  { av = a.deadline || 'zzzz'; bv = b.deadline || 'zzzz'; }
+    else { av = a.createdAt; bv = b.createdAt; }
+    const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+    return dir === 'asc' ? cmp : -cmp;
+  });
+
+  const COLS = [
+    { key:'text',      label:'Task' },
+    { key:'quad',      label:'Quadrant' },
+    { key:'urg',       label:'Urgency' },
+    { key:'imp',       label:'Importance' },
+    { key:'createdAt', label:'Created' },
+    { key:'deadline',  label:'Deadline' }
+  ];
+
+  const table = document.createElement('table');
+  table.className = 'task-table';
+
+  // Sortable thead
+  const thead = document.createElement('thead');
+  const hdrRow = document.createElement('tr');
+  COLS.forEach(c => {
+    const th = document.createElement('th');
+    th.style.cssText = 'cursor:pointer;user-select:none;white-space:nowrap';
+    const arrow = (col === c.key) ? (dir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+    th.innerHTML = `${c.label}<span style="font-size:9px;opacity:.5">${arrow}</span>`;
+    if(col === c.key) th.style.color = 'var(--accent2)';
+    th.addEventListener('click', () => {
+      if(ui.activeSort.col === c.key) {
+        ui.activeSort.dir = ui.activeSort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        ui.activeSort.col = c.key;
+        ui.activeSort.dir = 'asc';
+      }
+      renderCurrentTab();
+    });
+    hdrRow.appendChild(th);
+  });
+  thead.appendChild(hdrRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  active.forEach(tag => {
+    const tr = document.createElement('tr');
+
+    // Task cell with note button on hover
+    const taskTd = document.createElement('td');
+    const taskDiv = document.createElement('div');
+    taskDiv.style.cssText = 'display:flex;align-items:center;gap:6px';
+    const dot = document.createElement('div');
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${tag.color};flex-shrink:0`;
+    const taskText = document.createElement('span');
+    taskText.textContent = tag.text; taskText.style.flex = '1';
+    const noteBtn = document.createElement('button');
+    noteBtn.className = 'today-icon-btn'; noteBtn.innerHTML = '🗒';
+    noteBtn.title = tag.notes ? 'Edit note' : 'Add note';
+    noteBtn.style.display = 'none';
+    noteBtn.addEventListener('click', e => { e.stopPropagation(); editNote(tag); });
+    taskDiv.addEventListener('mouseenter', () => noteBtn.style.display = 'block');
+    taskDiv.addEventListener('mouseleave', () => noteBtn.style.display = 'none');
+    taskDiv.appendChild(dot); taskDiv.appendChild(taskText); taskDiv.appendChild(noteBtn);
+    taskTd.appendChild(taskDiv);
+
+    const quadTd = document.createElement('td');
+    const badge = document.createElement('span');
+    badge.className = `quadrant-badge ${quadrantKey(tag)}`;
+    badge.textContent = quadrantKey(tag).toUpperCase();
+    quadTd.appendChild(badge);
+
+    const urgTd = document.createElement('td'); urgTd.textContent = urgency(tag);
+    const impTd = document.createElement('td'); impTd.textContent = importance(tag);
+
+    const createdTd = document.createElement('td');
+    const createdInput = document.createElement('input');
+    createdInput.type = 'date'; createdInput.value = tag.createdAt ? tag.createdAt.split('T')[0] : '';
+    createdInput.style.cssText = 'background:var(--surface);color:var(--text);border:1px solid var(--border);padding:3px 5px;border-radius:3px;font-size:11px;color-scheme:dark';
+    function saveCreated() { if(createdInput.value){ tag.createdAt = createdInput.value+'T00:00:00.000Z'; saveData(); } }
+    createdInput.addEventListener('change', saveCreated);
+    createdInput.addEventListener('keydown', e => { if(e.key==='Enter') saveCreated(); });
+    createdTd.appendChild(createdInput);
+
+    const deadlineTd = document.createElement('td');
+    const dlInput = document.createElement('input');
+    dlInput.type = 'date';
+    if(tag.deadline) dlInput.value = tag.deadline.split('T')[0];
+    dlInput.style.cssText = 'background:var(--surface);color:var(--text);border:1px solid var(--border);padding:3px 5px;border-radius:3px;font-size:11px;color-scheme:dark';
+    function saveDl() { tag.deadline = dlInput.value ? dlInput.value+'T00:00:00.000Z' : null; saveData(); renderDeadlineBar(); }
+    dlInput.addEventListener('change', saveDl);
+    dlInput.addEventListener('keydown', e => { if(e.key==='Enter') saveDl(); });
+    deadlineTd.appendChild(dlInput);
+
+    [taskTd, quadTd, urgTd, impTd, createdTd, deadlineTd].forEach(td => tr.appendChild(td));
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  container.appendChild(table);
+}
+
+function renderDoneTab(container) {
+  const done = state.tags.filter(t => t.resolved && !t.archived);
+  if(done.length === 0) {
+    container.innerHTML = '<div class="today-empty">No completed tasks yet.</div>';
+    return;
+  }
+
+  const table = document.createElement('table');
+  table.className = 'task-table';
+  table.innerHTML = `<thead><tr>
+    <th>Task</th><th>Quad</th><th>Created</th><th>Done</th><th>Duration</th><th></th>
+  </tr></thead><tbody></tbody>`;
+
+  const tbody = table.querySelector('tbody');
+  done.forEach(tag => {
+    const tr = document.createElement('tr');
+
+    const taskTd = document.createElement('td');
+    const taskDiv = document.createElement('div');
+    taskDiv.style.display = 'flex';
+    taskDiv.style.alignItems = 'center';
+    taskDiv.style.gap = '8px';
+
+    const taskText = document.createElement('span');
+    taskText.textContent = tag.text;
+    taskText.style.flex = '1';
+
+    const noteBtn = document.createElement('button');
+    noteBtn.className = 'today-icon-btn';
+    noteBtn.innerHTML = '🗒';
+    noteBtn.style.display = 'none';
+    noteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      editNote(tag);
+    });
+
+    taskDiv.addEventListener('mouseenter', () => noteBtn.style.display = 'block');
+    taskDiv.addEventListener('mouseleave', () => noteBtn.style.display = 'none');
+
+    taskDiv.appendChild(taskText);
+    taskDiv.appendChild(noteBtn);
+    taskTd.appendChild(taskDiv);
+
+    const quadTd = document.createElement('td');
+    const badge = document.createElement('span');
+    badge.className = `quadrant-badge ${quadrantKey(tag)}`;
+    badge.textContent = quadrantKey(tag).toUpperCase();
+    quadTd.appendChild(badge);
+
+    const createdTd = document.createElement('td');
+    const createdInput = document.createElement('input');
+    createdInput.type = 'date';
+    createdInput.value = tag.createdAt.split('T')[0];
+    createdInput.addEventListener('change', () => {
+      tag.createdAt = createdInput.value + 'T00:00:00.000Z';
+      saveData();
+    });
+    createdInput.addEventListener('keydown', e => {
+      if(e.key === 'Enter') {
+        tag.createdAt = createdInput.value + 'T00:00:00.000Z';
+        saveData();
+      }
+    });
+    createdTd.appendChild(createdInput);
+
+    const doneTd = document.createElement('td');
+    const doneInput = document.createElement('input');
+    doneInput.type = 'date';
+    if(tag.resolvedAt) doneInput.value = tag.resolvedAt.split('T')[0];
+    doneInput.addEventListener('change', () => {
+      tag.resolvedAt = doneInput.value ? doneInput.value + 'T00:00:00.000Z' : null;
+      saveData();
+    });
+    doneInput.addEventListener('keydown', e => {
+      if(e.key === 'Enter') {
+        tag.resolvedAt = doneInput.value ? doneInput.value + 'T00:00:00.000Z' : null;
+        saveData();
+      }
+    });
+    doneTd.appendChild(doneInput);
+
+    const durationTd = document.createElement('td');
+    if(tag.createdAt && tag.resolvedAt) {
+      const created = new Date(tag.createdAt);
+      const resolved = new Date(tag.resolvedAt);
+      const days = Math.floor((resolved - created) / (1000 * 60 * 60 * 24));
+      durationTd.textContent = days + 'd';
+    }
+
+    const menuTd = document.createElement('td');
+    menuTd.style.position = 'relative';
+
+    const menuBtn = document.createElement('button');
+    menuBtn.className = 'menu-btn';
+    menuBtn.innerHTML = '⋮';
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showDoneMenu(menuBtn, tag);
+    });
+    menuTd.appendChild(menuBtn);
+
+    tr.appendChild(taskTd);
+    tr.appendChild(quadTd);
+    tr.appendChild(createdTd);
+    tr.appendChild(doneTd);
+    tr.appendChild(durationTd);
+    tr.appendChild(menuTd);
+    tbody.appendChild(tr);
+  });
+
+  container.appendChild(table);
+}
+
+function showDoneMenu(btn, tag) {
+  document.querySelectorAll('.menu-dropdown').forEach(m => m.remove());
+
+  const menu = document.createElement('div');
+  menu.className = 'menu-dropdown';
+  menu.innerHTML = `
+    <div class="menu-item" data-action="revive">↺ Revive</div>
+    <div class="menu-item" data-action="delete">× Delete</div>
+    <div class="menu-item" data-action="archive">⬇ Archive</div>
+  `;
+
+  menu.addEventListener('click', e => {
+    const action = e.target.dataset.action;
+    if(action === 'revive') {
+      tag.resolved = false;
+      tag.resolvedAt = null;
+      saveData();
+      renderCurrentTab();
+      renderMatrix();
+      renderDeadlineBar();
+    } else if(action === 'delete') {
+      showConfirm('Delete task?', `Remove "${tag.text}" forever?`, () => hardDeleteTag(tag.id));
+    } else if(action === 'archive') {
+      tag.archived = true;
+      tag.archivedAt = new Date().toISOString();
+      saveData();
+      renderCurrentTab();
+      renderMatrix();
+      renderDeadlineBar();
+    }
+    menu.remove();
+  });
+
+  btn.parentElement.appendChild(menu);
+}
+
+function renderArchivedTab(container) {
+  const archived = state.tags.filter(t => t.archived);
+  if(archived.length === 0) {
+    container.innerHTML = '<div class="today-empty">No archived tasks yet.</div>';
+    return;
+  }
+
+  // Group by completion date (resolvedAt), fallback to archivedAt, then createdAt
+  const groups = {};
+  archived.forEach(tag => {
+    const dateStr = tag.resolvedAt || tag.archivedAt || tag.createdAt || new Date().toISOString();
+    const d = new Date(dateStr);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(tag);
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a,b) => b.localeCompare(a)); // newest first
+
+  const wrap = document.createElement('div');
+  sortedKeys.forEach(key => {
+    const d = new Date(key + 'T12:00:00');
+    const label = d.toLocaleDateString('en-US', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+
+    // Group header
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'padding:7px 12px;background:var(--surface2);font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center';
+    hdr.innerHTML = `<span>📅 ${label}</span><span style="background:var(--surface3);border-radius:10px;padding:1px 7px;font-size:10px">${groups[key].length}</span>`;
+    wrap.appendChild(hdr);
+
+    groups[key].forEach(tag => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .1s';
+      item.addEventListener('mouseenter', () => item.style.background = 'var(--surface2)');
+      item.addEventListener('mouseleave', () => item.style.background = '');
+
+      const dot = document.createElement('div');
+      dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${tag.color||'#888'};flex-shrink:0`;
+
+      const nameEl = document.createElement('span');
+      nameEl.style.cssText = 'flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      nameEl.textContent = tag.text;
+
+      const quad = document.createElement('span');
+      quad.className = `quadrant-badge ${quadrantKey(tag)}`;
+      quad.textContent = quadrantKey(tag).toUpperCase();
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'today-icon-btn';
+      delBtn.innerHTML = '×'; delBtn.title = 'Delete permanently';
+      delBtn.addEventListener('click', () =>
+        showConfirm('Delete task?', `Remove "${tag.text}" forever?`, () => hardDeleteTag(tag.id))
+      );
+
+      item.appendChild(dot); item.appendChild(nameEl); item.appendChild(quad); item.appendChild(delBtn);
+      wrap.appendChild(item);
+    });
+  });
+
+  container.appendChild(wrap);
+}
+
+// ============= DEADLINE BAR =============
+function renderDeadlineBar() {
+  const bar = document.getElementById('deadlineBar');
+  bar.innerHTML = '';
+
+  const active = state.tags.filter(t => !t.resolved && !t.archived && t.deadline);
+  if(active.length === 0) return;
+
+  active.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+  active.slice(0, 3).forEach(tag => {
+    const days = Math.ceil((new Date(tag.deadline) - new Date()) / (1000*60*60*24));
+    const isUrgent = days <= 3;
+
+    const el = document.createElement('div');
+    el.className = `deadline-bar${isUrgent ? ' urgent' : ''}`;
+    el.textContent = `📅 ${tag.text} — ${days}d left`;
+    bar.appendChild(el);
+  });
+}
+
+// ============= MODALS =============
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+function showConfirm(title, msg, callback) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMessage').textContent = msg;
+  window._confirmCallback = callback;
+  openModal('confirmModal');
+}
+
+function showPickTasksModal() {
+  const available = state.tags.filter(t => !t.resolved && !t.archived && !state.todayItems.find(ti => ti.tagId === t.id));
+  const list = document.getElementById('pickTasksList');
+  list.innerHTML = '';
+
+  available.forEach(tag => {
+    const item = document.createElement('label');
+    item.className = 'modal-item';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = tag.id;
+
+    const label = document.createElement('div');
+    label.className = 'modal-item-label';
+    label.style.display = 'flex';
+    label.style.gap = '8px';
+    label.style.flex = '1';
+
+    const dot = document.createElement('div');
+    dot.style.width = '8px';
+    dot.style.height = '8px';
+    dot.style.borderRadius = '50%';
+    dot.style.backgroundColor = tag.color || '#8888ff';
+    dot.style.flexShrink = '0';
+
+    const text = document.createElement('span');
+    text.textContent = tag.text;
+    text.style.flex = '1';
+
+    const badge = document.createElement('span');
+    badge.className = `quadrant-badge ${quadrantKey(tag)}`;
+    badge.textContent = quadrantKey(tag).toUpperCase();
+    badge.style.flexShrink = '0';
+
+    label.appendChild(dot);
+    label.appendChild(text);
+    label.appendChild(badge);
+
+    item.appendChild(cb);
+    item.appendChild(label);
+    list.appendChild(item);
+  });
+
+  openModal('pickTasksModal');
+}
+
+function addPickedTasks() {
+  const checkboxes = document.querySelectorAll('#pickTasksList input[type="checkbox"]:checked');
+  checkboxes.forEach(cb => {
+    const tagId = cb.value;
+    if(!state.todayItems.find(ti => ti.tagId === tagId)) {
+      state.todayItems.push({uid: genId(), tagId, renamedText: ''});
+    }
+  });
+  saveData();
+  closeModal('pickTasksModal');
+  renderCurrentTab();
+}
+
+function addToToday(tagId) {
+  if(!state.todayItems.find(ti => ti.tagId === tagId)) {
+    state.todayItems.push({uid: genId(), tagId, renamedText: ''});
+    saveData();
+    renderCurrentTab();
+  }
+}
+
+function showEndOfDayModal() {
+  const committed = state.todayItems.length;
+  if(committed === 0) {
+    alert('Nothing planned for today!');
+    return;
+  }
+
+  const completed = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && tag.resolved;
+  }).length;
+
+  const percent = Math.round((completed / committed) * 100);
+
+  const statsDiv = document.getElementById('endOfDayStats');
+  statsDiv.innerHTML = `
+    <div class="stat-box">
+      <div class="stat-label">Committed</div>
+      <div class="stat-value">${committed}</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value">${completed}</div>
+    </div>
+  `;
+
+  const progressDiv = document.createElement('div');
+  progressDiv.className = 'stat-box';
+  progressDiv.style.gridColumn = '1/-1';
+  progressDiv.innerHTML = `
+    <div class="stat-label">Progress</div>
+    <div class="stat-value">${percent}%</div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: ${percent}%"></div>
+    </div>
+  `;
+  statsDiv.appendChild(progressDiv);
+
+  let praise = '✨ You showed up. That matters. ✨';
+  const q1Completed = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && tag.resolved && quadrantKey(tag) === 'q1';
+  }).length;
+
+  const q2Completed = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && tag.resolved && quadrantKey(tag) === 'q2';
+  }).length;
+
+  if(q1Completed > 0 || q2Completed > 0) {
+    praise = `🎯 You crushed the important stuff today. That's how empires are built.`;
+  }
+
+  document.getElementById('endOfDayPraise').textContent = praise;
+
+  const tasksDiv = document.getElementById('endOfDayTasks');
+  tasksDiv.innerHTML = '';
+
+  const completedTasks = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && tag.resolved;
+  });
+
+  if(completedTasks.length > 0) {
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Completed';
+    h3.style.fontSize = '12px';
+    h3.style.marginTop = '16px';
+    h3.style.marginBottom = '8px';
+    h3.style.color = 'var(--accent2)';
+    tasksDiv.appendChild(h3);
+
+    completedTasks.forEach(ti => {
+      const tag = state.tags.find(t => t.id === ti.tagId);
+      const p = document.createElement('p');
+      p.style.fontSize = '12px';
+      p.style.textDecoration = 'line-through';
+      p.style.color = 'var(--text-dim)';
+      p.textContent = `✓ ${ti.renamedText || tag.text}`;
+      tasksDiv.appendChild(p);
+    });
+  }
+
+  const remainingTasks = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && !tag.resolved;
+  });
+
+  if(remainingTasks.length > 0) {
+    const h3 = document.createElement('h3');
+    h3.textContent = 'Remaining';
+    h3.style.fontSize = '12px';
+    h3.style.marginTop = '16px';
+    h3.style.marginBottom = '8px';
+    h3.style.color = 'var(--text-dim)';
+    tasksDiv.appendChild(h3);
+
+    remainingTasks.forEach(ti => {
+      const tag = state.tags.find(t => t.id === ti.tagId);
+      const p = document.createElement('p');
+      p.style.fontSize = '12px';
+      p.textContent = `○ ${ti.renamedText || tag.text}`;
+      tasksDiv.appendChild(p);
+    });
+  }
+
+  openModal('endOfDayModal');
+}
+
+function showMoodModal() {
+  const mood = MOODS[ui.moodIndex];
+  document.getElementById('moodTitle').textContent = mood.title;
+  document.getElementById('moodQuote').textContent = mood.quote;
+  document.getElementById('moodBody').textContent = mood.body;
+
+  const q1 = state.tags.find(t => !t.resolved && !t.archived && quadrantKey(t) === 'q1');
+  const closingText = mood.closing.replace('[Q1]', q1 ? q1.text : 'something on your list');
+  document.getElementById('moodClosing').textContent = closingText;
+
+  openModal('moodModal');
+}
+
+// ============= HEADER =============
+function rotateGreeting() {
+  ui.greetingIndex = (ui.greetingIndex + 1) % GREETINGS.length;
+  const g = GREETINGS[ui.greetingIndex];
+  const name = state.userName || 'Friend';
+  document.getElementById('hdrGreeting').innerHTML =
+    `${g.pre} <strong style="cursor:pointer;border-bottom:1px dashed rgba(255,255,255,.3);padding-bottom:1px" title="Click to edit name">${name}</strong>${g.suf}`;
+}
+
+function updateMoodBtn() {
+  const moodTexts = ['I\'m bored', 'I\'m drained', 'I\'m tired', 'I\'m exhausted'];
+  document.getElementById('moodBtn').textContent = moodTexts[ui.moodIndex];
+}
+
+function startClock() {
+  function updateClock() {
+    const now = new Date();
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const day = days[now.getDay()];
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const date = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const sec = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('hdrClock').textContent = `${year}/${month}/${date} ${day} ${hour}:${min}:${sec}`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+// ============= COPY/PASTE =============
+function copyData() {
+  // Export in a versioned envelope so imports always work
+  const exportPayload = {
+    _v: 7,
+    tags: state.tags,
+    userName: state.userName,
+    todayItems: state.todayItems
+  };
+  const json = JSON.stringify(exportPayload, null, 2);
+  try {
+    navigator.clipboard.writeText(json).then(() => showToast('📋 Data copied to clipboard!'));
+  } catch(e) {
+    // Fallback: show textarea for manual copy
+    showCopyFallback(json);
+  }
+}
+
+function showCopyFallback(json) {
+  const bd = document.createElement('div');
+  bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9100;display:flex;align-items:center;justify-content:center';
+  bd.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;width:480px;max-width:92vw">
+    <div style="font-weight:700;margin-bottom:10px">📋 Copy this data</div>
+    <textarea readonly style="width:100%;height:150px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box">${json}</textarea>
+    <div style="text-align:right;margin-top:10px"><button onclick="this.closest('div[style]').remove()" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px">Close</button></div>
+  </div>`;
+  document.body.appendChild(bd);
+  bd.querySelector('textarea').select();
+}
+
+function pasteData() {
+  const bd = document.createElement('div');
+  bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9100;display:flex;align-items:center;justify-content:center';
+  bd.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;width:480px;max-width:92vw">
+    <div style="font-weight:700;margin-bottom:6px;color:var(--accent2)">📥 Import Data</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Paste exported data below. Works with any previous version (v5, v6, v7).</div>
+    <textarea id="_importTA" style="width:100%;height:160px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box" placeholder='Paste JSON here…'></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button id="_importCancel" style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px">Cancel</button>
+      <button id="_importApply" style="background:var(--accent2);color:var(--bg);border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700">Apply</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bd);
+  bd.querySelector('#_importCancel').addEventListener('click', () => bd.remove());
+  bd.querySelector('#_importApply').addEventListener('click', () => {
+    const raw = bd.querySelector('#_importTA').value.trim();
+    bd.remove();
+    if(!raw) return;
+    applyImport(raw);
+  });
+  // Try to read clipboard automatically
+  navigator.clipboard.readText().then(text => {
+    bd.querySelector('#_importTA').value = text;
+  }).catch(() => {});
+}
+
+function applyImport(raw) {
+  let parsed;
+  try { parsed = JSON.parse(raw); } catch(e) { showToast('❌ Invalid JSON — could not import.'); return; }
+
+  // Accept both versioned envelope { _v, tags, userName, todayItems }
+  // and flat arrays from v5/v6 (array of tags directly)
+  let imported = { tags: [], userName: 'Friend', todayItems: [] };
+  if(Array.isArray(parsed)) {
+    // Old v5 format: just an array of tags
+    imported.tags = parsed;
+  } else if(parsed.tags) {
+    imported = parsed;
+  } else {
+    showToast('❌ Unrecognised data format.'); return;
+  }
+
+  // Normalise every tag (same as loadData)
+  imported.tags = imported.tags.map(t => ({
+    id: t.id || genId(),
+    text: t.text || 'Unnamed',
+    color: t.color || nextColor(),
+    x: t.x !== undefined ? t.x : 50,
+    y: t.y !== undefined ? t.y : 50,
+    createdAt: t.createdAt || new Date().toISOString(),
+    deadline: t.deadline ? (t.deadline.includes('T') ? t.deadline : t.deadline.replace(/\//g,'-')+'T00:00:00.000Z') : null,
+    resolvedAt: t.resolvedAt || null,
+    resolved: !!t.resolved,
+    archived: !!t.archived,
+    archivedAt: t.archivedAt || null,
+    notes: t.notes || ''
+  }));
+
+  state = {
+    tags: imported.tags,
+    userName: imported.userName || state.userName || 'Friend',
+    todayItems: imported.todayItems || []
+  };
+  saveData();
+  renderMatrix();
+  renderCurrentTab();
+  renderDeadlineBar();
+  showToast('✅ Data imported successfully!');
+}
+
+function showToast(msg) {
+  let t = document.getElementById('_toast');
+  if(!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:10px 16px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:opacity .3s;opacity:0';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+// ============= ADD TAG =============
+function addTag(text, deadline) {
+  state.tags.push({
+    id: genId(),
+    text: text.trim().slice(0, 100),
+    color: nextColor(),
+    x: 50,   // centre of matrix — user drags to correct position
+    y: 50,
+    createdAt: new Date().toISOString(),
+    deadline: deadline || null,
+    resolvedAt: null,
+    resolved: false,
+    archived: false,
+    archivedAt: null,
+    notes: ''
+  });
+  saveData();
+  renderMatrix();
+  renderCurrentTab();
+  renderDeadlineBar();
+}
+
+</script>
+
+</body>
+</html>
