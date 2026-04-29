@@ -1249,6 +1249,89 @@
       92%  { opacity:.9; }
       100% { top:calc(100% + 20px); opacity:0; }
     }
+
+    /* ── Matrix tab bar ─────────────────────────────────── */
+    #matrixTabBar {
+      display: flex; flex-shrink: 0;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 10px; gap: 2px; padding-top: 5px;
+    }
+    .mtab {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      color: var(--text-dim); cursor: pointer; font-size: 12.5px; font-weight: 600;
+      padding: 7px 12px; border-radius: 5px 5px 0 0;
+      transition: color .15s, border-color .15s; white-space: nowrap;
+      position: relative; bottom: -1px;
+    }
+    .mtab:hover { color: var(--text); }
+    .mtab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+    [data-theme="light"] .mtab.active { color: #5B7CFA; border-bottom-color: #5B7CFA; }
+
+    /* ── Work / Private toggle ──────────────────────────── */
+    #typeToggle {
+      display: flex; flex-shrink: 0;
+      background: var(--surface3); border-radius: 6px;
+      padding: 2px; gap: 2px; align-items: center;
+    }
+    .type-btn {
+      background: none; border: none; color: var(--text-dim); cursor: pointer;
+      font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 5px;
+      transition: background .12s, color .12s; white-space: nowrap;
+    }
+    .type-btn.active { background: var(--accent); color: #fff; }
+    .type-btn[data-type="private"].active { background: var(--accent3); }
+    [data-theme="light"] .type-btn.active { background: #7A6FF0; }
+    [data-theme="light"] .type-btn[data-type="private"].active { background: #FF6EC7; }
+
+    /* ── Tag hamburger ──────────────────────────────────── */
+    .tag-hamburger {
+      width: 18px; height: 18px; flex-shrink: 0;
+      background: rgba(0,0,0,.32); border: none; border-radius: 4px;
+      color: rgba(255,255,255,.85); cursor: pointer; font-size: 13px;
+      display: none; align-items: center; justify-content: center;
+      padding: 0; line-height: 1; transition: background .12s;
+    }
+    .tag:hover .tag-hamburger { display: flex; }
+    .tag.dragging-active-tag .tag-hamburger,
+    .tag.editing .tag-hamburger { display: none !important; }
+    .tag-hamburger:hover { background: rgba(255,255,255,.28); }
+
+    /* ── Tag action dropdown ────────────────────────────── */
+    #tagActionMenu {
+      position: fixed; z-index: 2000; min-width: 130px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9px; overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.05);
+      animation: menuPop .12s ease;
+    }
+    @keyframes menuPop { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+    .tam-item {
+      padding: 9px 14px; font-size: 12.5px; color: var(--text);
+      cursor: pointer; display: flex; align-items: center; gap: 9px;
+      border-bottom: 1px solid var(--border); transition: background .1s, color .1s;
+      white-space: nowrap;
+    }
+    .tam-item:last-child { border-bottom: none; }
+    .tam-item:hover { background: var(--surface3); color: var(--accent2); }
+    .tam-item.danger:hover { color: var(--accent3); }
+    .tam-icon { width: 18px; text-align: center; font-size: 13px; flex-shrink: 0; }
+    [data-theme="light"] #tagActionMenu { background:#EEF3FF; border-color:#B8CAFE; box-shadow:0 6px 20px rgba(0,0,0,.15); }
+    [data-theme="light"] .tam-item { color:#2D2F3A; border-color:#B8CAFE; }
+    [data-theme="light"] .tam-item:hover { background:#DCE4FF; color:#5B7CFA; }
+
+    /* ── Tag type badge ─────────────────────────────────── */
+    .tag-type-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; opacity: .7;
+      background: rgba(255,255,255,.6);
+    }
+    .tag.type-private .tag-type-dot { background: #ffb0d0; }
+
+    /* ── Tags in light mode ─────────────────────────────── */
+    [data-theme="light"] .tag {
+      border-color: rgba(0,0,0,.14) !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.08) !important;
+    }
     /* MOOD PORTRAIT */
     .mood-portrait-fb {
       width: 76px; height: 76px; flex-shrink: 0;
@@ -1367,7 +1450,7 @@
   <div id="pdHeader">
     <div id="pdAvatar"><img id="pdAvatarImg" src="" alt=""></div>
     <div id="pdInfo">
-      <div id="pdName">Angela Pai</div>
+      <div id="pdName"></div>
       <div id="pdSub">◉ Personal workspace</div>
     </div>
   </div>
@@ -1384,10 +1467,21 @@
   <!-- LEFT PANEL: ADD + MATRIX -->
   <div id="leftPanel">
 
-    <!-- ADD TAG (above matrix) -->
+    <!-- MATRIX TAB BAR -->
+    <div id="matrixTabBar">
+      <button class="mtab active" data-mtab="overview">All Tasks</button>
+      <button class="mtab" data-mtab="work">Work</button>
+      <button class="mtab" data-mtab="private">Private</button>
+    </div>
+
+    <!-- ADD TASK BAR -->
     <div id="addTagSection">
       <input id="newTagInput" type="text" placeholder="New task name… (max 100 chars)" maxlength="100" autocomplete="off">
       <input id="deadlineInput" type="date" title="Optional deadline">
+      <div id="typeToggle">
+        <button class="type-btn active" data-type="work">Work</button>
+        <button class="type-btn" data-type="private">Private</button>
+      </div>
       <button class="add-tag-btn">+ Add Task</button>
     </div>
 
@@ -1822,7 +1916,8 @@ let ui = {
   dragStart: null,
   dragDelta: null,
   openMenuId: null,
-  activeSort: { col: 'createdAt', dir: 'desc' }
+  activeSort: { col: 'createdAt', dir: 'desc' },
+  matrixTab: 'overview'
 };
 
 // ============= INIT =============
@@ -1863,6 +1958,7 @@ function init() {
 function applyUserName(name) {
   state.userName = name.trim() || 'Friend';
   if(!state.firstUsed) state.firstUsed = new Date().toISOString();
+  const _pdn = document.getElementById('pdName'); if(_pdn) _pdn.textContent = state.userName;
   document.title = `Eisenhower Matrix — ${state.userName}`;
   rotateGreeting();
   saveData();
@@ -1889,6 +1985,9 @@ function loadData() {
   if(!state.tags) state.tags = [];
   if(!state.todayItems) state.todayItems = [];
   if(!state.firstUsed)  state.firstUsed = new Date().toISOString();
+  if(!state.profile)    state.profile    = {};
+  state.tags.forEach(t => { if(!t.type) t.type = 'work'; });
+  const _pdn2 = document.getElementById('pdName'); if(_pdn2) _pdn2.textContent = state.userName || '';
 
   // Normalise each tag — fill in missing fields, fix old date formats
   state.tags.forEach(t => {
@@ -2058,16 +2157,40 @@ function setupEventListeners() {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
 
-  // Add tag — ONLY the button triggers creation (no Enter key shortcut)
+
+  // ── Matrix tabs (Overview / Work / Private) ──────────────────────
+  document.querySelectorAll('.mtab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ui.matrixTab = btn.dataset.mtab;
+      // Sync type toggle default to match tab
+      if(ui.matrixTab === 'private') setTypeToggle('private');
+      else setTypeToggle('work');
+      renderMatrix();
+    });
+  });
+
+  // ── Work/Private type toggle ──────────────────────────────────────
+  function setTypeToggle(type) {
+    document.querySelectorAll('.type-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.type === type);
+    });
+  }
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTypeToggle(btn.dataset.type));
+  });
+
+  // ── Add task — read type toggle ───────────────────────────────────
   document.querySelector('.add-tag-btn').addEventListener('click', () => {
     const input = document.getElementById('newTagInput');
-    const text = input.value.trim();
-    if(!text) { input.focus(); input.style.borderColor = 'var(--accent3)'; setTimeout(() => input.style.borderColor = '', 1000); return; }
-    const dl = document.getElementById('deadlineInput').value;
-    addTag(text, dl ? dl + 'T00:00:00.000Z' : null);
-    input.value = '';
-    document.getElementById('deadlineInput').value = '';
-    input.focus();
+    const text  = input.value.trim();
+    if(!text) { input.focus(); input.style.borderColor='var(--accent3)'; setTimeout(()=>input.style.borderColor='',1000); return; }
+    const dl    = document.getElementById('deadlineInput').value;
+    const activeType = document.querySelector('.type-btn.active');
+    const type  = activeType ? activeType.dataset.type : 'work';
+    addTag(text, dl ? dl+'T00:00:00.000Z' : null, type);
+    input.value=''; document.getElementById('deadlineInput').value=''; input.focus();
   });
 
   // Today items reorder
@@ -2181,6 +2304,51 @@ function setupEventListeners() {
 }
 
 
+
+// ── Tag action menu (hamburger dropdown) ─────────────────────────
+let _tagMenuOpen = false;
+function closeTagActionMenu() {
+  const m = document.getElementById('tagActionMenu');
+  if(m) m.remove();
+  _tagMenuOpen = false;
+}
+function openTagActionMenu(tag, anchor) {
+  closeTagActionMenu();
+  _tagMenuOpen = true;
+  const menu = document.createElement('div');
+  menu.id = 'tagActionMenu';
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const isPrivate = (tag.type||'work') === 'private';
+  const items = [
+    { icon:'🗒', label:'Note',   cls:'',       fn: () => { closeTagActionMenu(); editNote(tag); } },
+    { icon:'✓',  label:'Done',   cls:'',       fn: () => { closeTagActionMenu(); resolveTag(tag.id); } },
+    { icon:'⇄',  label: isPrivate ? 'Move to Work' : 'Move to Private', cls:'', fn: () => { closeTagActionMenu(); moveTag(tag.id); } },
+    { icon:'×',  label:'Delete', cls:'danger', fn: async () => { closeTagActionMenu(); const ok = await showConfirm('Delete task?',`Remove "${tag.text}" forever?`); if(ok) hardDeleteTag(tag.id); } },
+  ];
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'tam-item' + (item.cls ? ' '+item.cls : '');
+    row.innerHTML = `<span class="tam-icon">${item.icon}</span>${item.label}`;
+    row.addEventListener('click', e => { e.stopPropagation(); item.fn(); });
+    menu.appendChild(row);
+  });
+  // Position below/near the anchor button
+  const rect = anchor.getBoundingClientRect();
+  const left = Math.min(rect.left, window.innerWidth - 160);
+  menu.style.top  = (rect.bottom + 4) + 'px';
+  menu.style.left = left + 'px';
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', closeTagActionMenu, { once: true }), 0);
+}
+
+// ── Move tag type ─────────────────────────────────────────────────
+function moveTag(id) {
+  const tag = state.tags.find(t => t.id === id);
+  if(!tag) return;
+  tag.type = (tag.type||'work') === 'private' ? 'work' : 'private';
+  saveData(); renderMatrix(); renderCurrentTab();
+}
+
 // ── Shooting stars on matrix grid ──────────────────────────────
 function launchShootingStar() {
   const canvas = document.getElementById('matrixCanvas');
@@ -2195,19 +2363,19 @@ function launchShootingStar() {
 
   const star = document.createElement('div');
   star.className = 'mstar';
-  const W = 100, H = 3; // shooting-star dimensions
+  const W = 90, H = 1;  // thin shooting star
 
   if(horiz) {
     star.style.cssText = `
       width:${W}px; height:${H}px; top:${pct}%;
       background:linear-gradient(90deg,${colFade},${col},#fff 75%,${colFade});
-      box-shadow:0 0 8px ${col},0 0 16px ${col}66;
+      box-shadow:0 0 2px ${col}88;
       animation:mstarH ${1.4+Math.random()*.6}s ease-in-out forwards;`;
   } else {
     star.style.cssText = `
       width:${H}px; height:${W}px; left:${pct}%;
       background:linear-gradient(180deg,${colFade},${col},#fff 75%,${colFade});
-      box-shadow:0 0 8px ${col},0 0 16px ${col}66;
+      box-shadow:0 0 2px ${col}88;
       animation:mstarV ${1.4+Math.random()*.6}s ease-in-out forwards;`;
   }
   canvas.appendChild(star);
@@ -2227,8 +2395,14 @@ function scheduleStars() {
 function renderMatrix() {
   const canvas = document.getElementById('matrixCanvas');
   Array.from(canvas.querySelectorAll('.tag')).forEach(el => el.remove());
-
-  state.tags.filter(t => !t.resolved && !t.archived).forEach(tag => {
+  const tab = ui.matrixTab || 'overview';
+  state.tags.filter(t => {
+    if(t.resolved || t.archived) return false;
+    const ty = t.type || 'work';          // normalise missing type
+    if(tab === 'work')    return ty === 'work';
+    if(tab === 'private') return ty === 'private';
+    return true;                           // 'overview' → show all
+  }).forEach(tag => {
     const el = createTagEl(tag);
     el.style.left = Math.max(2, Math.min(98, tag.x)) + '%';
     el.style.top  = Math.max(2, Math.min(98, tag.y)) + '%';
@@ -2250,25 +2424,25 @@ function createTagEl(tag) {
   textEl.className = 'tag-text';
   textEl.textContent = tag.text;
 
-  const controls = document.createElement('div');
-  controls.className = 'tag-controls';
+  // type dot
+  const typeDot = document.createElement('span');
+  typeDot.className = 'tag-type-dot';
 
-  function mkBtn(html, title, onClick) {
-    const b = document.createElement('button');
-    b.className = 'tag-btn'; b.innerHTML = html; b.title = title;
-    b.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
-    b.addEventListener('click', e => { e.stopPropagation(); onClick(); });
-    return b;
-  }
-
-  controls.appendChild(mkBtn('✓', 'Mark done', () => resolveTag(tag.id)));
-  controls.appendChild(mkBtn('🗒', tag.notes ? 'Edit note' : 'Add note', () => editNote(tag)));
-  controls.appendChild(mkBtn('×', 'Delete', () =>
-    showConfirm('Delete task?', `Remove "${tag.text}" forever?`, () => hardDeleteTag(tag.id))
-  ));
+  // hamburger button — opens action menu on click
+  const hamburger = document.createElement('button');
+  hamburger.className = 'tag-hamburger';
+  hamburger.innerHTML = '⋮';
+  hamburger.title = 'Actions';
+  hamburger.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
+  hamburger.addEventListener('click', e => {
+    e.stopPropagation();
+    openTagActionMenu(tag, hamburger);
+  });
 
   el.appendChild(textEl);
-  el.appendChild(controls);
+  el.appendChild(typeDot);
+  el.appendChild(hamburger);
+  if((tag.type||'work') === 'private') el.classList.add('type-private');
 
   // ── DRAG: start global drag state (mouse + touch) ──
   function startDrag(cx, cy) {
@@ -2282,13 +2456,13 @@ function createTagEl(tag) {
     };
   }
   el.addEventListener('mousedown', e => {
-    if(e.target.closest('.tag-controls')) return;
+    if(e.target.closest('.tag-hamburger')) return;
     if(el.classList.contains('editing')) return;
     e.preventDefault(); e.stopPropagation();
     startDrag(e.clientX, e.clientY);
   });
   el.addEventListener('touchstart', e => {
-    if(e.target.closest('.tag-controls')) return;
+    if(e.target.closest('.tag-hamburger')) return;
     if(el.classList.contains('editing')) return;
     e.stopPropagation();
     startDrag(e.touches[0].clientX, e.touches[0].clientY);
@@ -2296,7 +2470,7 @@ function createTagEl(tag) {
 
   // ── CLICK → inline edit (only when there was no real drag) ──
   el.addEventListener('click', e => {
-    if(e.target.closest('.tag-controls')) return;
+    if(e.target.closest('.tag-hamburger')) return;
     // If a drag just ended, ignore
     if(el.classList.contains('dragging-active-tag')) return;
 
@@ -2305,7 +2479,7 @@ function createTagEl(tag) {
     inp.className = 'tag-text-input'; inp.type = 'text';
     inp.value = tag.text; inp.maxLength = 100;
     textEl.style.display = 'none';
-    el.insertBefore(inp, controls);
+    el.insertBefore(inp, typeDot);  // typeDot replaces old controls anchor
     inp.focus(); inp.select();
 
     let saved = false;
@@ -3253,20 +3427,17 @@ function showToast(msg) {
 }
 
 // ============= ADD TAG =============
-function addTag(text, deadline) {
+function addTag(text, deadline, type) {
   state.tags.push({
     id: genId(),
     text: text.trim().slice(0, 100),
     color: nextColor(),
-    x: 50,   // centre of matrix — user drags to correct position
-    y: 50,
+    x: 50, y: 50,
     createdAt: new Date().toISOString(),
     deadline: deadline || null,
-    resolvedAt: null,
-    resolved: false,
-    archived: false,
-    archivedAt: null,
-    notes: ''
+    resolvedAt: null, resolved: false,
+    archived: false, archivedAt: null,
+    notes: '', type: type || 'work'
   });
   saveData();
   renderMatrix();
