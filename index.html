@@ -1157,32 +1157,97 @@
     }
 
 
-    /* ── Profile modal avatar ───────────────────────────────── */
+    /* ── Profile modal — two-column ───────────────────────── */
+    .pm-modal {
+      max-width: 700px !important; padding: 0 !important;
+      display: flex !important; gap: 0 !important;
+      text-align: left; overflow: hidden; position: relative;
+    }
+    .pm-left {
+      flex: 0 0 210px; padding: 28px 20px;
+      text-align: center; background: var(--surface2);
+      display: flex; flex-direction: column; align-items: center;
+      border-right: 1px solid var(--border);
+    }
+    .pm-right {
+      flex: 1; padding: 24px 22px;
+      overflow-y: auto; max-height: 80vh;
+    }
     #pmAvatarWrap {
-      width: 88px; height: 88px; border-radius: 50%; overflow: hidden;
-      margin: 0 auto 14px;
+      width: 82px; height: 82px; border-radius: 50%; overflow: hidden;
+      margin: 0 auto 12px; flex-shrink: 0;
       border: 3px solid transparent;
-      background: linear-gradient(var(--surface),var(--surface)) padding-box,
+      background: linear-gradient(var(--surface2),var(--surface2)) padding-box,
                   linear-gradient(135deg,#FF6EC7,#5B7CFA) border-box;
-      box-shadow: 0 0 18px var(--accent3-glow);
+      box-shadow: 0 0 16px var(--accent3-glow);
     }
     #pmAvatarWrap img { width:100%; height:100%; object-fit:contain; display:block; }
-    /* ── Neon grid lines on matrix canvas ──────────────────── */
+    #pmName  { font-size:16px; font-weight:700; margin-bottom:3px; }
+    #pmSince { font-size:11px; color:var(--text-dim); margin-bottom:14px; }
+    .pm-stats { display:grid; grid-template-columns:1fr 1fr; gap:7px; width:100%; }
+    .pm-close-btn {
+      position:absolute; top:10px; right:14px;
+      background:none; border:none; color:var(--text-dim);
+      cursor:pointer; font-size:22px; line-height:1;
+      transition:color .15s; z-index:10;
+    }
+    .pm-close-btn:hover { color:var(--accent3); }
+    /* Right-side form */
+    .pm-section-title {
+      font-size:13px; font-weight:700; color:var(--accent2);
+      margin-bottom:14px; letter-spacing:.3px; text-transform:uppercase;
+    }
+    .pm-field { margin-bottom:13px; }
+    .pm-label {
+      display:block; font-size:11px; font-weight:600;
+      color:var(--text-dim); margin-bottom:5px; letter-spacing:.3px;
+    }
+    .pm-input {
+      width:100%; background:var(--surface2); color:var(--text);
+      border:1px solid var(--border); border-radius:6px;
+      padding:8px 10px; font-size:12.5px; outline:none;
+      transition:border-color .15s, box-shadow .15s; font-family:inherit;
+      box-sizing:border-box;
+    }
+    .pm-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-glow); }
+    .pm-textarea { min-height:72px; resize:vertical; line-height:1.5; }
+    .pm-select { cursor:pointer; }
+    .pm-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    [data-theme="light"] .pm-left { background:#DCE4FF; border-color:#B8CAFE; }
+    [data-theme="light"] .pm-input { background:#EEF3FF; border-color:#B8CAFE; color:#2D2F3A; }
+    [data-theme="light"] .pm-input:focus { border-color:#7A6FF0; }
+    [data-theme="light"] .pm-section-title { color:#5B7CFA; }
+    [data-theme="light"] .pm-label { color:#6B6F85; }
+    /* ── Neon grid lines ─────────────────────────────────── */
     #matrixCanvas::after {
       content: ''; position: absolute; inset: 0;
       pointer-events: none; z-index: 1;
       background-image:
-        linear-gradient(rgba(217,76,255,.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(217,76,255,.10) 1px, transparent 1px);
+        linear-gradient(rgba(217,76,255,.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(217,76,255,.22) 1px, transparent 1px);
       background-size: 12.5% 12.5%;
-      /* subtle extra glow on the quadrant-divider lines */
-      box-shadow: inset 50% 0 0 0 rgba(217,76,255,.04),
-                  inset 0 50% 0 0 rgba(217,76,255,.04);
+      filter: drop-shadow(0 0 2px rgba(217,76,255,.45));
     }
     [data-theme="light"] #matrixCanvas::after {
       background-image:
-        linear-gradient(rgba(122,111,240,.16) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(122,111,240,.16) 1px, transparent 1px);
+        linear-gradient(rgba(122,111,240,.28) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122,111,240,.28) 1px, transparent 1px);
+      filter: drop-shadow(0 0 2px rgba(122,111,240,.35));
+    }
+
+    /* ── Shooting stars ───────────────────────────────────── */
+    .mstar { position:absolute; pointer-events:none; z-index:6; border-radius:2px; }
+    @keyframes mstarH {
+      0%   { left:-120px; opacity:0; }
+      6%   { opacity:1; }
+      92%  { opacity:.9; }
+      100% { left:calc(100% + 20px); opacity:0; }
+    }
+    @keyframes mstarV {
+      0%   { top:-120px; opacity:0; }
+      6%   { opacity:1; }
+      92%  { opacity:.9; }
+      100% { top:calc(100% + 20px); opacity:0; }
     }
     /* MOOD PORTRAIT */
     .mood-portrait-fb {
@@ -1468,31 +1533,64 @@
   </div>
 </div>
 
-<!-- PROFILE MODAL -->
+<!-- PROFILE MODAL (two-column) -->
 <div id="profileModal" class="modal-backdrop">
-  <div class="modal" style="max-width:340px;text-align:center;padding:28px 22px">
-    <div id="pmAvatarWrap"><img id="pmAvatarImg" src="" alt=""></div>
-    <h2 id="pmName" style="font-size:20px;margin-bottom:4px"></h2>
-    <p id="pmSince" style="font-size:12px;color:var(--text-dim);margin-bottom:20px"></p>
-    <div class="modal-stats" style="gap:10px;margin-bottom:16px">
-      <div class="stat-box">
-        <div class="stat-label">Tasks Created</div>
-        <div class="stat-value" id="pmCreated">0</div>
+  <div class="modal pm-modal">
+    <button class="pm-close-btn" id="pmClose" title="Close">×</button>
+
+    <!-- LEFT: avatar + stats -->
+    <div class="pm-left">
+      <div id="pmAvatarWrap"><img id="pmAvatarImg" src="" alt=""></div>
+      <h2 id="pmName"></h2>
+      <p id="pmSince"></p>
+      <div class="pm-stats">
+        <div class="stat-box"><div class="stat-label">Created</div><div class="stat-value" id="pmCreated">0</div></div>
+        <div class="stat-box"><div class="stat-label">Done</div><div class="stat-value" id="pmDone">0</div></div>
       </div>
-      <div class="stat-box">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value" id="pmDone">0</div>
-      </div>
-      <div class="stat-box" style="grid-column:1/-1">
-        <div class="stat-label">Completion Rate</div>
-        <div class="stat-value" id="pmPct" style="font-size:30px">0%</div>
-        <div class="progress-bar" style="margin-top:8px">
-          <div class="progress-fill" id="pmBar" style="width:0%"></div>
-        </div>
+      <div class="stat-box" style="margin-top:9px;width:100%">
+        <div class="stat-label">Completion</div>
+        <div class="stat-value" id="pmPct" style="font-size:26px">0%</div>
+        <div class="progress-bar" style="margin-top:7px"><div class="progress-fill" id="pmBar" style="width:0%"></div></div>
       </div>
     </div>
-    <div class="modal-buttons">
-      <button class="modal-btn primary" id="pmClose">Close</button>
+
+    <!-- RIGHT: editable profile settings -->
+    <div class="pm-right">
+      <div class="pm-section-title">Profile Settings</div>
+
+      <div class="pm-field">
+        <label class="pm-label">What do you do?</label>
+        <input id="pmJobTitle" type="text" class="pm-input" placeholder="Your current role or title" maxlength="80">
+      </div>
+
+      <div class="pm-field">
+        <label class="pm-label">Where do you see yourself in a year?</label>
+        <textarea id="pmGoals" class="pm-input pm-textarea" placeholder="Your vision, your goals, your next chapter…" maxlength="400"></textarea>
+      </div>
+
+      <div class="pm-row">
+        <div class="pm-field">
+          <label class="pm-label">Nationality</label>
+          <input id="pmNationality" type="text" class="pm-input" placeholder="Where are you from?" maxlength="50">
+        </div>
+        <div class="pm-field">
+          <label class="pm-label">Gender</label>
+          <select id="pmGender" class="pm-input pm-select">
+            <option value="">Prefer not to say</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="nonbinary">Non-binary</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pm-field">
+        <label class="pm-label">Date of Birth</label>
+        <input id="pmBirthday" type="date" class="pm-input" value="2000-07-22" style="color-scheme:dark">
+      </div>
+
+      <button class="modal-btn primary" id="pmSaveBtn" style="width:100%;margin-top:6px">Save Profile</button>
     </div>
   </div>
 </div>
@@ -1528,16 +1626,33 @@ function showProfileModal() {
     days === 1 ? '✦ Using for 1 day' :
                  `✦ Using for ${days} days`;
 
-  const total   = state.tags.length;
-  const done    = state.tags.filter(t => t.resolved || t.archived).length;
-  const pct     = total > 0 ? Math.round(done / total * 100) : 0;
-
+  const total = state.tags.length;
+  const done  = state.tags.filter(t => t.resolved || t.archived).length;
+  const pct   = total > 0 ? Math.round(done / total * 100) : 0;
   document.getElementById('pmCreated').textContent = total;
   document.getElementById('pmDone').textContent    = done;
   document.getElementById('pmPct').textContent     = pct + '%';
   document.getElementById('pmBar').style.width     = pct + '%';
 
+  // Populate editable fields
+  const p = state.profile || {};
+  document.getElementById('pmJobTitle').value    = p.jobTitle    || '';
+  document.getElementById('pmGoals').value       = p.goals       || '';
+  document.getElementById('pmNationality').value = p.nationality || '';
+  document.getElementById('pmGender').value      = p.gender      || '';
+  document.getElementById('pmBirthday').value    = p.birthday    || '2000-07-22';
+
   openModal('profileModal');
+}
+
+function saveProfileFields() {
+  if(!state.profile) state.profile = {};
+  state.profile.jobTitle    = document.getElementById('pmJobTitle').value.trim();
+  state.profile.goals       = document.getElementById('pmGoals').value.trim();
+  state.profile.nationality = document.getElementById('pmNationality').value.trim();
+  state.profile.gender      = document.getElementById('pmGender').value;
+  state.profile.birthday    = document.getElementById('pmBirthday').value;
+  saveData();
 }
 
 // ============= THEME (light / dark) =============
@@ -1735,6 +1850,7 @@ function init() {
   updateMoodBtn();
   updateThemeBtns();
   updateProfileAvatar();
+  scheduleStars();
   renderMatrix();
   renderCurrentTab();
   renderDeadlineBar();
@@ -2036,8 +2152,18 @@ function setupEventListeners() {
     if(el) el.addEventListener('click', () => { pdDrop.classList.remove('open'); fn(); });
   }
   // ── Profile modal wiring ───────────────────────────────────────
-  document.getElementById('pmClose').addEventListener('click', () => closeModal('profileModal'));
-  // Enable Profile item in dropdown
+  document.getElementById('pmClose').addEventListener('click', () => {
+    saveProfileFields(); closeModal('profileModal');
+  });
+  document.getElementById('pmSaveBtn').addEventListener('click', () => {
+    saveProfileFields();
+    showToast('✅ Profile saved!');
+  });
+  document.getElementById('profileModal').addEventListener('click', e => {
+    if(e.target === document.getElementById('profileModal')) {
+      saveProfileFields(); closeModal('profileModal');
+    }
+  });
   pdAction('pdProfile', showProfileModal);
 
   pdAction('pdCopy',    copyData);
@@ -2052,6 +2178,49 @@ function setupEventListeners() {
       ui.openMenuId = null;
     }
   });
+}
+
+
+// ── Shooting stars on matrix grid ──────────────────────────────
+function launchShootingStar() {
+  const canvas = document.getElementById('matrixCanvas');
+  if(!canvas) return;
+  const isDark  = document.documentElement.getAttribute('data-theme') !== 'light';
+  const col     = isDark ? '#D94CFF' : '#7A6FF0';
+  const colFade = isDark ? 'rgba(217,76,255,0)' : 'rgba(122,111,240,0)';
+  const horiz   = Math.random() > 0.45;
+  // grid lines at 12.5% intervals; pick one randomly
+  const lines   = [.125,.25,.375,.5,.625,.75,.875];
+  const pct     = lines[Math.floor(Math.random() * lines.length)] * 100;
+
+  const star = document.createElement('div');
+  star.className = 'mstar';
+  const W = 100, H = 3; // shooting-star dimensions
+
+  if(horiz) {
+    star.style.cssText = `
+      width:${W}px; height:${H}px; top:${pct}%;
+      background:linear-gradient(90deg,${colFade},${col},#fff 75%,${colFade});
+      box-shadow:0 0 8px ${col},0 0 16px ${col}66;
+      animation:mstarH ${1.4+Math.random()*.6}s ease-in-out forwards;`;
+  } else {
+    star.style.cssText = `
+      width:${H}px; height:${W}px; left:${pct}%;
+      background:linear-gradient(180deg,${colFade},${col},#fff 75%,${colFade});
+      box-shadow:0 0 8px ${col},0 0 16px ${col}66;
+      animation:mstarV ${1.4+Math.random()*.6}s ease-in-out forwards;`;
+  }
+  canvas.appendChild(star);
+  star.addEventListener('animationend', () => star.remove());
+}
+
+function scheduleStars() {
+  const delay = 10000 + Math.random() * 10000; // 10–20 s
+  setTimeout(() => {
+    const n = Math.random() > .55 ? 2 : 1;
+    for(let i=0; i<n; i++) setTimeout(launchShootingStar, i * 350);
+    scheduleStars();
+  }, delay);
 }
 
 // ============= MATRIX =============
