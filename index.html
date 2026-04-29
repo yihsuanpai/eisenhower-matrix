@@ -1155,6 +1155,35 @@
       background: var(--accent2);
       transition: width 0.3s;
     }
+
+
+    /* ── Profile modal avatar ───────────────────────────────── */
+    #pmAvatarWrap {
+      width: 88px; height: 88px; border-radius: 50%; overflow: hidden;
+      margin: 0 auto 14px;
+      border: 3px solid transparent;
+      background: linear-gradient(var(--surface),var(--surface)) padding-box,
+                  linear-gradient(135deg,#FF6EC7,#5B7CFA) border-box;
+      box-shadow: 0 0 18px var(--accent3-glow);
+    }
+    #pmAvatarWrap img { width:100%; height:100%; object-fit:contain; display:block; }
+    /* ── Neon grid lines on matrix canvas ──────────────────── */
+    #matrixCanvas::after {
+      content: ''; position: absolute; inset: 0;
+      pointer-events: none; z-index: 1;
+      background-image:
+        linear-gradient(rgba(217,76,255,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(217,76,255,.10) 1px, transparent 1px);
+      background-size: 12.5% 12.5%;
+      /* subtle extra glow on the quadrant-divider lines */
+      box-shadow: inset 50% 0 0 0 rgba(217,76,255,.04),
+                  inset 0 50% 0 0 rgba(217,76,255,.04);
+    }
+    [data-theme="light"] #matrixCanvas::after {
+      background-image:
+        linear-gradient(rgba(122,111,240,.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122,111,240,.16) 1px, transparent 1px);
+    }
     /* MOOD PORTRAIT */
     .mood-portrait-fb {
       width: 76px; height: 76px; flex-shrink: 0;
@@ -1278,7 +1307,7 @@
     </div>
   </div>
   <div class="pd-divider"></div>
-  <div class="pd-item pd-disabled" id="pdProfile">◉&ensp;Profile</div>
+  <div class="pd-item" id="pdProfile">◉&ensp;Profile</div>
   <div class="pd-item" id="pdCopy">⊙&ensp;Copy Data</div>
   <div class="pd-item" id="pdImport">⊞&ensp;Import Data</div>
   <div class="pd-item" id="pdTheme">◑&ensp;Dark Mode</div>
@@ -1439,6 +1468,35 @@
   </div>
 </div>
 
+<!-- PROFILE MODAL -->
+<div id="profileModal" class="modal-backdrop">
+  <div class="modal" style="max-width:340px;text-align:center;padding:28px 22px">
+    <div id="pmAvatarWrap"><img id="pmAvatarImg" src="" alt=""></div>
+    <h2 id="pmName" style="font-size:20px;margin-bottom:4px"></h2>
+    <p id="pmSince" style="font-size:12px;color:var(--text-dim);margin-bottom:20px"></p>
+    <div class="modal-stats" style="gap:10px;margin-bottom:16px">
+      <div class="stat-box">
+        <div class="stat-label">Tasks Created</div>
+        <div class="stat-value" id="pmCreated">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="pmDone">0</div>
+      </div>
+      <div class="stat-box" style="grid-column:1/-1">
+        <div class="stat-label">Completion Rate</div>
+        <div class="stat-value" id="pmPct" style="font-size:30px">0%</div>
+        <div class="progress-bar" style="margin-top:8px">
+          <div class="progress-fill" id="pmBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="pmClose">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 
 // ── Profile avatar images (dark / light mode) ──────────────────────────
@@ -1452,6 +1510,34 @@ function updateProfileAvatar() {
   if(img) img.src = src;
   const pdImg = document.getElementById('pdAvatarImg');
   if(pdImg) pdImg.src = src;
+}
+
+
+// ── Profile modal ───────────────────────────────────────────────
+function showProfileModal() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const img = document.getElementById('pmAvatarImg');
+  if(img) img.src = isDark ? PROFILE_DARK : PROFILE_LIGHT;
+
+  document.getElementById('pmName').textContent = state.userName || 'Friend';
+
+  const first = state.firstUsed ? new Date(state.firstUsed) : new Date();
+  const days  = Math.floor((Date.now() - first.getTime()) / 86400000);
+  document.getElementById('pmSince').textContent =
+    days === 0 ? '✦ Joined today — welcome!' :
+    days === 1 ? '✦ Using for 1 day' :
+                 `✦ Using for ${days} days`;
+
+  const total   = state.tags.length;
+  const done    = state.tags.filter(t => t.resolved || t.archived).length;
+  const pct     = total > 0 ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('pmCreated').textContent = total;
+  document.getElementById('pmDone').textContent    = done;
+  document.getElementById('pmPct').textContent     = pct + '%';
+  document.getElementById('pmBar').style.width     = pct + '%';
+
+  openModal('profileModal');
 }
 
 // ============= THEME (light / dark) =============
@@ -1660,6 +1746,7 @@ function init() {
 
 function applyUserName(name) {
   state.userName = name.trim() || 'Friend';
+  if(!state.firstUsed) state.firstUsed = new Date().toISOString();
   document.title = `Eisenhower Matrix — ${state.userName}`;
   rotateGreeting();
   saveData();
@@ -1685,6 +1772,7 @@ function loadData() {
 
   if(!state.tags) state.tags = [];
   if(!state.todayItems) state.todayItems = [];
+  if(!state.firstUsed)  state.firstUsed = new Date().toISOString();
 
   // Normalise each tag — fill in missing fields, fix old date formats
   state.tags.forEach(t => {
@@ -1947,6 +2035,11 @@ function setupEventListeners() {
     const el = document.getElementById(id);
     if(el) el.addEventListener('click', () => { pdDrop.classList.remove('open'); fn(); });
   }
+  // ── Profile modal wiring ───────────────────────────────────────
+  document.getElementById('pmClose').addEventListener('click', () => closeModal('profileModal'));
+  // Enable Profile item in dropdown
+  pdAction('pdProfile', showProfileModal);
+
   pdAction('pdCopy',    copyData);
   pdAction('pdImport',  pasteData);
   pdAction('pdTheme',   toggleTheme);
