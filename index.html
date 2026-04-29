@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Eisenhower Matrix v7</title>
+  <title>Eisenhower Matrix</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzEyMTYyZSIvPgogIDxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiIgcng9IjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Q5NENGRiIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMTYiIHkxPSIzIiB4Mj0iMTYiIHkyPSIyOSIgc3Ryb2tlPSIjRDk0Q0ZGIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMyIgeTE9IjE2IiB4Mj0iMjkiIHkyPSIxNiIgc3Ryb2tlPSIjRDk0Q0ZGIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+">
   <style>
     :root {
       --bg: #12162e;
@@ -1156,6 +1157,29 @@
       transition: width 0.3s;
     }
 
+
+
+    #pmAvatarWrap {
+      width: 90px; height: 90px; border-radius: 50%; overflow: hidden;
+      margin: 0 auto 16px; border: 3px solid transparent;
+      background: linear-gradient(var(--surface),var(--surface)) padding-box,
+                  linear-gradient(135deg,#FF6EC7,#5B7CFA) border-box;
+      box-shadow: 0 0 20px var(--accent3-glow);
+    }
+    #pmAvatarImg {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+    /* ── Matrix grid lines ─────────────────────────────────── */
+    .matrix-grid-lines {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 2;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 12.5% 12.5%;   /* 8×8 grid */
+      opacity: 0.28;
+    }
+    [data-theme="light"] .matrix-grid-lines { opacity: 0.45; }
     /* MOOD PORTRAIT */
     .mood-portrait-fb {
       width: 76px; height: 76px; flex-shrink: 0;
@@ -1279,7 +1303,7 @@
     </div>
   </div>
   <div class="pd-divider"></div>
-  <div class="pd-item pd-disabled" id="pdProfile">◉&ensp;Profile</div>
+  <div class="pd-item" id="pdProfile">◉&ensp;Profile</div>
   <div class="pd-item" id="pdCopy">⊙&ensp;Copy Data</div>
   <div class="pd-item" id="pdImport">⊞&ensp;Import Data</div>
   <div class="pd-item" id="pdTheme">◑&ensp;Dark Mode</div>
@@ -1317,6 +1341,8 @@
 
         <!-- THE CANVAS — tags are absolutely positioned here -->
         <div id="matrixCanvas">
+          <!-- grid lines overlay -->
+          <div class="matrix-grid-lines"></div>
           <!-- quadrant bg overlays (pointer-events:none) -->
           <div class="qbg q2"></div>
           <div class="qbg q1"></div>
@@ -1454,6 +1480,37 @@ function updateProfileAvatar() {
   const pdImg = document.getElementById('pdAvatarImg');
   if(pdImg) pdImg.src = src;
 }
+
+// ── Profile modal ───────────────────────────────────────────────────
+function showProfileModal() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  document.getElementById('pmAvatarImg').src = isDark ? PROFILE_DARK : PROFILE_LIGHT;
+  document.getElementById('pmName').textContent = state.userName || 'Friend';
+
+  // Time since first use
+  const first = state.firstUsed ? new Date(state.firstUsed) : new Date();
+  const days  = Math.floor((Date.now() - first.getTime()) / 86400000);
+  document.getElementById('pmSince').textContent =
+    days === 0 ? '✦ Joined today — welcome!' :
+    days === 1 ? '✦ Using for 1 day' :
+    `✦ Using for ${days} day${days>1?'s':''}`;
+
+  // Task stats
+  const total    = state.tags.length;
+  const done     = state.tags.filter(t => t.resolved).length;
+  const archived = state.tags.filter(t => t.archived).length;
+  const allDone  = done + archived;
+  const pct      = total > 0 ? Math.round(allDone / total * 100) : 0;
+
+  document.getElementById('pmCreated').textContent = total;
+  document.getElementById('pmDone').textContent    = allDone;
+  document.getElementById('pmPct').textContent     = pct + '%';
+  document.getElementById('pmBar').style.width     = pct + '%';
+
+  openModal('profileModal');
+}
+
+document.getElementById('pmClose').addEventListener('click', () => closeModal('profileModal'));
 // ============= THEME (light / dark) =============
 (function initTheme() {
   const saved = localStorage.getItem('ei_theme') || 'dark';
@@ -1660,6 +1717,7 @@ function init() {
 
 function applyUserName(name) {
   state.userName = name.trim() || 'Friend';
+  if(!state.firstUsed) state.firstUsed = new Date().toISOString();
   document.title = `Eisenhower Matrix — ${state.userName}`;
   rotateGreeting();
   saveData();
@@ -1685,6 +1743,7 @@ function loadData() {
 
   if(!state.tags) state.tags = [];
   if(!state.todayItems) state.todayItems = [];
+  if(!state.firstUsed)  state.firstUsed  = new Date().toISOString();
 
   // Normalise each tag — fill in missing fields, fix old date formats
   state.tags.forEach(t => {
@@ -1947,6 +2006,7 @@ function setupEventListeners() {
     const el = document.getElementById(id);
     if(el) el.addEventListener('click', () => { pdDrop.classList.remove('open'); fn(); });
   }
+  pdAction('pdProfile', showProfileModal);
   pdAction('pdCopy',    copyData);
   pdAction('pdImport',  pasteData);
   pdAction('pdTheme',   toggleTheme);
@@ -3014,6 +3074,37 @@ function addTag(text, deadline) {
 
 </script>
 
+
+<!-- PROFILE MODAL -->
+<div id="profileModal" class="modal-backdrop">
+  <div class="modal" style="max-width:360px;text-align:center;padding:28px 24px">
+    <div id="pmAvatarWrap">
+      <img id="pmAvatarImg" src="" alt="">
+    </div>
+    <h2 id="pmName" style="margin-bottom:4px;font-size:20px"></h2>
+    <p id="pmSince" style="font-size:12px;color:var(--text-dim);margin-bottom:20px"></p>
+    <div class="modal-stats" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div class="stat-box">
+        <div class="stat-label">Tasks Created</div>
+        <div class="stat-value" id="pmCreated">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Tasks Done</div>
+        <div class="stat-value" id="pmDone">0</div>
+      </div>
+      <div class="stat-box" style="grid-column:1/-1">
+        <div class="stat-label">Completion Rate</div>
+        <div class="stat-value" id="pmPct" style="font-size:32px">0%</div>
+        <div class="progress-bar" style="margin-top:8px">
+          <div class="progress-fill" id="pmBar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn primary" id="pmClose">Close</button>
+    </div>
+  </div>
+</div>
 <footer id="appFooter">© 2026 Angela Pai · Eisenhower Matrix · All Rights Reserved</footer>
 </body>
 </html>
