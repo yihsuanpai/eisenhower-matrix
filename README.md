@@ -2,9 +2,9 @@
 
 > *Because your brain deserves a better operating system.*
 
-A single-file, zero-dependency, local-first productivity tool built around the Eisenhower Decision Matrix — the same prioritisation framework used by US presidents, Fortune 500 executives, and every high-functioning person who's ever stared down an inbox and survived.
+A single-file, zero-dependency, local-first productivity tool built around the Eisenhower Decision Matrix — the same prioritisation framework used by executives and high-functioning professionals who've learned to distinguish what actually matters from what just feels urgent.
 
-No subscriptions. No accounts. No tracking. Just you, your tasks, and brutal clarity about what actually matters.
+No subscriptions. No accounts. No tracking. Just you, your tasks, and brutal clarity about what to work on next.
 
 **→ [Launch App](https://yihsuanpai.github.io/eisenhower-matrix/)**
 
@@ -14,10 +14,10 @@ No subscriptions. No accounts. No tracking. Just you, your tasks, and brutal cla
 
 The matrix splits every task into four quadrants by two axes — **urgency** and **importance**:
 
-|                  | **Urgent →**            | **Not Urgent**            |
-|------------------|-------------------------|---------------------------|
-| **Important ↑**  | 🔴 **DO** — right now   | 🔵 **SCHEDULE** — plan it |
-| **Not Important**| 🟡 **DELEGATE** — offload it | ⚫ **ELIMINATE** — delete it |
+|                  | **Urgent →**              | **Not Urgent**              |
+|------------------|---------------------------|-----------------------------|
+| **Important ↑**  | 🔴 **DO** — right now     | 🔵 **SCHEDULE** — plan it   |
+| **Not Important**| 🟡 **DELEGATE** — offload | ⚫ **ELIMINATE** — skip it  |
 
 The insight is deceptively simple: most people spend their days reacting to urgent-but-unimportant noise. The matrix forces you to stop, zoom out, and act on what *actually* moves the needle.
 
@@ -26,85 +26,71 @@ The insight is deceptively simple: most people spend their days reacting to urge
 ## Features
 
 ### 🎯 Free-Float Matrix Canvas
-Drag tasks to any position on the canvas — their exact coordinates represent their urgency (x-axis) and importance (y-axis). No snapping, no rigid boxes. A task that's 80% urgent and 60% important sits *exactly* there, visually.
+Drag tasks to any position on the canvas. Their exact x,y coordinates represent urgency (right = more urgent) and importance (top = more important). Drop them anywhere — precision is the point.
+
+### 🗂 Work / Private Separation
+Tag every task as **Work** or **Private**. Three matrix views — **All Tasks**, **Work**, and **Private** — keep your professional and personal life cleanly separated on the same canvas.
+
+### ⚡ Work DNA Analysis
+Answer 8 behavioural questions and get a personalised work-pattern analysis: your archetype (Visionary, Optimizer, Connector, Craftsman, or Architect), the Tier 1 tech companies built for your kind of talent, and the famous leader whose working style most closely mirrors yours. Results are cached and shareable to X, Threads, Facebook, or Instagram.
 
 ### ✦ Today's Sprint Tab
-Commit to what you're actually finishing today. Pick tasks from your active list, reorder them by priority with drag-and-drop, and close the day with a summary of what you shipped — including a completion rate and praise for clearing anything from the DO quadrant. Unfinished tasks carry forward automatically.
+Commit to what you're actually finishing today. Pick tasks from your active list, drag to reorder by priority, and close the day with a summary — completion rate, remaining tasks, and a well-earned compliment for clearing anything from the DO quadrant. Incomplete tasks carry forward automatically.
 
 ### 🌙 End-of-Day Summary
-When you're done, hit *Call it a day*. The app shows you: how many tasks you committed to, how many you finished, what's still open, and — if you cleared any high-importance work — a well-earned compliment.
+Hit *Call it a day* to see your committed vs completed count, a live completion percentage with progress bar, and praise for finishing high-importance work.
+
+### 🗒 Per-Task Notes
+Every task supports rich freeform notes accessible via a `🗒` hover button on both the matrix canvas and the task table. Notes persist with the task across all views.
+
+### ⋮ Contextual Task Menu
+Hover any matrix tag to reveal a `⋮` button. Click to access: **Note · Done · Move · Delete** — including a Move action that flips a task between Work and Private.
 
 ### 📋 Sortable Active Task Table
-Every column in the Active tab is sortable: task name, quadrant, urgency score, importance score, creation date, deadline. One click to sort, one more to reverse.
+Every column in the Active tab is sortable: task name, quadrant, urgency, importance, creation date, deadline. One click to sort, one more to reverse.
 
 ### 📅 Deadline Countdown Bar
-Set a hard deadline on any task. As it approaches, a live countdown bar appears at the top of the matrix — hours, minutes, seconds — so nothing sneaks up on you.
+Set a hard deadline on any task. Within 48 hours, a live HH:MM:SS countdown bar appears above the matrix so nothing sneaks up on you.
 
-### 🗒 Notes Per Task
-Every task supports rich freeform notes. Add a note icon appears on hover across both the matrix canvas and the table view. Notes are searchable and previewed on hover.
+### 🌗 Light / Dark Mode
+One click in the profile menu toggles between a deep-space dark palette and a city-pop pastel light mode. Preference persists across sessions.
 
-### 😮‍💨 Mood Check-Ins
-Feeling drained? Hit the mood button (*I'm bored / I'm tired / I'm exhausted / I'm drained*). A Marcus Aurelius quote appears, followed by a witty-but-wise nudge to step away for three minutes — then come back and start a specific task from your DO quadrant.
+### 👤 Profile & Settings
+The profile modal (accessible via the avatar) shows your usage stats — days active, tasks created, completion rate — alongside editable profile fields: job title, one-year vision, nationality, gender, and date of birth.
+
+### 🌠 Animated Matrix Grid
+Subtle neon grid lines with occasional shooting-star animations trace the grid every 10–20 seconds, giving the canvas a quiet sense of motion without distraction.
 
 ### 🎨 City-Pop Aesthetic
-Dark-mode base built on deep space blue and midnight indigo, lit up with cyber magenta, electric aqua, hot pink, and neon lime accents. Designed to feel like a premium productivity tool, not an enterprise JIRA clone.
+Dark-mode base on deep space blue and midnight indigo, lit up with cyber magenta, electric aqua, and hot pink. Light mode uses soft periwinkle and lavender with pastel warmth. Both feel premium, never neon-overloaded.
 
 ### 🔒 Fully Local — No Server, No Sync, No Tracking
-All data lives in your browser's `localStorage`. Nothing is sent anywhere. The app is a single `.html` file — the entire product, zero build step, zero dependencies, zero cloud costs.
+All data lives in your browser's `localStorage`. Nothing is ever sent anywhere. The app is a single `.html` file — the entire product, zero build step, zero dependencies.
 
 ---
 
 ## Stack
 
 ```
-HTML + CSS + Vanilla JS   (1 file, ~2,400 lines)
+HTML + CSS + Vanilla JS   (1 file, ~4,000 lines)
 localStorage              (persistence)
 GitHub Pages              (hosting)
+Wikipedia REST API        (celebrity portraits — on-demand, no key required)
+Clearbit Logo API         (company logos — on-demand, no key required)
 ```
 
 No React. No Node. No bundler. No npm install. Deliberately.
-
-The constraint of a single file isn't a limitation — it's a design choice. When your entire product fits in one file, you think very carefully about what belongs in it.
-
----
-
-## Run it Locally
-
-```bash
-# Option A: just open it
-open eisenhower.html
-
-# Option B: serve it (avoids any file:// quirks)
-python3 -m http.server 8080
-# → http://localhost:8080/eisenhower.html
-```
-
----
-
-## Deploy Your Own Copy
-
-```bash
-# 1. Get a GitHub token at https://github.com/settings/tokens (tick 'repo')
-# 2. Run:
-GITHUB_TOKEN=ghp_yourtoken python3 deploy.py
-# → Publishes to https://yourusername.github.io/eisenhower-matrix/
-```
 
 ---
 
 ## Data & Privacy
 
-Your tasks, notes, and name are stored **only in your browser's localStorage**. They are never sent to GitHub, any server, or anywhere else. Publishing this repo makes the *source code* public — not your data. Think of it as open-sourcing a blank notebook.
+Your tasks, notes, name, and profile settings are stored **only in your browser's localStorage**. They are never sent to GitHub, any server, or anywhere else. Publishing this repo makes the *source code* public — not your data.
 
-To back up your data: click the 📋 **Copy Data** button in the app. To restore: click 📥 **Import Data**.
+To back up: click **⊙ Copy Data** in the profile menu. To restore: click **⊞ Import Data**.
 
 ---
 
 ## Version
 
-`Ver. 1.0.0` — Built with [Claude Sonnet 4.6](https://www.anthropic.com/claude)  
-**Builder:** Angela Pai
-
----
-
-*Built because good tools should feel as sharp as the thinking they support.*
+`Ver. 1.3.0` — Built with [Claude Sonnet 4.6](https://www.anthropic.com/claude)
