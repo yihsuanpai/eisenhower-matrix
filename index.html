@@ -1332,6 +1332,207 @@
       border-color: rgba(0,0,0,.14) !important;
       box-shadow: 0 2px 10px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.08) !important;
     }
+
+    /* ══════════════ ANALYSIS MODAL ══════════════════════════ */
+    #anaModal {
+      position: fixed; inset: 0; z-index: 8000;
+      background: rgba(0,0,0,.72); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    #anaModal.open { display: flex; }
+
+    /* Animated neon border wrapper */
+    .ana-outer {
+      position: relative;
+      border-radius: 20px;
+      padding: 2px;
+      width: min(860px, 96vw);
+      max-height: 90vh;
+      background: linear-gradient(60deg,#D94CFF,#4FF0D1,#FF6EC7,#7CFF9B,#D94CFF);
+      background-size: 300% 300%;
+      animation: anaBorderSpin 5s linear infinite;
+      box-shadow: 0 0 32px rgba(217,76,255,.5), 0 0 60px rgba(79,240,209,.25);
+    }
+    @keyframes anaBorderSpin { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
+
+    /* Shooting star on the border */
+    .ana-outer::after {
+      content: ''; position: absolute; inset: 0; border-radius: 20px;
+      background: conic-gradient(from 0deg,
+        transparent 0deg, transparent 354deg,
+        rgba(255,255,255,.95) 356deg, rgba(255,255,255,.95) 358deg, transparent 360deg);
+      animation: anaBorderStar 10s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes anaBorderStar { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+    /* Inner box with gradient bg */
+    .ana-box {
+      border-radius: 18px;
+      background: linear-gradient(140deg,#0d0530 0%,#150b45 28%,#081530 60%,#050d1f 100%);
+      overflow: hidden; overflow-y: auto;
+      max-height: calc(90vh - 4px);
+      position: relative;
+    }
+    [data-theme="light"] .ana-outer {
+      box-shadow: 0 0 24px rgba(122,111,240,.4), 0 0 48px rgba(91,124,250,.2);
+    }
+    [data-theme="light"] .ana-box {
+      background: linear-gradient(140deg,#dce4ff 0%,#eff3ff 35%,#e8d8ff 70%,#f7f9ff 100%);
+    }
+
+    /* Header */
+    .ana-hdr {
+      padding: 20px 24px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    [data-theme="light"] .ana-hdr { border-bottom-color: rgba(0,0,0,.08); }
+    .ana-title {
+      font-size: 18px; font-weight: 800; letter-spacing: .5px;
+      background: linear-gradient(90deg,#D94CFF,#4FF0D1,#FF6EC7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    [data-theme="light"] .ana-title {
+      background: linear-gradient(90deg,#7A6FF0,#5B7CFA,#FF6EC7);
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .ana-close {
+      background: none; border: none; color: rgba(255,255,255,.4);
+      font-size: 22px; cursor: pointer; transition: color .15s; line-height:1;
+    }
+    .ana-close:hover { color: #FF6EC7; }
+    [data-theme="light"] .ana-close { color: rgba(0,0,0,.3); }
+
+    /* Steps */
+    .ana-step { display: none; padding: 20px 24px 24px; }
+    .ana-step.active { display: block; }
+
+    /* Questions */
+    .ana-q-block { margin-bottom: 20px; }
+    .ana-q-text  { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.9); margin-bottom: 10px; }
+    [data-theme="light"] .ana-q-text { color: #2D2F3A; }
+    .ana-options { display: flex; flex-direction: column; gap: 7px; }
+    .ana-opt {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; border-radius: 8px; cursor: pointer;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+      transition: background .12s, border-color .12s;
+      font-size: 12.5px; color: rgba(255,255,255,.75);
+    }
+    .ana-opt:hover { background: rgba(217,76,255,.12); border-color: rgba(217,76,255,.3); }
+    .ana-opt input[type="radio"] { accent-color: #D94CFF; flex-shrink:0; width:14px; height:14px; }
+    .ana-opt.selected { background: rgba(217,76,255,.18); border-color: #D94CFF; color: #fff; }
+    [data-theme="light"] .ana-opt { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); color: #2D2F3A; }
+    [data-theme="light"] .ana-opt:hover { background: rgba(122,111,240,.12); }
+    [data-theme="light"] .ana-opt input[type="radio"] { accent-color: #7A6FF0; }
+    [data-theme="light"] .ana-opt.selected { background: rgba(122,111,240,.18); border-color: #7A6FF0; }
+
+    /* Progress */
+    .ana-progress { display: flex; gap: 4px; margin-bottom: 18px; }
+    .ana-prog-dot {
+      flex: 1; height: 3px; border-radius: 2px;
+      background: rgba(255,255,255,.1); transition: background .3s;
+    }
+    .ana-prog-dot.done { background: #4FF0D1; }
+    .ana-prog-dot.active { background: #D94CFF; }
+
+    /* Analyse button */
+    .ana-btn {
+      width: 100%; padding: 12px; border-radius: 10px; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 700; letter-spacing: .5px;
+      background: linear-gradient(135deg,#D94CFF,#4FF0D1);
+      color: #fff; margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(217,76,255,.4);
+      transition: opacity .15s, box-shadow .15s;
+    }
+    .ana-btn:hover { opacity: .9; box-shadow: 0 6px 28px rgba(217,76,255,.55); }
+    .ana-btn:disabled { opacity: .4; cursor: default; }
+    [data-theme="light"] .ana-btn { background: linear-gradient(135deg,#7A6FF0,#5B7CFA); }
+
+    /* Step 2: Loading */
+    .ana-loading { text-align: center; padding: 60px 20px; }
+    .ana-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
+    .ana-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: #D94CFF;
+      animation: anaDot 1.4s ease-in-out infinite;
+    }
+    .ana-dot:nth-child(2) { animation-delay: .2s; background: #4FF0D1; }
+    .ana-dot:nth-child(3) { animation-delay: .4s; background: #FF6EC7; }
+    @keyframes anaDot { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+    .ana-loading-text { font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+    [data-theme="light"] .ana-loading-text { color: #6B6F85; }
+
+    /* Step 3: Results */
+    .ana-section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: #4FF0D1; margin-bottom: 12px; margin-top: 22px;
+    }
+    [data-theme="light"] .ana-section-title { color: #5B7CFA; }
+    .ana-general-text {
+      font-size: 13.5px; line-height: 1.75; color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.04); border-radius: 10px; padding: 16px;
+      border-left: 3px solid #D94CFF;
+    }
+    [data-theme="light"] .ana-general-text { color: #2D2F3A; background: rgba(122,111,240,.06); border-color: #7A6FF0; }
+
+    /* Company cards */
+    .ana-companies { display: flex; gap: 12px; flex-wrap: wrap; }
+    .ana-company-card {
+      flex: 1; min-width: 160px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      transition: border-color .15s;
+    }
+    .ana-company-card:hover { border-color: #4FF0D1; }
+    .ana-company-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; background: white; padding: 4px; }
+    .ana-company-name { font-size: 13px; font-weight: 700; color: #fff; }
+    .ana-company-reason { font-size: 11.5px; color: rgba(255,255,255,.6); text-align: center; line-height: 1.5; }
+    [data-theme="light"] .ana-company-card { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
+    [data-theme="light"] .ana-company-name { color: #2D2F3A; }
+    [data-theme="light"] .ana-company-reason { color: #6B6F85; }
+
+    /* Celebrity cards */
+    .ana-celebs { display: flex; gap: 14px; flex-wrap: wrap; }
+    .ana-celeb-card {
+      flex: 1; min-width: 200px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .ana-celeb-photo {
+      width: 64px; height: 64px; flex-shrink: 0; border-radius: 10px;
+      object-fit: cover; object-position: center top; border: 2px solid rgba(217,76,255,.4);
+      background: var(--surface3);
+    }
+    .ana-celeb-fb { width:64px; height:64px; flex-shrink:0; border-radius:10px;
+      display:flex; align-items:center; justify-content:center; font-size:24px;
+      background: rgba(255,255,255,.08); border: 2px solid rgba(217,76,255,.4); }
+    .ana-celeb-name { font-size: 13px; font-weight: 700; color: #FF6EC7; margin-bottom: 4px; }
+    .ana-celeb-reason { font-size: 11.5px; color: rgba(255,255,255,.65); line-height: 1.5; }
+    [data-theme="light"] .ana-celeb-card { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
+    [data-theme="light"] .ana-celeb-name { color: #7A6FF0; }
+    [data-theme="light"] .ana-celeb-reason { color: #6B6F85; }
+
+    /* Share buttons */
+    .ana-share-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+    .ana-share-btn {
+      flex: 1; min-width: 110px; padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.06); color: rgba(255,255,255,.8);
+      cursor: pointer; font-size: 12px; font-weight: 600;
+      transition: background .12s, border-color .12s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .ana-share-btn:hover { background: rgba(217,76,255,.2); border-color: #D94CFF; color: #fff; }
+    [data-theme="light"] .ana-share-btn { border-color: rgba(122,111,240,.2); background: rgba(122,111,240,.06); color: #2D2F3A; }
+    .ana-redo-btn {
+      background: none; border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.6); padding: 9px 18px; border-radius: 8px;
+      cursor: pointer; font-size: 12px; transition: all .15s; margin-top: 14px;
+    }
+    .ana-redo-btn:hover { border-color: #4FF0D1; color: #4FF0D1; }
+    [data-theme="light"] .ana-redo-btn { border-color: rgba(122,111,240,.3); color: #6B6F85; }
     /* MOOD PORTRAIT */
     .mood-portrait-fb {
       width: 76px; height: 76px; flex-shrink: 0;
@@ -1456,6 +1657,7 @@
   </div>
   <div class="pd-divider"></div>
   <div class="pd-item" id="pdProfile">◉&ensp;Profile</div>
+  <div class="pd-item" id="pdDNA">⚡&ensp;Work DNA</div>
   <div class="pd-item" id="pdCopy">⊙&ensp;Copy Data</div>
   <div class="pd-item" id="pdImport">⊞&ensp;Import Data</div>
   <div class="pd-item" id="pdTheme">◑&ensp;Dark Mode</div>
@@ -1685,6 +1887,59 @@
       </div>
 
       <button class="modal-btn primary" id="pmSaveBtn" style="width:100%;margin-top:6px">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- WORK DNA ANALYSIS MODAL -->
+<div id="anaModal">
+  <div class="ana-outer">
+    <div class="ana-box">
+      <div class="ana-hdr">
+        <div class="ana-title">⚡ Work DNA Analysis</div>
+        <button class="ana-close" id="anaClose">×</button>
+      </div>
+
+      <!-- STEP 1: Questionnaire -->
+      <div id="anaStep1" class="ana-step active">
+        <div class="ana-progress" id="anaProgress"></div>
+        <div id="anaQContainer"></div>
+        <button class="ana-btn" id="anaAnalyseBtn" disabled>Analyse My Work DNA →</button>
+      </div>
+
+      <!-- STEP 2: Loading -->
+      <div id="anaStep2" class="ana-step">
+        <div class="ana-loading">
+          <div class="ana-dots">
+            <div class="ana-dot"></div><div class="ana-dot"></div><div class="ana-dot"></div>
+          </div>
+          <p class="ana-loading-text">Reading the patterns in your task history and cross-referencing your responses — this won't take long.</p>
+        </div>
+      </div>
+
+      <!-- STEP 3: Results -->
+      <div id="anaStep3" class="ana-step">
+        <div class="ana-section-title">General Analysis</div>
+        <div class="ana-general-text" id="anaGeneral"></div>
+
+        <div class="ana-section-title" style="margin-top:20px">Companies Built for Your Kind of Talent</div>
+        <div class="ana-companies" id="anaCompanies"></div>
+
+        <div class="ana-section-title" style="margin-top:20px">Your Working Style Mirrors</div>
+        <div class="ana-celebs" id="anaCelebs"></div>
+
+        <div class="ana-section-title" style="margin-top:20px">Share Your Results</div>
+        <div class="ana-share-row">
+          <button class="ana-share-btn" data-platform="x">𝕏&ensp;Post on X</button>
+          <button class="ana-share-btn" data-platform="threads">⊕&ensp;Threads</button>
+          <button class="ana-share-btn" data-platform="facebook">f&ensp;Facebook</button>
+          <button class="ana-share-btn" data-platform="instagram">◎&ensp;Instagram</button>
+        </div>
+        <div style="text-align:center">
+          <button class="ana-redo-btn" id="anaRedo">↺ Redo Analysis</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -2288,7 +2543,7 @@ function setupEventListeners() {
     }
   });
   pdAction('pdProfile', showProfileModal);
-
+  pdAction('pdDNA',     showAnalysisModal);
   pdAction('pdCopy',    copyData);
   pdAction('pdImport',  pasteData);
   pdAction('pdTheme',   toggleTheme);
@@ -2348,6 +2603,290 @@ function moveTag(id) {
   tag.type = (tag.type||'work') === 'private' ? 'work' : 'private';
   saveData(); renderMatrix(); renderCurrentTab();
 }
+
+
+// ══════════════════════════════════════════════════════════════════
+// WORK DNA ANALYSIS
+// ══════════════════════════════════════════════════════════════════
+const ANA_QUESTIONS = [
+  { q: "When kicking off a new project, your natural instinct is to:",
+    opts: ["Dive in and learn as things unfold","Map out the full scope before touching anything","Align stakeholders and build consensus first","Identify the core problem and solve it elegantly"] },
+  { q: "When priorities shift unexpectedly, you:",
+    opts: ["Pivot fast — change energises you","Reassess and restructure with clear logic","Check in with the team before adjusting","Protect quality — standards don't move under pressure"] },
+  { q: "Your ideal work environment is:",
+    opts: ["High-velocity, ambiguous, always evolving","Structured with clear goals and measurable outcomes","Collaborative, open-plan, people-first","Quiet, focused, deep-work hours protected"] },
+  { q: "When you hit a wall on a hard problem, you:",
+    opts: ["Reframe boldly and try something completely different","Break it into parts and work through systematically","Talk it through — a fresh perspective unlocks things","Stay with it. Depth of focus is how you break through"] },
+  { q: "What energises you most professionally?",
+    opts: ["Shipping something ambitious from scratch","Making a chaotic system run elegantly","Growing people and shaping culture","Achieving a level of craft others didn't think was possible"] },
+  { q: "How do others typically describe working with you?",
+    opts: ["Relentlessly driven and results-oriented","Structured and reliable — you know what to expect","A natural collaborator who lifts everyone around them","Quietly exceptional — the work speaks for itself"] },
+  { q: "How do you approach important decisions?",
+    opts: ["Trust instincts, move fast, correct course later","Analyse, model, then commit with conviction","Gather input broadly, then synthesise and lead","Study the craft masters, then apply their principles"] },
+  { q: "What does mastery look like to you?",
+    opts: ["Doing impossible things at speed","Building systems that scale without breaking","Inspiring others to do their best work","Obsessing over one thing until it becomes timeless"] },
+];
+
+// Profile definitions
+const ANA_PROFILES = {
+  visionary: {
+    label: "The Visionary",
+    text: "You think in systems before others even see the problem. What sets you apart isn't just ambition — it's the rare ability to hold a clear north star while navigating complete uncertainty. You don't wait for permission to think big, and your best work tends to emerge when the constraints are extreme and the stakes are high. People around you often describe a feeling of momentum they can't quite explain — that's you operating in your natural state. The one thing to watch: patience with incremental thinking. It's not a flaw — it's a signal of what you're capable of.",
+    companies: [
+      { name:"OpenAI",    domain:"openai.com",     reason:"OpenAI moves at the edge of what's possible — where first-principles thinking and high tolerance for uncertainty aren't just welcome, they're required." },
+      { name:"Anthropic", domain:"anthropic.com",   reason:"Anthropic attracts people who want to solve civilisation-scale problems with intellectual rigour. Your combination of bold thinking and careful reasoning fits exactly." },
+      { name:"NVIDIA",    domain:"nvidia.com",      reason:"Jensen Huang built NVIDIA by betting on things the market couldn't yet see. Your instinct for long-horizon conviction is exactly the currency that drives this company." },
+    ],
+    celebs: [
+      { name:"Elon Musk",   wiki:"Elon_Musk",   reason:"You share Elon's instinct to ignore conventional timelines and solve problems from first principles. The ambition doesn't scare you — it's where you feel most alive." },
+      { name:"Sam Altman",  wiki:"Sam_Altman",  reason:"Like Sam, you operate with a rare combination of long-horizon thinking and short-cycle execution. You don't wait for the world to catch up to your vision." },
+    ],
+  },
+  optimizer: {
+    label: "The Optimizer",
+    text: "You see what others overlook: the inefficiency hiding inside the ordinary. Your instinct is to understand how systems work — not just at the surface, but structurally — and then make them measurably better. You bring a rare rigour to your craft that most environments undervalue until they see the results. You are most powerful when given a hard constraint and told to figure it out. Occasionally you struggle with the ambiguity of early-stage work, but once a direction is clear, there are few who execute with more precision and consistency.",
+    companies: [
+      { name:"Amazon",    domain:"amazon.com",    reason:"Amazon's culture of working backwards, writing things down, and holding an unrelenting bar on execution aligns with how you already think about problems." },
+      { name:"Google",    domain:"google.com",    reason:"Google rewards people who combine intellectual depth with systematic thinking. Your profile fits the engineering-first, data-driven culture they've built." },
+      { name:"Microsoft", domain:"microsoft.com", reason:"Microsoft's transformation under Satya rewards exactly the kind of structured, high-output thinking you bring — turning complexity into durable solutions." },
+    ],
+    celebs: [
+      { name:"Jeff Bezos",    wiki:"Jeff_Bezos",    reason:"Bezos built one of the most complex organisations on Earth through an obsession with systems, long-term thinking, and relentless measurement — qualities that define you too." },
+      { name:"Sundar Pichai", wiki:"Sundar_Pichai", reason:"Sundar's calm, structured intelligence and ability to bring clarity to massive complexity mirrors how you navigate challenging work environments." },
+    ],
+  },
+  connector: {
+    label: "The Connector",
+    text: "Your greatest asset is something that can't be easily taught: the ability to make people feel seen, aligned, and energised toward a shared goal. You thrive at the intersection of people and purpose. You have sharp instincts about culture, communication, and the human side of any challenge. Your impact is often felt long after you've left a room. The area to lean into: channelling your interpersonal intelligence into structural decisions — you have more leverage than you think.",
+    companies: [
+      { name:"Meta",   domain:"meta.com",   reason:"Meta is built on connecting people at scale — and its leadership culture rewards those who can hold alignment in fast-moving, high-ambiguity environments." },
+      { name:"Uber",   domain:"uber.com",   reason:"Uber's cross-functional, global culture needs people who can bring cohesion and energy in markets where the ground shifts constantly — that's your superpower." },
+      { name:"Stripe", domain:"stripe.com", reason:"Stripe is unusual: it's a technical company that runs on the quality of its thinking and writing. Your ability to bring people together around big ideas is highly valued here." },
+    ],
+    celebs: [
+      { name:"Oprah Winfrey",  wiki:"Oprah_Winfrey",  reason:"Oprah built a media empire by understanding people deeply and creating spaces where they feel genuinely seen. That same intelligence is your professional currency." },
+      { name:"Satya Nadella",  wiki:"Satya_Nadella",  reason:"Satya transformed Microsoft through empathy, alignment, and the belief that culture is the product. You lead and influence the same way." },
+    ],
+  },
+  craftsman: {
+    label: "The Craftsman",
+    text: "You are driven by a standard of excellence that isn't externally defined — it comes from within. You're the person who notices what's slightly off, who cares about the thing others would have shipped already. In a world that rewards speed over depth, your disposition toward mastery is increasingly rare and increasingly valuable. Your output quality sets you apart in ways you may not fully realise — trust it. The area to develop: letting 'good enough to ship' coexist with your high standards. Speed and mastery aren't enemies.",
+    companies: [
+      { name:"Apple",  domain:"apple.com",  reason:"Apple's obsession with the details users will never consciously notice is exactly where your standards-driven approach would feel completely at home." },
+      { name:"Stripe", domain:"stripe.com", reason:"Stripe has an unusually high bar for craft — in writing, design, engineering, and thinking. Your attention to quality is precisely the signal they hire for." },
+      { name:"NVIDIA", domain:"nvidia.com", reason:"NVIDIA rewards deep technical mastery and long-term domain obsession. The people who thrive here are specialists who care intensely — just like you." },
+    ],
+    celebs: [
+      { name:"Shohei Ohtani",  wiki:"Shohei_Ohtani",  reason:"Ohtani doesn't just play baseball — he has redefined what a single person can achieve through relentless, disciplined mastery of his craft. Sound familiar?" },
+      { name:"Taylor Swift",   wiki:"Taylor_Swift",    reason:"Taylor controls every detail of her art with an intentionality most people never see. The result? Work that outlasts trends because it was built to last." },
+    ],
+  },
+  architect: {
+    label: "The Architect",
+    text: "You build things designed to last. There's an elegance to how you think about structure — not just what works today, but what will hold under pressure, at scale, over time. You're methodical without being slow, detailed without losing the big picture. People learn to depend on your judgment because it's grounded in genuine craft and long-term thinking. Your challenge: occasionally overbuilding when good-enough would unlock more momentum. Trust that your foundation is already stronger than most.",
+    companies: [
+      { name:"Stripe",    domain:"stripe.com",    reason:"Stripe was built on the idea that complex infrastructure can be made beautifully simple — which requires exactly the kind of structural thinking you bring." },
+      { name:"Google",    domain:"google.com",    reason:"Google's internal culture of building at scale with rigour suits the Architect profile: someone who designs for longevity, not just the current sprint." },
+      { name:"Apple",     domain:"apple.com",     reason:"The pursuit of coherent, durable product design is Apple's defining discipline — and your architectural approach to problems makes you a natural fit." },
+    ],
+    celebs: [
+      { name:"Steve Jobs",    wiki:"Steve_Jobs",    reason:"Jobs didn't just build products — he built belief systems, languages, and entire categories. Your instinct for structure with soul puts you in his orbit." },
+      { name:"Jensen Huang",  wiki:"Jensen_Huang",  reason:"Jensen spent 30 years building a company most people didn't understand — until they did. Your long-arc thinking and structural conviction is exactly his mode." },
+    ],
+  },
+};
+
+// Question → profile weight mapping (A→0,B→1,C→2,D→3 → profile)
+const ANA_WEIGHTS = [
+  ['visionary','optimizer','connector','architect'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+  ['visionary','optimizer','connector','craftsman'],
+];
+
+let _anaAnswers = [];
+let _anaCache   = {}; // hash → profile key
+
+function anaHash(answers, taskCount) {
+  const s = answers.join(',') + '|' + Math.floor(taskCount/5);
+  return s.split('').reduce((a,c) => ((a<<5)-a+c.charCodeAt(0))|0, 0).toString(36);
+}
+
+function calculateProfile(answers) {
+  const sc = {visionary:0,optimizer:0,connector:0,craftsman:0,architect:0};
+  answers.forEach((ai, qi) => {
+    const p = ANA_WEIGHTS[qi]?.[ai];
+    if(p) sc[p] += 2;
+  });
+  // task count nudge
+  const tc = state.tags.length;
+  if(tc > 20) sc.architect += 1;
+  if(tc > 10) sc.optimizer += 1;
+  return Object.entries(sc).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+// ── Celebrity photo fetch (Wikipedia REST API) ───────────────────
+const _celebPhotoCache = {};
+async function fetchCelebPhoto(wikiPage) {
+  if(_celebPhotoCache[wikiPage] !== undefined) return _celebPhotoCache[wikiPage];
+  try {
+    const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${wikiPage}`);
+    const d = await r.json();
+    const url = d.thumbnail?.source || null;
+    _celebPhotoCache[wikiPage] = url;
+    return url;
+  } catch(e) { _celebPhotoCache[wikiPage] = null; return null; }
+}
+
+// ── Render results ───────────────────────────────────────────────
+async function renderAnaResults(profileKey) {
+  const p = ANA_PROFILES[profileKey];
+  document.getElementById('anaGeneral').innerHTML =
+    `<strong style="color:#4FF0D1;font-size:14px">${p.label}</strong><br><br>${p.text}`;
+
+  // Companies
+  const compEl = document.getElementById('anaCompanies');
+  compEl.innerHTML = p.companies.map(c => `
+    <div class="ana-company-card">
+      <img class="ana-company-logo" src="https://logo.clearbit.com/${c.domain}" alt="${c.name}"
+           onerror="this.style.display='none'">
+      <div class="ana-company-name">${c.name}</div>
+      <div class="ana-company-reason">${c.reason}</div>
+    </div>`).join('');
+
+  // Celebrities
+  const celebEl = document.getElementById('anaCelebs');
+  celebEl.innerHTML = '<div style="color:rgba(255,255,255,.4);font-size:12px;padding:8px">Loading profiles…</div>';
+
+  const celebHtml = await Promise.all(p.celebs.map(async c => {
+    const photo = await fetchCelebPhoto(c.wiki);
+    const img   = photo
+      ? `<img class="ana-celeb-photo" src="${photo}" alt="${c.name}">`
+      : `<div class="ana-celeb-fb">${c.name[0]}</div>`;
+    return `<div class="ana-celeb-card">${img}
+      <div><div class="ana-celeb-name">${c.name}</div>
+      <div class="ana-celeb-reason">${c.reason}</div></div>
+    </div>`;
+  }));
+  celebEl.innerHTML = celebHtml.join('');
+}
+
+// ── Social sharing ───────────────────────────────────────────────
+function getShareText() {
+  const profileKey = _anaCache[Object.keys(_anaCache).pop()] || 'visionary';
+  const p = ANA_PROFILES[profileKey];
+  const celebName = p.celebs[0]?.name || 'a top leader';
+  const compName  = p.companies[0]?.name || 'top tech companies';
+  return encodeURIComponent(
+    `My Work DNA says I'm a "${p.label}" — working closest to ${celebName}, and built for places like ${compName}. 🧬⚡\n\nDiscover yours at https://yihsuanpai.github.io/eisenhower-matrix/ #WorkDNA #EisenhowerMatrix`
+  );
+}
+document.querySelectorAll('.ana-share-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = getShareText();
+    const p = btn.dataset.platform;
+    if(p === 'x')         window.open(`https://twitter.com/intent/tweet?text=${t}`,'_blank');
+    else if(p === 'threads')  window.open(`https://www.threads.net/intent/post?text=${t}`,'_blank');
+    else if(p === 'facebook') window.open(`https://www.facebook.com/sharer/sharer.php?quote=${t}&u=https://yihsuanpai.github.io/eisenhower-matrix/`,'_blank');
+    else if(p === 'instagram'){
+      navigator.clipboard.writeText(decodeURIComponent(t)).then(()=>showToast('📋 Copied — paste into Instagram!'));
+    }
+  });
+});
+
+// ── Analysis flow ─────────────────────────────────────────────────
+function showAnalysisModal() {
+  const pdDrop = document.getElementById('profileDropdown');
+  if(pdDrop) pdDrop.classList.remove('open');
+  _anaAnswers = new Array(ANA_QUESTIONS.length).fill(-1);
+  buildAnaQuestionnaire();
+  goAnaStep(1);
+  document.getElementById('anaModal').classList.add('open');
+}
+function closeAnalysisModal() {
+  document.getElementById('anaModal').classList.remove('open');
+}
+
+function goAnaStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`anaStep${i}`).classList.toggle('active', i === n);
+  });
+}
+
+function buildAnaQuestionnaire() {
+  const container = document.getElementById('anaQContainer');
+  const progress  = document.getElementById('anaProgress');
+  progress.innerHTML = ANA_QUESTIONS.map((_,i) =>
+    `<div class="ana-prog-dot" id="apd${i}"></div>`).join('');
+
+  container.innerHTML = ANA_QUESTIONS.map((q, qi) => `
+    <div class="ana-q-block" id="aqb${qi}">
+      <div class="ana-q-text">${qi+1}. ${q.q}</div>
+      <div class="ana-options">
+        ${q.opts.map((opt, oi) => `
+          <label class="ana-opt" id="ao${qi}_${oi}">
+            <input type="radio" name="anaq${qi}" value="${oi}">
+            ${opt}
+          </label>`).join('')}
+      </div>
+    </div>`).join('');
+
+  updateAnaProgress();
+
+  container.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', e => {
+      const [,qi,oi] = radio.name.replace('anaq','').split('_').map(Number);
+      // parse qi from name
+      const qiStr = radio.name.replace('anaq','');
+      const qIdx  = parseInt(qiStr);
+      const oIdx  = parseInt(radio.value);
+      _anaAnswers[qIdx] = oIdx;
+      // update styling
+      document.querySelectorAll(`[id^="ao${qIdx}_"]`).forEach(el => el.classList.remove('selected'));
+      document.getElementById(`ao${qIdx}_${oIdx}`).classList.add('selected');
+      updateAnaProgress();
+    });
+  });
+}
+
+function updateAnaProgress() {
+  ANA_QUESTIONS.forEach((_, i) => {
+    const dot = document.getElementById(`apd${i}`);
+    if(!dot) return;
+    if(_anaAnswers[i] >= 0) dot.classList.add('done');
+    else dot.classList.add('active');
+  });
+  const allAnswered = _anaAnswers.every(a => a >= 0);
+  document.getElementById('anaAnalyseBtn').disabled = !allAnswered;
+}
+
+document.getElementById('anaAnalyseBtn').addEventListener('click', async () => {
+  const hash = anaHash(_anaAnswers, state.tags.length);
+  if(_anaCache[hash]) {
+    goAnaStep(3);
+    return;
+  }
+  goAnaStep(2);
+  await new Promise(r => setTimeout(r, 2800));
+  const profile = calculateProfile(_anaAnswers);
+  _anaCache[hash] = profile;
+  await renderAnaResults(profile);
+  goAnaStep(3);
+});
+
+document.getElementById('anaClose').addEventListener('click', closeAnalysisModal);
+document.getElementById('anaModal').addEventListener('click', e => {
+  if(e.target === document.getElementById('anaModal')) closeAnalysisModal();
+});
+document.getElementById('anaRedo').addEventListener('click', () => {
+  _anaAnswers = new Array(ANA_QUESTIONS.length).fill(-1);
+  buildAnaQuestionnaire();
+  goAnaStep(1);
+});
 
 // ── Shooting stars on matrix grid ──────────────────────────────
 function launchShootingStar() {
