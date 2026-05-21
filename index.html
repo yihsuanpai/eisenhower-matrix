@@ -1246,7 +1246,41 @@
     #pmAvatarWrap img { width:100%; height:100%; object-fit:contain; display:block; }
     #pmName  { font-size:16px; font-weight:700; margin-bottom:3px; }
     #pmSince { font-size:11px; color:var(--text-dim); margin-bottom:14px; }
-    .pm-stats { display:grid; grid-template-columns:1fr 1fr; gap:7px; width:100%; }
+    .pm-stats-wrap { width:100%; }
+    .pm-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; width:100%; }
+    .pm-chart-section {
+      margin-top:8px; width:100%; position:relative;
+    }
+    .pm-chart-label {
+      font-size:10px; font-weight:600; color:var(--text-dim);
+      margin-bottom:4px; letter-spacing:.3px;
+    }
+    .pm-completion-chart {
+      display:block; width:100%; height:80px;
+    }
+    .pm-completion-empty {
+      font-size:9px; color:var(--text-dim); line-height:1.3;
+      padding:8px 4px; min-height:80px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; border-radius:6px;
+      background:var(--surface2); border:1px dashed var(--border);
+    }
+    .pm-nationality-wrap { position:relative; }
+    .pm-save-wrap { position:relative; margin-top:6px; }
+    .pm-save-toast {
+      position:absolute; bottom:calc(100% + 8px); left:50%;
+      transform:translateX(-50%);
+      background:var(--surface3); color:var(--text);
+      border:1px solid var(--accent2);
+      padding:6px 12px; border-radius:6px; font-size:11px;
+      box-shadow:0 4px 12px rgba(0,0,0,.35);
+      opacity:0; pointer-events:none; transition:opacity .25s;
+      white-space:nowrap; z-index:5;
+    }
+    .pm-save-toast.visible { opacity:1; }
+    [data-theme="light"] .pm-save-toast {
+      background:#EEF3FF; border-color:#5B7CFA; color:#2D2F3A;
+    }
     .pm-close-btn {
       position:absolute; top:10px; right:14px;
       background:none; border:none; color:var(--text-dim);
@@ -1851,6 +1885,7 @@
   </style>
 </head>
 <body>
+<script src="countries.js"></script>
 
 <!-- HEADER: ✦ | greeting | clock | mood | profile-avatar -->
 <div id="header">
@@ -2060,14 +2095,17 @@
       <div id="pmAvatarWrap"><img id="pmAvatarImg" src="" alt=""></div>
       <h2 id="pmName"></h2>
       <p id="pmSince"></p>
-      <div class="pm-stats">
-        <div class="stat-box"><div class="stat-label">Created</div><div class="stat-value" id="pmCreated">0</div></div>
-        <div class="stat-box"><div class="stat-label">Done</div><div class="stat-value" id="pmDone">0</div></div>
-      </div>
-      <div class="stat-box" style="margin-top:9px;width:100%">
-        <div class="stat-label">Completion</div>
-        <div class="stat-value" id="pmPct" style="font-size:26px">0%</div>
-        <div class="progress-bar" style="margin-top:7px"><div class="progress-fill" id="pmBar" style="width:0%"></div></div>
+      <div class="pm-stats-wrap">
+        <div class="pm-stats">
+          <div class="stat-box"><div class="stat-label">Created</div><div class="stat-value" id="pmCreated">0</div></div>
+          <div class="stat-box"><div class="stat-label">Done</div><div class="stat-value" id="pmDone">0</div></div>
+          <div class="stat-box"><div class="stat-label">Completion</div><div class="stat-value" id="pmAvgCompletion">0%</div></div>
+        </div>
+        <div class="pm-chart-section">
+          <div class="pm-chart-label">Daily completion rate</div>
+          <canvas id="pmCompletionChart" class="pm-completion-chart" aria-label="Daily completion rate chart"></canvas>
+          <div id="pmCompletionEmpty" class="pm-completion-empty" style="display:none">Close a day to track rates over time</div>
+        </div>
       </div>
     </div>
 
@@ -2088,7 +2126,8 @@
       <div class="pm-row">
         <div class="pm-field">
           <label class="pm-label">Nationality</label>
-          <input id="pmNationality" type="text" class="pm-input" placeholder="Where are you from?" maxlength="50">
+          <input id="pmNationality" type="text" class="pm-input" list="pmNationalityList" placeholder="Type or pick a country…" maxlength="80" autocomplete="off">
+          <datalist id="pmNationalityList"></datalist>
         </div>
         <div class="pm-field">
           <label class="pm-label">Gender</label>
@@ -2107,7 +2146,10 @@
         <input id="pmBirthday" type="date" class="pm-input" value="2000-07-22" style="color-scheme:dark">
       </div>
 
-      <button class="modal-btn primary" id="pmSaveBtn" style="width:100%;margin-top:6px">Save Profile</button>
+      <div class="pm-save-wrap">
+        <div class="pm-save-toast" id="pmSaveToast" role="status" aria-live="polite"></div>
+        <button class="modal-btn primary" id="pmSaveBtn" style="width:100%">Save Profile</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2181,8 +2223,135 @@ function updateProfileAvatar() {
 }
 
 
+// ── Profile modal helpers ─────────────────────────────────────────
+let _nationalityListReady = false;
+
+function initNationalityDatalist() {
+  if(_nationalityListReady || typeof COUNTRY_NAMES === 'undefined') return;
+  const list = document.getElementById('pmNationalityList');
+  if(!list) return;
+  const frag = document.createDocumentFragment();
+  COUNTRY_NAMES.forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    frag.appendChild(opt);
+  });
+  list.appendChild(frag);
+  _nationalityListReady = true;
+}
+
+function showProfileToast(msg) {
+  const toast = document.getElementById('pmSaveToast');
+  if(!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove('visible'), 2500);
+}
+
+function getTodaySprintCompletionPercent() {
+  const committed = state.todayItems.length;
+  if(committed === 0) return null;
+  const completed = state.todayItems.filter(ti => {
+    const tag = state.tags.find(t => t.id === ti.tagId);
+    return tag && tag.resolved;
+  }).length;
+  return Math.round((completed / committed) * 100);
+}
+
+function recordDailyCompletion(percent) {
+  if(!state.dailyCompletion) state.dailyCompletion = {};
+  const dateKey = new Date().toISOString().slice(0, 10);
+  state.dailyCompletion[dateKey] = Math.max(0, Math.min(100, percent));
+}
+
+function getAverageCompletionRate() {
+  const history = state.dailyCompletion || {};
+  const vals = Object.values(history);
+  if(!vals.length) return 0;
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+}
+
+function pmChartPalette() {
+  return [
+    '#D94CFF', '#4FF0D1', '#FF6EC7', '#7CFF9B', '#B8A8FF',
+    '#8FFFD1', '#FF9060', '#60BFFF', '#FFD060', '#A060FF'
+  ];
+}
+
+function renderPmCompletionChart() {
+  const canvas = document.getElementById('pmCompletionChart');
+  const empty = document.getElementById('pmCompletionEmpty');
+  const avgEl = document.getElementById('pmAvgCompletion');
+  if(avgEl) avgEl.textContent = getAverageCompletionRate() + '%';
+  if(!canvas) return;
+
+  const wrap = document.querySelector('.pm-chart-section');
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = wrap ? wrap.clientWidth : 200;
+  const w = Math.max(cssW, 120);
+  const h = 80;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const history = state.dailyCompletion || {};
+  const dates = Object.keys(history).sort();
+  const maxBars = 14;
+  const recent = dates.slice(-maxBars);
+
+  if(recent.length === 0) {
+    canvas.style.display = 'none';
+    if(empty) empty.style.display = 'flex';
+    return;
+  }
+
+  canvas.style.display = 'block';
+  if(empty) empty.style.display = 'none';
+
+  const pad = { l: 22, r: 4, t: 6, b: 14 };
+  const plotW = w - pad.l - pad.r;
+  const plotH = h - pad.t - pad.b;
+  const barGap = 2;
+  const barW = Math.max(4, (plotW - barGap * (recent.length - 1)) / recent.length);
+  const palette = pmChartPalette();
+  const dim = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || '#7880c0';
+  const baseY = pad.t + plotH;
+
+  recent.forEach((dateKey, i) => {
+    const pct = history[dateKey];
+    const barH = (pct / 100) * plotH;
+    const x = pad.l + i * (barW + barGap);
+    const y = baseY - barH;
+    const c0 = palette[i % palette.length];
+    const c1 = palette[(i + 1) % palette.length];
+    const grad = ctx.createLinearGradient(x, baseY, x, y);
+    grad.addColorStop(0, c0);
+    grad.addColorStop(1, c1);
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, barW, barH);
+    const d = new Date(dateKey + 'T12:00:00');
+    ctx.fillStyle = dim;
+    ctx.font = '8px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(d.getMonth() + 1) + '/' + String(d.getDate()), x + barW / 2, h - 3);
+  });
+
+  ctx.font = '7px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = dim;
+  ctx.fillText('100', pad.l - 3, pad.t + 4);
+  ctx.fillText('0', pad.l - 3, pad.t + plotH);
+}
+
 // ── Profile modal ───────────────────────────────────────────────
 function showProfileModal() {
+  initNationalityDatalist();
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const img = document.getElementById('pmAvatarImg');
   if(img) img.src = isDark ? PROFILE_DARK : PROFILE_LIGHT;
@@ -2198,17 +2367,15 @@ function showProfileModal() {
 
   const total = state.tags.length;
   const done  = state.tags.filter(t => t.resolved || t.archived).length;
-  const pct   = total > 0 ? Math.round(done / total * 100) : 0;
   document.getElementById('pmCreated').textContent = total;
   document.getElementById('pmDone').textContent    = done;
-  document.getElementById('pmPct').textContent     = pct + '%';
-  document.getElementById('pmBar').style.width     = pct + '%';
-
+  requestAnimationFrame(() => renderPmCompletionChart());
   // Populate editable fields
   const p = state.profile || {};
   document.getElementById('pmJobTitle').value    = p.jobTitle    || '';
   document.getElementById('pmGoals').value       = p.goals       || '';
-  document.getElementById('pmNationality').value = p.nationality || '';
+  const nat = (p.nationality || '').replace('Taiwan, Province of China', 'Taiwan');
+  document.getElementById('pmNationality').value = nat;
   document.getElementById('pmGender').value      = p.gender      || '';
   document.getElementById('pmBirthday').value    = p.birthday    || '2000-07-22';
 
@@ -2217,6 +2384,7 @@ function showProfileModal() {
 
 function saveProfileFields() {
   if(!state.profile) state.profile = {};
+  if(!state.dailyCompletion) state.dailyCompletion = {};
   state.profile.jobTitle    = document.getElementById('pmJobTitle').value.trim();
   state.profile.goals       = document.getElementById('pmGoals').value.trim();
   state.profile.nationality = document.getElementById('pmNationality').value.trim();
@@ -2402,6 +2570,7 @@ window.addEventListener('DOMContentLoaded', init);
 
 function init() {
   loadData();
+  initNationalityDatalist();
   setupEventListeners();
   setupGlobalDrag();
   startClock();
@@ -2463,6 +2632,7 @@ function loadData() {
   if(!state.todayItems) state.todayItems = [];
   if(!state.firstUsed)  state.firstUsed = new Date().toISOString();
   if(!state.profile)    state.profile    = {};
+  if(!state.dailyCompletion) state.dailyCompletion = {};
   state.tags.forEach(t => { if(!t.type) t.type = 'work'; });
   const _pdn2 = document.getElementById('pdName'); if(_pdn2) _pdn2.textContent = state.userName || '';
 
@@ -2725,6 +2895,8 @@ function setupEventListeners() {
   });
 
   document.getElementById('endOfDayClose').addEventListener('click', () => {
+    const percent = getTodaySprintCompletionPercent();
+    if(percent !== null) recordDailyCompletion(percent);
     closeModal('endOfDayModal');
     // Keep only INCOMPLETE tasks — they carry over to the next day
     state.todayItems = state.todayItems.filter(ti => {
@@ -2761,7 +2933,7 @@ function setupEventListeners() {
   });
   document.getElementById('pmSaveBtn').addEventListener('click', () => {
     saveProfileFields();
-    showToast('✅ Profile saved!');
+    showProfileToast('✅ Profile saved!');
   });
   document.getElementById('profileModal').addEventListener('click', e => {
     if(e.target === document.getElementById('profileModal')) {
@@ -4563,7 +4735,10 @@ function copyData() {
     _v: 7,
     tags: state.tags,
     userName: state.userName,
-    todayItems: state.todayItems
+    todayItems: state.todayItems,
+    profile: state.profile,
+    dailyCompletion: state.dailyCompletion,
+    firstUsed: state.firstUsed
   };
   const json = JSON.stringify(exportPayload, null, 2);
   try {
@@ -4647,7 +4822,10 @@ function applyImport(raw) {
   state = {
     tags: imported.tags,
     userName: imported.userName || state.userName || 'Friend',
-    todayItems: imported.todayItems || []
+    todayItems: imported.todayItems || [],
+    profile: imported.profile || state.profile || {},
+    dailyCompletion: imported.dailyCompletion || state.dailyCompletion || {},
+    firstUsed: imported.firstUsed || state.firstUsed || new Date().toISOString()
   };
   saveData();
   renderMatrix();
