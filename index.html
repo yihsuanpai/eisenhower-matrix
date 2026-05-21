@@ -1030,6 +1030,35 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
 
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .modal-header h2 {
+      margin-bottom: 0;
+      flex: 1;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .modal-close:hover {
+      color: var(--accent2);
+    }
+    [data-theme="light"] .modal-close:hover {
+      color: var(--accent);
+    }
+
     .modal h2 {
       font-size: 18px;
       margin-bottom: 16px;
@@ -1112,6 +1141,39 @@
       flex: 1;
       font-size: 12px;
       cursor: pointer;
+    }
+
+    .pick-tasks-sort {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin: 8px 0 4px;
+    }
+    .pick-tasks-sort-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pick-tasks-sort-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pick-tasks-sort-btn:hover {
+      border-color: var(--accent2);
+      color: var(--text);
+    }
+    .pick-tasks-sort-btn.active {
+      border-color: var(--accent2);
+      color: var(--accent2);
     }
 
     .modal-stats {
@@ -1924,6 +1986,7 @@
 <div id="pickTasksModal" class="modal-backdrop">
   <div class="modal">
     <h2>Pick Tasks</h2>
+    <div class="pick-tasks-sort" id="pickTasksSortBar"></div>
     <div class="modal-list" id="pickTasksList"></div>
     <div class="modal-buttons">
       <button class="modal-btn" id="pickTasksCancel">Cancel</button>
@@ -1934,7 +1997,10 @@
 
 <div id="endOfDayModal" class="modal-backdrop">
   <div class="modal">
-    <h2 id="endOfDayTitle">🌙 Day's End</h2>
+    <div class="modal-header">
+      <h2 id="endOfDayTitle">🌙 Day's End</h2>
+      <button type="button" class="modal-close" id="endOfDayDismiss" aria-label="Close">×</button>
+    </div>
     <div class="modal-stats" id="endOfDayStats"></div>
     <p id="endOfDayPraise"></p>
     <div id="endOfDayTasks"></div>
@@ -2327,6 +2393,7 @@ let ui = {
   dragDelta: null,
   openMenuId: null,
   activeSort: { col: 'createdAt', dir: 'desc' },
+  pickTasksSort: { col: 'createdAt', dir: 'desc' },
   matrixTab: 'overview'
 };
 
@@ -2652,6 +2719,10 @@ function setupEventListeners() {
 
   document.getElementById('pickTasksCancel').addEventListener('click', () => closeModal('pickTasksModal'));
   document.getElementById('pickTasksAdd').addEventListener('click', addPickedTasks);
+
+  document.getElementById('endOfDayDismiss').addEventListener('click', () => {
+    closeModal('endOfDayModal');
+  });
 
   document.getElementById('endOfDayClose').addEventListener('click', () => {
     closeModal('endOfDayModal');
@@ -4177,18 +4248,71 @@ function showConfirm(title, msg, callback) {
   openModal('confirmModal');
 }
 
-function showPickTasksModal() {
+function sortPickTasksTags(tags) {
+  const { col, dir } = ui.pickTasksSort;
+  return tags.slice().sort((a, b) => {
+    let av, bv;
+    if(col === 'quad') {
+      av = quadrantKey(a);
+      bv = quadrantKey(b);
+    } else {
+      av = a.createdAt || '';
+      bv = b.createdAt || '';
+    }
+    const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+    return dir === 'asc' ? cmp : -cmp;
+  });
+}
+
+function renderPickTasksSortBar() {
+  const bar = document.getElementById('pickTasksSortBar');
+  bar.innerHTML = '';
+  const label = document.createElement('span');
+  label.className = 'pick-tasks-sort-label';
+  label.textContent = 'Sort by';
+  bar.appendChild(label);
+
+  const { col, dir } = ui.pickTasksSort;
+  [
+    { key: 'createdAt', label: 'Created' },
+    { key: 'quad', label: 'Quadrant' }
+  ].forEach(c => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pick-tasks-sort-btn' + (col === c.key ? ' active' : '');
+    const arrow = col === c.key ? (dir === 'asc' ? ' ▲' : ' ▼') : '';
+    btn.textContent = c.label + arrow;
+    btn.addEventListener('click', () => {
+      if(ui.pickTasksSort.col === c.key) {
+        ui.pickTasksSort.dir = ui.pickTasksSort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        ui.pickTasksSort.col = c.key;
+        ui.pickTasksSort.dir = c.key === 'createdAt' ? 'desc' : 'asc';
+      }
+      renderPickTasksSortBar();
+      renderPickTasksList();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+function renderPickTasksList() {
+  const checked = new Set(
+    [...document.querySelectorAll('#pickTasksList input[type="checkbox"]:checked')].map(cb => cb.value)
+  );
   const available = state.tags.filter(t => !t.resolved && !t.archived && !state.todayItems.find(ti => ti.tagId === t.id));
+  const sorted = sortPickTasksTags(available);
   const list = document.getElementById('pickTasksList');
   list.innerHTML = '';
 
-  available.forEach(tag => {
+  sorted.forEach(tag => {
     const item = document.createElement('label');
     item.className = 'modal-item';
 
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.value = tag.id;
+    if(checked.has(tag.id)) cb.checked = true;
 
     const label = document.createElement('div');
     label.className = 'modal-item-label';
@@ -4220,7 +4344,11 @@ function showPickTasksModal() {
     item.appendChild(label);
     list.appendChild(item);
   });
+}
 
+function showPickTasksModal() {
+  renderPickTasksSortBar();
+  renderPickTasksList();
   openModal('pickTasksModal');
 }
 
