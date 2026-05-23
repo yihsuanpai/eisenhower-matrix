@@ -2,22 +2,28 @@
 
 > *Because your brain deserves a better operating system.*
 
-A single-file, zero-dependency, local-first productivity tool built around the Eisenhower Decision Matrix — the same prioritisation framework used by executives and high-functioning professionals who've learned to distinguish what actually matters from what just feels urgent.
+A single-file, zero-dependency, local-first productivity tool built around the Eisenhower Decision Matrix — the same prioritisation framework used by executives and high-functioning professionals to distinguish what actually matters from what just feels urgent.
 
-No subscriptions. No accounts. No tracking. Just you, your tasks, and brutal clarity about what to work on next.
+No subscriptions. No accounts. No tracking. Just you, your tasks, and absolute clarity about what to work on next.
 
 **→ [Launch App](https://yihsuanpai.github.io/eisenhower-matrix/)**
 
 ---
 
-## What is the Eisenhower Matrix?
+## The Framework
 
-The matrix splits every task into four quadrants by two axes — **urgency** and **importance**:
+The matrix splits every task into four quadrants by two axes — **urgency** (X-axis) and **importance** (Y-axis):
 
-|                  | **Urgent →**              | **Not Urgent**              |
-|------------------|---------------------------|-----------------------------|
-| **Important ↑**  | 🔴 **DO** — right now     | 🔵 **SCHEDULE** — plan it   |
-| **Not Important**| 🟡 **DELEGATE** — offload | ⚫ **ELIMINATE** — skip it  |
+```mermaid
+quadrantChart
+    title Eisenhower Decision Matrix
+    x-axis "Not Urgent" --> "Urgent"
+    y-axis "Not Important" --> "Important"
+    quadrant-1 "🔴 DO (Q1)"
+    quadrant-2 "🔵 SCHEDULE (Q2)"
+    quadrant-3 "⚫ ELIMINATE (Q4)"
+    quadrant-4 "🟡 DELEGATE (Q3)"
+```
 
 The insight is deceptively simple: most people spend their days reacting to urgent-but-unimportant noise. The matrix forces you to stop, zoom out, and act on what *actually* moves the needle.
 
@@ -26,19 +32,27 @@ The insight is deceptively simple: most people spend their days reacting to urge
 ## Features
 
 ### 🎯 Free-Float Matrix Canvas
-Drag tasks to any position on the canvas. Their exact x,y coordinates represent urgency (right = more urgent) and importance (top = more important). Drop them anywhere — precision is the point.
+Drag tasks to any position on the canvas. Their exact X, Y coordinates represent urgency (right = more urgent) and importance (top = more important). Drop them anywhere — precision is the point.
 
 ### 🗂 Work / Private Separation
 Tag every task as **Work** or **Private**. Three matrix views — **All Tasks**, **Work**, and **Private** — keep your professional and personal life cleanly separated on the same canvas.
 
+### 🌎 Full Multi-Language Support (i18n)
+Fully localized UI support for 7 languages:
+- English, Traditional Chinese (`zh-TW`), Simplified Chinese (`zh-CN`), Japanese (`ja`), Indonesian (`id`), German (`de`), and Spanish (`es`).
+- Dynamic translation updating instantly on change, including live-recalculating active usage durations ("Using for X days").
+- East Asian (CJK) text layout fixes to keep vertical label text upright and readable under rotated CSS transforms.
+
+### 🌠 Micro-Animations & Celebrations
+Delightful screen-space visual rewards to motivate action:
+- **Task Done Confetti:** Colorful neon confetti explosions shoot directly from your cursor click point when a task is checked off.
+- **End-of-Day Confetti Streams:** A celebratory stream of cascading particles shoots up from both bottom corners of the viewport when you successfully close and reset a day.
+
 ### ⚡ Work DNA Analysis
-Answer 8 behavioural questions and get a personalised work-pattern analysis: your archetype (Visionary, Optimizer, Connector, Craftsman, or Architect), the Tier 1 tech companies built for your kind of talent, and the famous leader whose working style most closely mirrors yours. Results are cached and shareable to X, Threads, Facebook, or Instagram.
+Answer 8 behavioral questions and get a personalized work-pattern analysis: your archetype (Visionary, Optimizer, Connector, Craftsman, or Architect), the Tier 1 tech companies built for your kind of talent, and the famous leader whose working style most closely mirrors yours. Results are cached and shareable to X, Threads, Facebook, or Instagram.
 
 ### ✦ Today's Sprint Tab
 Commit to what you're actually finishing today. Pick tasks from your active list, drag to reorder by priority, and close the day with a summary — completion rate, remaining tasks, and a well-earned compliment for clearing anything from the DO quadrant. Incomplete tasks carry forward automatically.
-
-### 🌙 End-of-Day Summary
-Hit *Call it a day* to see your committed vs completed count, a live completion percentage with progress bar, and praise for finishing high-importance work.
 
 ### 🗒 Per-Task Notes
 Every task supports rich freeform notes accessible via a `🗒` hover button on both the matrix canvas and the task table. Notes persist with the task across all views.
@@ -56,23 +70,14 @@ Set a hard deadline on any task. Within 48 hours, a live HH:MM:SS countdown bar 
 One click in the profile menu toggles between a deep-space dark palette and a city-pop pastel light mode. Preference persists across sessions.
 
 ### 👤 Profile & Settings
-The profile modal (accessible via the avatar) shows your usage stats — days active, tasks created, completion rate — alongside editable profile fields: job title, one-year vision, nationality, gender, and date of birth.
-
-### 🌠 Animated Matrix Grid
-Subtle neon grid lines with occasional shooting-star animations trace the grid every 10–20 seconds, giving the canvas a quiet sense of motion without distraction.
-
-### 🎨 City-Pop Aesthetic
-Dark-mode base on deep space blue and midnight indigo, lit up with cyber magenta, electric aqua, and hot pink. Light mode uses soft periwinkle and lavender with pastel warmth. Both feel premium, never neon-overloaded.
-
-### 🔒 Fully Local — No Server, No Sync, No Tracking
-All data lives in your browser's `localStorage`. Nothing is ever sent anywhere. The app is a single `.html` file — the entire product, zero build step, zero dependencies.
+The profile modal (accessible via the avatar) shows your usage stats — days active, tasks created, completion rate — alongside editable profile fields: job title, one-year vision, nationality, gender, and date of birth. Repositioned language settings for a clean form flow.
 
 ---
 
-## Stack
+## Technical Stack
 
 ```
-HTML + CSS + Vanilla JS   (1 file, ~4,000 lines)
+HTML + CSS + Vanilla JS   (1 file, ~5,000 lines)
 localStorage              (persistence)
 GitHub Pages              (hosting)
 Wikipedia REST API        (celebrity portraits — on-demand, no key required)
@@ -93,4 +98,4 @@ To back up: click **⊙ Copy Data** in the profile menu. To restore: click **⊞
 
 ## Version
 
-`Ver. 1.3.0` — Built with [Claude Sonnet 4.6](https://www.anthropic.com/claude)
+`Ver. 2.0.0` — Built with [Claude Sonnet 4.6](https://www.anthropic.com/claude) and [Cursor](https://www.cursor.com/)
