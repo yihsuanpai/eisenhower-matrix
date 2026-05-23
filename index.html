@@ -2955,6 +2955,7 @@ function setupEventListeners() {
   document.getElementById('endOfDayClose').addEventListener('click', () => {
     const percent = getTodaySprintCompletionPercent();
     if(percent !== null) recordDailyCompletion(percent);
+    triggerDayCloseConfetti();
     closeModal('endOfDayModal');
     // Keep only INCOMPLETE tasks — they carry over to the next day
     state.todayItems = state.todayItems.filter(ti => {
