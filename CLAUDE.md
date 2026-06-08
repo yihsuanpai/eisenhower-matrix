@@ -1,0 +1,1 @@
+Directly modify the index.html instead of totally revamp everything, separate the following improvements to multiple agents as long as one agent take care the tokens that will not exceed the limit (32000)
