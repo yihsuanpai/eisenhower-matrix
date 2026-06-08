@@ -373,10 +373,8 @@
       #matrixCanvas { flex: 1 !important; min-width: 0 !important;
                       min-height: 0 !important; position: relative !important; }
 
-      /* Tablet/narrow: cap tag width so full-text wrapping stays inside the
-         smaller canvas without overflowing the edges. */
-      .tag         { max-width: clamp(120px, 34vw, 220px); }
-      .tag .tag-text { max-width: clamp(106px, 30vw, 200px); }
+      /* Tablet/narrow: slightly smaller uniform pill for the smaller canvas. */
+      .tag         { width: 130px; height: 28px; }
 
       /* ── SECTION 3: Tab bar + content ────────────────── */
       #rightPanel {
@@ -409,8 +407,7 @@
       #header      { padding: 0 10px !important; gap: 8px; }
       #hdrGreeting { font-size: 12px; }
       #matrixWrap  { height: 82vw !important; min-height: 230px !important; }
-      .tag         { font-size: 10px; padding: 4px 7px 4px 8px; max-width: clamp(110px, 42vw, 170px); }
-      .tag .tag-text { max-width: clamp(96px, 38vw, 156px); }
+      .tag         { font-size: 10px; padding: 0 8px; width: 124px; height: 27px; }
       .modal       { padding: 14px 12px; max-width: 96vw; }
       .mood-hero   { gap: 10px; }
       .mood-portrait, .mood-portrait-fb { width: 58px !important; height: 58px !important; }
@@ -767,7 +764,8 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: clamp(2px, 0.4vw, 4px) clamp(6px, 0.7vw, 9px) clamp(2px, 0.4vw, 4px) clamp(7px, 0.8vw, 10px);
+      box-sizing: border-box;
+      padding: 0 9px;
       border-radius: 11px;
       font-size: clamp(9px, 0.7vw, 11px);
       line-height: 1.2;
@@ -779,7 +777,11 @@
       border: 1.5px solid rgba(255,255,255,.22);
       box-shadow: 0 2px 10px rgba(0,0,0,.4);
       transition: box-shadow .16s ease, transform .16s ease, opacity .16s ease;
-      max-width: clamp(100px, 16vw, 200px);
+      /* Every tag is the same size; long names truncate and live in the tooltip.
+         No overflow:hidden here — the note glyph sits just outside the pill and
+         must stay fully visible; text truncation is handled on .tag-text. */
+      width: 150px;
+      height: 30px;
       z-index: 10;
       outline: none;
     }
@@ -810,13 +812,13 @@
     }
 
     .tag-text {
-      /* Full label is shown — wrap to as many lines as needed.
-         Responsive max-width keeps a long name from blowing up the layout;
-         the centered pill + bounded width keeps edge tags inside the canvas. */
-      white-space: normal;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      max-width: clamp(90px, 15vw, 184px);
+      /* Single line, truncated with an ellipsis so every pill stays the same
+         size. The full label is available via the native tooltip on hover. */
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       pointer-events: none;
     }
 
@@ -1187,7 +1189,19 @@
     .today-topic-head {
       display: flex; align-items: center; gap: 10px;
       margin-bottom: 8px;
+      cursor: pointer;
     }
+    /* Collapse caret — points down when open, right when collapsed. */
+    .today-topic-caret {
+      flex-shrink: 0; width: 12px; text-align: center;
+      color: var(--text-dim); font-size: 10px; line-height: 1;
+      transform: rotate(90deg); transition: transform .15s ease;
+      user-select: none;
+    }
+    .today-topic-group.collapsed .today-topic-caret { transform: rotate(0deg); }
+    .today-topic-group.collapsed .today-topic-head { margin-bottom: 0; }
+    .today-topic-group.collapsed .today-list,
+    .today-topic-group.collapsed .today-add-row { display: none; }
     .today-topic-emoji {
       background: var(--surface3); border: 1px solid var(--border);
       border-radius: 8px; cursor: pointer;
@@ -3329,6 +3343,9 @@ const TOPIC_EMOJIS = ['💼','📊','🎯','🚀','🧠','📝','💡','🔬','�
 
 // Track a topic whose name should open in inline-edit mode on the next render.
 let _editTopicNameId = null;
+// Collapsed state for the read-only "Unassigned" group (real topics store this
+// on the topic object so it persists; Unassigned is session-only).
+let _unassignedCollapsed = false;
 
 // Small dropdown menu (Rename / Delete) anchored to the ⋮ button — modelled on openTagActionMenu.
 function openTopicMenu(id, anchor) {
@@ -5059,8 +5076,9 @@ function createTagEl(tag) {
   }
   refreshNoteIndicator();
 
-  // Tooltip (desktop) — keep it to the label; the note has its own glyph + editor.
-  el.title = tag.text.length > 18 ? tag.text : '';
+  // Tooltip (desktop) — the pill is fixed-size and truncates, so always expose
+  // the full label on hover.
+  el.title = tag.text;
 
   return el;
 }
@@ -5459,8 +5477,30 @@ function buildTopicGroup(topic, items) {
   group.className = 'today-topic-group';
   group.dataset.topicId = topic ? topic.id : ''; // empty => Unassigned drop target
 
+  const collapsed = topic ? !!topic.collapsed : _unassignedCollapsed;
+  if(collapsed) group.classList.add('collapsed');
+
   const head = document.createElement('div');
   head.className = 'today-topic-head';
+  head.title = 'Click to collapse / expand';
+
+  // Collapse caret (leads the header).
+  const caret = document.createElement('span');
+  caret.className = 'today-topic-caret';
+  caret.textContent = '▸';
+  caret.setAttribute('aria-hidden', 'true');
+  head.appendChild(caret);
+
+  // Clicking the header (anywhere but the emoji / menu / name editor) toggles.
+  head.addEventListener('click', e => {
+    if(e.target.closest('.today-topic-emoji') ||
+       e.target.closest('.today-topic-menu-btn') ||
+       e.target.closest('.today-topic-name-input')) return;
+    const willCollapse = !group.classList.contains('collapsed');
+    group.classList.toggle('collapsed', willCollapse);
+    if(topic) { topic.collapsed = willCollapse; saveData(); }
+    else { _unassignedCollapsed = willCollapse; }
+  });
 
   if(topic) {
     const emoji = document.createElement('button');
