@@ -5708,9 +5708,14 @@ function buildTodayItemCard(item, tag) {
     e.stopPropagation();
     const newName = prompt(tr('today.rename'), item.renamedText || tag.text);
     if(newName !== null) {
-      item.renamedText = newName;
+      const v = newName.trim();
+      if(!v) return;                 // ignore empty — keep the existing name
+      tag.text = v.slice(0, 100);    // rename the underlying task → matrix tag updates too
+      item.renamedText = '';         // drop any Today-only alias so all views stay in sync
       saveData();
       renderCurrentTab();
+      if(typeof renderMatrix === 'function') renderMatrix();
+      if(typeof renderDeadlineBar === 'function') renderDeadlineBar();
     }
   });
 
