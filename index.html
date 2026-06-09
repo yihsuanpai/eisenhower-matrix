@@ -1860,9 +1860,10 @@
     /* Hide quick actions during drag / edit so they don't get in the way */
     .tag.dragging-active-tag .tag-actions,
     .tag.editing .tag-actions { display: none !important; }
-    /* Touch devices: keep actions visible (no hover) */
+    /* Touch (no hover): reveal actions only after a deliberate tap, never by
+       default — a tap adds .actions-open. Bigger hit targets for fingers. */
+    .tag.actions-open .tag-actions { max-width: 90px; opacity: 1; }
     @media (hover: none) {
-      .tag-actions { max-width: 90px; opacity: 1; }
       .tag-qbtn { width: 26px; height: 26px; font-size: 14px; }
     }
 
@@ -3532,6 +3533,13 @@ function _clearRailHighlight() {
 }
 
 function setupGlobalDrag() {
+  // Tapping anywhere outside a tag closes any revealed (touch) action cluster.
+  document.addEventListener('click', e => {
+    if(!e.target.closest('.tag')) {
+      document.querySelectorAll('.tag.actions-open').forEach(t => t.classList.remove('actions-open'));
+    }
+  });
+
   document.addEventListener('mousemove', e => {
     if(!_dragState) return;
     const dx = e.clientX - _dragState.sx, dy = e.clientY - _dragState.sy;
@@ -3948,6 +3956,7 @@ function openTagActionMenu(tag, anchor) {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const isPrivate = (tag.type||'work') === 'private';
   const items = [
+    { icon:'✎',  label: tr('today.rename') || 'Rename', cls:'', fn: () => { closeTagActionMenu(); const t = document.getElementById('tag-' + tag.id); if(t && t._beginEdit) t._beginEdit(); } },
     { icon: NOTE_ICON_OUTLINE, label: (tag.notes ? tr('tag.note') + ' ●' : tr('tag.note')), cls:'', fn: () => { closeTagActionMenu(); editNote(tag); } },
     { icon:'✓',  label: tr('tag.done'),   cls:'',       fn: () => { closeTagActionMenu(); resolveTag(tag.id); } },
     { icon:'⇄',  label: isPrivate ? tr('tag.moveWork') : tr('tag.movePrivate'), cls:'', fn: () => { closeTagActionMenu(); moveTag(tag.id); } },
@@ -5086,13 +5095,23 @@ function createTagEl(tag) {
     inp.addEventListener('mousedown', ev => ev.stopPropagation());
     inp.addEventListener('blur', () => setTimeout(doSave, 150));
   }
+  el._beginEdit = beginEdit;   // let the ⋮ action menu trigger rename on touch
 
-  // ── CLICK → inline edit (only when there was no real drag) ──
+  // ── CLICK → inline edit (desktop) / reveal actions (touch) ──
   el.addEventListener('click', e => {
     if(e.target.closest('.tag-actions')) return;
     // If a drag just ended (moved past DRAG_THRESH), the click is the
     // tail of the drag — ignore so a clean click edits, a drag moves.
     if(el.classList.contains('dragging-active-tag')) return;
+    // On touch devices there is no hover, so a tap reveals the action
+    // buttons (Done / Move / ⋮ → Rename) instead of jumping into rename.
+    const noHover = window.matchMedia && window.matchMedia('(hover: none)').matches;
+    if(noHover) {
+      const wasOpen = el.classList.contains('actions-open');
+      document.querySelectorAll('.tag.actions-open').forEach(t => { if(t !== el) t.classList.remove('actions-open'); });
+      el.classList.toggle('actions-open', !wasOpen);
+      return;
+    }
     beginEdit();
   });
 
