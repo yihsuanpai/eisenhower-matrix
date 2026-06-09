@@ -2633,6 +2633,23 @@
     <p id="endOfDayPraise"></p>
     <div id="endOfDayTasks"></div>
     <p id="endOfDayClosing" data-i18n="eod.closing">Rest well. Tomorrow is a fresh start. ✨</p>
+
+    <!-- Share your day -->
+    <div id="eodShareWrap" style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text-dim);margin-bottom:6px">SHARE YOUR DAY</div>
+      <div id="eodSharePreview" style="font-size:12.5px;line-height:1.5;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;white-space:pre-wrap"></div>
+      <div class="ana-share-row" id="eodShareRow">
+        <button class="ana-share-btn" data-share="x">𝕏&ensp;X</button>
+        <button class="ana-share-btn" data-share="threads">⊕&ensp;Threads</button>
+        <button class="ana-share-btn" data-share="facebook">f&ensp;Facebook</button>
+        <button class="ana-share-btn" data-share="line">L&ensp;LINE VOOM</button>
+        <button class="ana-share-btn" data-share="instagram">◎&ensp;Instagram</button>
+        <button class="ana-share-btn" data-share="discord">◇&ensp;Discord</button>
+        <button class="ana-share-btn" data-share="slack">#&ensp;Slack</button>
+        <button class="ana-share-btn" data-share="copy">⧉&ensp;Copy</button>
+      </div>
+    </div>
+
     <div class="modal-buttons">
       <button class="modal-btn primary" id="endOfDayClose" data-i18n="eod.closeBtn">Close & Reset Day</button>
     </div>
@@ -3098,7 +3115,9 @@ const WIKI_PAGES = {
   marcus:'Marcus_Aurelius', aristotle:'Aristotle', plato:'Plato',
   socrates:'Socrates', epicurus:'Epicurus', shakespeare:'William_Shakespeare',
   wittgenstein:'Ludwig_Wittgenstein', nietzsche:'Friedrich_Nietzsche',
-  seneca:'Seneca_the_Younger', epictetus:'Epictetus'
+  seneca:'Seneca_the_Younger', epictetus:'Epictetus',
+  lisasu:'Lisa_Su', taylorswift:'Taylor_Swift', jensenhuang:'Jensen_Huang',
+  jobs:'Steve_Jobs', buffett:'Warren_Buffett'
 };
 const _portraitCache = {};
 async function fetchPortrait(key) {
@@ -3123,7 +3142,12 @@ const PHI = {
   wittgenstein:{ name:'Ludwig Wittgenstein',  dates:'1889–1951',   role:'Austrian Philosopher',                img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Ludwig_Wittgenstein_by_Ben_Richards.jpg/256px-Ludwig_Wittgenstein_by_Ben_Richards.jpg' },
   nietzsche:   { name:'Friedrich Nietzsche',  dates:'1844–1900',   role:'German Philosopher',                  img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Nietzsche187a.jpg/256px-Nietzsche187a.jpg' },
   seneca:      { name:'Seneca the Younger',   dates:'4 BC–65 AD',  role:'Roman Stoic Philosopher',             img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Pseudo-Seneca.jpg/256px-Pseudo-Seneca.jpg' },
-  epictetus:   { name:'Epictetus',            dates:'50–135 AD',   role:'Greek Stoic Philosopher',             img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg/256px-Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg' }
+  epictetus:   { name:'Epictetus',            dates:'50–135 AD',   role:'Greek Stoic Philosopher',             img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg/256px-Epicteti_Enchiridion_Latinis_versibus_adumbratum_%28Oxford_1715%29_frontispiece.jpg' },
+  lisasu:      { name:'Lisa Su',              dates:'b. 1969',     role:'Chair & CEO, AMD' },
+  taylorswift: { name:'Taylor Swift',         dates:'b. 1989',     role:'Singer-Songwriter & Entrepreneur' },
+  jensenhuang: { name:'Jensen Huang',         dates:'b. 1963',     role:'Co-founder & CEO, NVIDIA' },
+  jobs:        { name:'Steve Jobs',           dates:'1955–2011',   role:'Co-founder, Apple' },
+  buffett:     { name:'Warren Buffett',       dates:'b. 1930',     role:'Investor · CEO, Berkshire Hathaway' }
 };
 
 // ── 5 moods × up to 10 quotes each ────────────────────────────────────────
@@ -3138,7 +3162,9 @@ const MOOD_POOLS = {
     { p:'shakespeare',  q:'"We know what we are, but know not what we may be."',                                              body:'Boredom is standing at the door of potential. Behind it: something better than scrolling. You already know this.',                           closing:'3-minute escape: drink, breathe, move. Then come back and find out what \'[Q1]\' can become in your hands.' },
     { p:'seneca',       q:'"Nusquam est qui ubique est." (One who is everywhere is nowhere.)',                                 body:'Your attention is scattered — boredom is the symptom. Pick one thing. One corner of one task. Start there.',                                   closing:'Step away deliberately: water, toilet, three breaths outside — then return to \'[Q1]\'. Nowhere else.' },
     { p:'wittgenstein', q:'"If a lion could speak, we could not understand him."',                                            body:'Most problems feel boring because you haven\'t learned their language yet. Lean in. Every task has a grammar worth mastering.',                closing:'3 minutes away — seriously, go. Then come back and translate \'[Q1]\' into something you can act on.' },
-    { p:'epictetus',    q:'"Seek not that the things which happen should happen as you wish."',                                body:'You can\'t always control the work in front of you. You can always control how fully you show up to it.',                                       closing:'Go grab something cold to drink, walk to the window for 3 minutes — then show up to \'[Q1]\' fully.' }
+    { p:'epictetus',    q:'"Seek not that the things which happen should happen as you wish."',                                body:'You can\'t always control the work in front of you. You can always control how fully you show up to it.',                                       closing:'Go grab something cold to drink, walk to the window for 3 minutes — then show up to \'[Q1]\' fully.' },
+    { p:'jobs',         q:'"Innovation distinguishes between a leader and a follower."',                                        body:'Boredom is the blank page before the idea. Followers wait for it to fill itself. Leaders pick up the pen and start.',                            closing:'3 minutes to clear your head — walk, water, breathe — then lead by making the first move on \'[Q1]\'.' },
+    { p:'jensenhuang',  q:'"Don\'t walk — run. Either you\'re running for food, or running from being food."',                  body:'That restless boredom is your edge asking to be used. Stillness is the only real risk. Pick a direction and move.',                              closing:'Stand up, stretch, 3 minutes of motion — then run at \'[Q1]\' before the day runs at you.' }
   ],
   tired: [
     { p:'marcus',       q:'"It is not death that a man should fear, but he should fear never beginning to live."',            body:'Tired means you\'ve been working. That fog? The weight of effort. Effort is the only thing that ever changed anything.',                     closing:'Step away — biscuit, fresh air, 3 minutes of nothing — then open \'[Q1]\'. Just open it.' },
@@ -3150,7 +3176,9 @@ const MOOD_POOLS = {
     { p:'wittgenstein', q:'"The limits of my language mean the limits of my world."',                                         body:'Stop telling yourself "I\'m too tired." Change the language: "I am mid-effort." Different words, different world.',                           closing:'Take 3 minutes — move, breathe, drink — then come back and redefine \'[Q1]\' as something conquerable.' },
     { p:'epictetus',    q:'"Make the best use of what is in your power, and take the rest as it happens."',                   body:'You cannot control how tired you feel. You can control what you do in the next 20 minutes. Use them well.',                                  closing:'3-minute break: walk, water, window. Then use the next 20 minutes on \'[Q1]\'. Just 20.' },
     { p:'epicurus',     q:'"It is not what we have but what we enjoy that constitutes our abundance."',                       body:'The work ahead of you is also a gift — proof that your skills are needed, that your time has value. Tired but needed.',                     closing:'Enjoy a 3-minute respite: drink something, breathe deeply, stroll around. Then enjoy tackling \'[Q1]\'.' },
-    { p:'socrates',     q:'"The secret of change is to focus all your energy not on fighting the old, but on building the new."', body:'Don\'t fight the tiredness. Don\'t resist it. Just build one small new thing: one sentence, one step, one line of code.',               closing:'3 minutes to reset — body, mind, posture — then build one thing in \'[Q1]\'.' }
+    { p:'socrates',     q:'"The secret of change is to focus all your energy not on fighting the old, but on building the new."', body:'Don\'t fight the tiredness. Don\'t resist it. Just build one small new thing: one sentence, one step, one line of code.',               closing:'3 minutes to reset — body, mind, posture — then build one thing in \'[Q1]\'.' },
+    { p:'lisasu',       q:'"Run toward the hardest problems."',                                                                body:'Tired usually means the work is real and worth doing. The hard thing in front of you is exactly where the growth is hiding.',                   closing:'Refuel for 3 minutes — water, air, a short walk — then run toward the hardest part of \'[Q1]\'.' },
+    { p:'jensenhuang',  q:'"Greatness comes from character, and character is formed out of people who have suffered."',         body:'Fatigue isn\'t a verdict on your ability — it\'s the raw material of resilience. You\'re being forged, not finished.',                            closing:'Step away for 3 honest minutes — then come back and let \'[Q1]\' build a little more of your character.' }
   ],
   drained: [
     { p:'marcus',       q:'"You have power over your mind, not outside events. Realise this and you will find strength."',    body:'Drained is real. You\'re human, not a machine. Fatigue is the cost of caring. That\'s not weakness — that\'s investment.',                  closing:'Hydrate, stretch, 3 minutes cold air — then invest just 20 more minutes in \'[Q1]\'.' },
@@ -3162,7 +3190,9 @@ const MOOD_POOLS = {
     { p:'nietzsche',    q:'"In individuals, insanity is rare; but in groups, parties, nations and epochs, it is the rule."',  body:'The world is noisy. No wonder you\'re drained. You\'ve been carrying the weight of the collective. Put it down for three minutes.',           closing:'Escape the collective for 3 minutes: walk alone, no input. Then return to \'[Q1]\', which is yours alone.' },
     { p:'epicurus',     q:'"The greatest wealth is to live content with little."',                                            body:'Contentment is a renewable resource. Drain is the consequence of chasing too much at once. Simplify. One task. This task.',                  closing:'3 minutes of wanting nothing — just a drink and a walk. Then come back content to do one thing: \'[Q1]\'.' },
     { p:'wittgenstein', q:'"A serious and good philosophical work could be written consisting entirely of jokes."',           body:'Being drained doesn\'t mean being serious. Lighten up. The task doesn\'t require your gravity — just your presence.',                       closing:'3 laughing minutes if you can find them, or just 3 light ones. Then show up lightly to \'[Q1]\'.' },
-    { p:'socrates',     q:'"Know thyself."',                                                                                  body:'You know what drains you. You know what restores you. Use that knowledge. Take the break that actually works for you.',                      closing:'Take the break that works for YOU — 3 minutes, your way. Then come back and work on \'[Q1]\' as yourself.' }
+    { p:'socrates',     q:'"Know thyself."',                                                                                  body:'You know what drains you. You know what restores you. Use that knowledge. Take the break that actually works for you.',                      closing:'Take the break that works for YOU — 3 minutes, your way. Then come back and work on \'[Q1]\' as yourself.' },
+    { p:'buffett',      q:'"The most important investment you can make is in yourself."',                                      body:'When the tank is empty, you don\'t need more output — you need a deposit. Rest is not a withdrawal; it\'s how you compound.',                    closing:'Invest 3 quiet minutes in yourself — drink, breathe, step outside — then make one small deposit into \'[Q1]\'.' },
+    { p:'taylorswift',  q:'"Fearless is having fears, but jumping anyway."',                                                   body:'Drained doesn\'t mean done. You can feel the emptiness and still take one small leap. The leap is what counts, not how you feel before it.',     closing:'3 minutes to land and breathe — then jump back in with just the first step of \'[Q1]\'.' }
   ],
   lazy: [
     { p:'aristotle',    q:'"Excellence is never an accident. It is always the result of high intention and sincere effort."', body:'Laziness is efficiency waiting for a direction. Point it at something that matters and it becomes strategy.',                                  closing:'3 minutes to stretch and recalibrate — then point your efficiency squarely at \'[Q1]\'.' },
@@ -3174,7 +3204,9 @@ const MOOD_POOLS = {
     { p:'socrates',     q:'"Let him who would move the world first move himself."',                                           body:'The world won\'t move until you do. The smallest action — one sentence, one click — is a movement. Start the chain reaction.',               closing:'Move yourself: 3 minutes of actual walking. Then move \'[Q1]\' forward by one concrete step.' },
     { p:'epicurus',     q:'"Of all the things which wisdom provides to make us entirely happy, much the greatest is the possession of friendship."', body:'Your future self is your best friend. Don\'t leave them with today\'s undone work.',                      closing:'3 minutes to be kind to yourself (drink, breathe, stretch) — then be kind to your future self: do \'[Q1]\'.' },
     { p:'epictetus',    q:'"First say to yourself what you would be; and then do what you have to do."',                     body:'Say it: I am someone who ships. I am someone who finishes. Now do what that person does.',                                                     closing:'Say it out loud if you need to — then stand up, walk 3 minutes, come back, and do what \'[Q1]\' requires.' },
-    { p:'wittgenstein', q:'"The world is everything that is the case."',                                                      body:'Right now, the case is: you\'re reading a philosophy quote instead of working. The world is waiting for the other case: you started.',       closing:'3 minutes to reset the case — walk, water, breathe — then make the case for finishing \'[Q1]\'.' }
+    { p:'wittgenstein', q:'"The world is everything that is the case."',                                                      body:'Right now, the case is: you\'re reading a philosophy quote instead of working. The world is waiting for the other case: you started.',       closing:'3 minutes to reset the case — walk, water, breathe — then make the case for finishing \'[Q1]\'.' },
+    { p:'jobs',         q:'"Your time is limited, so don\'t waste it living someone else\'s life."',                           body:'Laziness is often just a task you haven\'t made yours yet. This hour is non-refundable — spend it on something that\'s actually yours.',        closing:'3 minutes to step away — then claim \'[Q1]\' as your own and spend the next 20 minutes on it.' },
+    { p:'buffett',      q:'"Chains of habit are too light to be felt until they are too heavy to be broken."',                 body:'Every time you start despite not feeling like it, you forge a lighter, better chain. One small start today rewires tomorrow.',                  closing:'Get up for 3 minutes — then forge today\'s link by doing one concrete thing on \'[Q1]\'.' }
   ],
   down: [
     { p:'marcus',       q:'"The soul becomes dyed with the colour of its thoughts."',                                         body:'Your thoughts are painting your world right now. You have more brushes than you think. Pick a different colour.',                              closing:'3 minutes outside, no phone, look at something real — then return and paint one small thing in \'[Q1]\'.' },
@@ -3186,7 +3218,9 @@ const MOOD_POOLS = {
     { p:'nietzsche',    q:'"There is always some madness in love. But there is also always some reason in madness."',         body:'Feeling down is the heart being loud. There\'s reason inside that madness — let it speak, then set it aside and make something.',            closing:'3 minutes to let the feeling be what it is — then make something. Start with \'[Q1]\'.' },
     { p:'socrates',     q:'"The unexamined life is not worth living."',                                                       body:'You\'re examining. That\'s the hardest part — most people never stop to feel this at all. You\'re already doing the deep work.',             closing:'Honour the examination: 3 minutes of honest rest — then continue with \'[Q1]\', which is part of a life worth living.' },
     { p:'wittgenstein', q:'"Whereof one cannot speak, thereof one must be silent."',                                          body:'Some things can\'t be solved by talking — or by thinking about them more. Sometimes the only answer is to make something.',                  closing:'3 silent minutes: no input, no thinking. Then make something with \'[Q1]\'.' },
-    { p:'epictetus',    q:'"We cannot choose our external circumstances, but we can always choose how we respond to them."',  body:'Down is a circumstance. The response is yours to choose. History remembers the response, never the circumstance.',                            closing:'Choose your response: 3 minutes of movement, then return and respond to \'[Q1]\' with your full self.' }
+    { p:'epictetus',    q:'"We cannot choose our external circumstances, but we can always choose how we respond to them."',  body:'Down is a circumstance. The response is yours to choose. History remembers the response, never the circumstance.',                            closing:'Choose your response: 3 minutes of movement, then return and respond to \'[Q1]\' with your full self.' },
+    { p:'taylorswift',  q:'"If you\'re lucky enough to be different, never change."',                                         body:'The down days often come from comparing yourself to everyone else. The thing that makes you feel out of place is usually the thing worth keeping.',  closing:'3 minutes to be kind to yourself — then do \'[Q1]\' your way, which is the only way that\'s actually yours.' },
+    { p:'lisasu',       q:'"Put one foot in front of the other, and you can accomplish anything."',                          body:'When everything feels heavy, you don\'t need the whole staircase — just the next step. Momentum is built one ordinary step at a time.',         closing:'3 minutes to steady yourself — then take exactly one small step on \'[Q1]\'. Just one.' }
   ]
 };
 
@@ -3468,6 +3502,18 @@ function genId() {
 // ============= GLOBAL DRAG (matrix tags — absolute positioning) =============
 let _dragState = null; // { tagId, el, canvasRect, sx, sy, origLeft, origTop, moved }
 
+// Vertical stripes sit every 12.5% (the canvas grid is 8 columns). Snap a
+// horizontal percentage to the nearest stripe so a tag's centre lands on it.
+// Clamped to the first/last visible interior stripes (12.5%–87.5%) so the
+// fixed-width pill stays on-canvas.
+const GRID_STEP = 12.5;
+function snapToStripe(xPct) {
+  let s = Math.round(xPct / GRID_STEP) * GRID_STEP;
+  if(s < GRID_STEP)       s = GRID_STEP;
+  if(s > 100 - GRID_STEP) s = 100 - GRID_STEP;
+  return s;
+}
+
 // Detect the rail item under a point and return it (or null).
 function _railItemAt(x, y) {
   const hit = document.elementFromPoint(x, y);
@@ -3496,7 +3542,7 @@ function setupGlobalDrag() {
     }
     // Move the element visually while dragging
     const r = _dragState.canvasRect;
-    const nx = Math.max(2, Math.min(98, ((e.clientX - r.left) / r.width) * 100));
+    const nx = snapToStripe(((e.clientX - r.left) / r.width) * 100);
     const ny = Math.max(2, Math.min(98, ((e.clientY - r.top) / r.height) * 100));
     _dragState.el.style.left = nx + '%';
     _dragState.el.style.top  = ny + '%';
@@ -3529,8 +3575,8 @@ function setupGlobalDrag() {
       return;
     }
 
-    // Compute final position clamped to canvas
-    const nx = Math.max(2, Math.min(98, ((e.clientX - canvasRect.left) / canvasRect.width) * 100));
+    // Compute final position: X snaps to the nearest vertical stripe, Y free.
+    const nx = snapToStripe(((e.clientX - canvasRect.left) / canvasRect.width) * 100);
     const ny = Math.max(2, Math.min(98, ((e.clientY - canvasRect.top) / canvasRect.height) * 100));
 
     const tag = state.tags.find(t => t.id === tagId);
@@ -3578,7 +3624,7 @@ function setupGlobalDrag() {
       _dragState.el.classList.add('dragging-active-tag');
     }
     const r = _dragState.canvasRect;
-    _dragState.el.style.left = Math.max(2, Math.min(98, ((t.clientX - r.left) / r.width) * 100)) + '%';
+    _dragState.el.style.left = snapToStripe(((t.clientX - r.left) / r.width) * 100) + '%';
     _dragState.el.style.top  = Math.max(2, Math.min(98, ((t.clientY - r.top)  / r.height) * 100)) + '%';
     _highlightRail(_railItemAt(t.clientX, t.clientY));
   }, { passive: false });
@@ -3609,7 +3655,7 @@ function setupGlobalDrag() {
       return;
     }
 
-    const nx = Math.max(2, Math.min(98, ((t.clientX - canvasRect.left) / canvasRect.width) * 100));
+    const nx = snapToStripe(((t.clientX - canvasRect.left) / canvasRect.width) * 100);
     const ny = Math.max(2, Math.min(98, ((t.clientY - canvasRect.top)  / canvasRect.height) * 100));
     const tag = state.tags.find(t2 => t2.id === tagId);
     if(tag) { tag.x = nx; tag.y = ny; saveData(); renderMatrix(); renderDeadlineBar(); }
@@ -3811,6 +3857,11 @@ function setupEventListeners() {
 
   document.getElementById('endOfDayDismiss').addEventListener('click', () => {
     closeModal('endOfDayModal');
+  });
+
+  // Daily-achievement share buttons
+  document.querySelectorAll('#eodShareRow [data-share]').forEach(btn => {
+    btn.addEventListener('click', () => shareDay(btn.dataset.share));
   });
 
   document.getElementById('endOfDayClose').addEventListener('click', () => {
@@ -6476,7 +6527,112 @@ function showEndOfDayModal() {
     });
   }
 
+  // Build the shareable caption once so the preview and every share button
+  // use exactly the same text (and the same random pep-talk line).
+  _dayShareText = buildDayShareText();
+  const prev = document.getElementById('eodSharePreview');
+  if(prev) prev.textContent = _dayShareText;
+
   openModal('endOfDayModal');
+}
+
+// ============= DAILY ACHIEVEMENT SHARING =============
+const SHARE_APP_URL = 'https://yihsuanpai.github.io/eisenhower-matrix/';
+let _dayShareText = '';
+const PEP_QUOTES = [
+  "Small wins compound. Keep stacking them.",
+  "Done beats perfect, every single time.",
+  "You showed up — that's the whole game.",
+  "Progress, not perfection. Today counted.",
+  "Future-you is already grateful.",
+  "Momentum is built one finished task at a time.",
+  "Discipline today, freedom tomorrow.",
+  "The work you did today is a brick in something bigger.",
+  "Consistency is quiet, then it's loud. Keep going.",
+  "Rest now — you earned the reset."
+];
+
+// Productive span in hours, inferred from today's completion timestamps.
+function _todayHours(completedTags) {
+  const times = completedTags.map(t => Date.parse(t.resolvedAt)).filter(n => !isNaN(n));
+  if(times.length < 1) return 0;
+  return (Math.max(...times) - Math.min(...times)) / 3.6e6;
+}
+function _formatHours(h) {
+  if(h <= 0) return null;
+  if(h < 1)  return 'under an hour';
+  const r = Math.round(h);
+  return r + (r === 1 ? ' hour' : ' hours');
+}
+
+// Compose the caption from the current Today state.
+function buildDayShareText() {
+  const items = state.todayItems;
+  const committed = items.length;
+  const completedTags = items
+    .map(ti => state.tags.find(t => t.id === ti.tagId))
+    .filter(t => t && t.resolved);
+  const completed = completedTags.length;
+  const hStr = _formatHours(_todayHours(completedTags));
+  const pep  = PEP_QUOTES[Math.floor(Math.random() * PEP_QUOTES.length)];
+  const line = hStr
+    ? `I completed ${completed} of ${committed} tasks in ${hStr} today. What a day! 💪`
+    : `I completed ${completed} of ${committed} tasks today. What a day! 💪`;
+  return `${line}\n\n“${pep}”\n\n#EisenhowerMatrix #GetItDone`;
+}
+
+function _platformName(p) {
+  return ({ instagram:'Instagram', discord:'Discord', slack:'Slack' })[p] || p;
+}
+
+// Platforms with a real web share intent open it directly; the rest copy the
+// caption to the clipboard and open the destination so the user can paste.
+function shareDay(platform) {
+  const text   = _dayShareText || buildDayShareText();
+  const enc    = encodeURIComponent(text);
+  const encUrl = encodeURIComponent(SHARE_APP_URL);
+  const open   = u => window.open(u, '_blank', 'noopener,noreferrer');
+  switch(platform) {
+    case 'x':        open(`https://twitter.com/intent/tweet?text=${enc}&url=${encUrl}`); return;
+    case 'threads':  open(`https://www.threads.net/intent/post?text=${enc}%20${encUrl}`); return;
+    case 'facebook': open(`https://www.facebook.com/sharer/sharer.php?u=${encUrl}&quote=${enc}`); return;
+    case 'line':     open(`https://social-plugins.line.me/lineit/share?url=${encUrl}&text=${enc}`); return;
+    default:         _copyShareText(text, platform);   // instagram / discord / slack / copy
+  }
+}
+
+function _copyShareText(text, platform) {
+  const dest = {
+    instagram: 'https://www.instagram.com/',
+    discord:   'https://discord.com/channels/@me',
+    slack:     'https://app.slack.com/'
+  };
+  const after = () => {
+    if(platform === 'copy') { showToast('Caption copied to clipboard.'); return; }
+    showToast('Caption copied — paste it into your ' + _platformName(platform) + ' post.');
+    if(dest[platform]) window.open(dest[platform], '_blank', 'noopener,noreferrer');
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(after, () => _fallbackCopy(text, after));
+  } else {
+    _fallbackCopy(text, after);
+  }
+}
+
+// Clipboard API unavailable (e.g. file://) → use a hidden textarea + execCommand.
+function _fallbackCopy(text, after) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    if(after) after();
+  } catch(e) {
+    showToast('Copy this: ' + text.split('\n')[0]);
+  }
 }
 
 async function showMoodModal() {
@@ -6614,11 +6770,14 @@ function startClock() {
   setInterval(updateClock, 1000);
 }
 
-// ============= COPY/PASTE =============
-function copyData() {
-  // Export in a versioned envelope so imports always work
-  const exportPayload = {
+// ============= BACKUP / RESTORE =============
+// Build the versioned export envelope. Centralised so download, clipboard, and
+// any future surface all emit identical, forward-compatible payloads.
+function buildExportPayload() {
+  return {
     _v: 7,
+    _app: 'eisenhower-matrix',
+    _exportedAt: new Date().toISOString(),
     tags: state.tags,           // raw tags keep type/topicId and all fields (BUG-002)
     topics: state.topics,
     activeTopicId: state.activeTopicId,
@@ -6630,56 +6789,185 @@ function copyData() {
     firstUsed: state.firstUsed,
     language: state.profile?.language || I18n.getLocale()
   };
-  const json = JSON.stringify(exportPayload, null, 2);
-  try {
-    navigator.clipboard.writeText(json).then(() => showToast(tr('toast.copied')));
-  } catch(e) {
-    // Fallback: show textarea for manual copy
-    showCopyFallback(json);
+}
+
+function _backupFilename() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `eisenhower-matrix-backup-${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}.json`;
+}
+
+// Trigger a client-side file download (no server, works fully offline).
+function _downloadText(filename, text, mime) {
+  const blob = new Blob([text], { type: (mime || 'application/json') + ';charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function _modalShell(innerHTML) {
+  const bd = document.createElement('div');
+  bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9100;display:flex;align-items:center;justify-content:center;padding:16px';
+  bd.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:480px;max-width:94vw;box-shadow:0 12px 40px rgba(0,0,0,.5)">${innerHTML}</div>`;
+  bd.addEventListener('click', e => { if(e.target === bd) bd.remove(); });
+  document.body.appendChild(bd);
+  return bd;
+}
+
+// ── EXPORT / BACKUP ──────────────────────────────────────────────
+function copyData() {
+  const json = JSON.stringify(buildExportPayload(), null, 2);
+  const tags = state.tags.length;
+  const topics = (state.topics || []).length;
+  const bytes = new Blob([json]).size;
+  const kb = (bytes / 1024).toFixed(bytes < 10240 ? 1 : 0);
+  const bd = _modalShell(`
+    <div style="font-weight:700;font-size:15px;margin-bottom:4px;color:var(--accent3)">⬇ Back up your data</div>
+    <div style="font-size:12.5px;color:var(--text-dim);line-height:1.55;margin-bottom:14px">
+      Save a portable backup file to your computer, then restore it any time — even on another device or browser. Everything stays on your machine.
+    </div>
+    <div style="display:flex;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text-dim)">
+      <span><b style="color:var(--text)">${tags}</b> tasks</span>
+      <span><b style="color:var(--text)">${topics}</b> topics</span>
+      <span><b style="color:var(--text)">${kb} KB</b></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button id="_dl" style="background:var(--accent3);color:#fff;border:none;padding:11px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700">⬇ Download backup file (.json)</button>
+      <button id="_cp" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:10px 16px;border-radius:8px;cursor:pointer;font-size:12.5px">⧉ Copy to clipboard instead</button>
+    </div>
+    <div style="text-align:right;margin-top:14px"><button id="_close" style="background:none;color:var(--text-dim);border:none;cursor:pointer;font-size:12px">Close</button></div>
+  `);
+  bd.querySelector('#_dl').addEventListener('click', () => {
+    _downloadText(_backupFilename(), json);
+    showToast('Backup downloaded — keep it somewhere safe.');
+    bd.remove();
+  });
+  bd.querySelector('#_cp').addEventListener('click', () => {
+    try {
+      navigator.clipboard.writeText(json).then(
+        () => { showToast(tr('toast.copied')); bd.remove(); },
+        () => _selectForManualCopy(bd, json)
+      );
+    } catch(e) { _selectForManualCopy(bd, json); }
+  });
+  bd.querySelector('#_close').addEventListener('click', () => bd.remove());
+}
+
+// Clipboard blocked (e.g. file://) → fall back to a selectable textarea.
+function _selectForManualCopy(bd, json) {
+  bd.querySelector('div[style]').innerHTML = `
+    <div style="font-weight:700;margin-bottom:8px">⧉ Select all & copy</div>
+    <textarea readonly style="width:100%;height:160px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box">${json.replace(/</g,'&lt;')}</textarea>
+    <div style="text-align:right;margin-top:10px"><button id="_close2" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px">Done</button></div>`;
+  const ta = bd.querySelector('textarea'); ta.focus(); ta.select();
+  bd.querySelector('#_close2').addEventListener('click', () => bd.remove());
+}
+
+// ── IMPORT / RESTORE ─────────────────────────────────────────────
+function pasteData() {
+  const bd = _modalShell(`
+    <div style="font-weight:700;font-size:15px;margin-bottom:4px;color:var(--accent2)">↺ Restore from backup</div>
+    <div style="font-size:12.5px;color:var(--text-dim);line-height:1.55;margin-bottom:14px">
+      Load a backup file you previously downloaded, or paste exported text. Works with any earlier version (v5–v7).
+    </div>
+    <label id="_drop" style="display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px dashed var(--border);border-radius:10px;padding:18px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s">
+      <span style="font-size:22px">📁</span>
+      <span style="font-size:13px;font-weight:600;color:var(--text)">Choose a backup file</span>
+      <span style="font-size:11px;color:var(--text-dim)">or drag &amp; drop · .json / .txt</span>
+      <input id="_file" type="file" accept=".json,.txt,application/json,text/plain" style="display:none">
+    </label>
+    <details style="margin-top:12px">
+      <summary style="font-size:12px;color:var(--text-dim);cursor:pointer">Paste text instead</summary>
+      <textarea id="_importTA" style="width:100%;height:120px;margin-top:8px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box" placeholder='Paste exported JSON here…'></textarea>
+    </details>
+    <div id="_preview" style="display:none;margin-top:12px;font-size:12px;border-radius:8px;padding:10px 12px"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+      <button id="_importCancel" style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px">Cancel</button>
+      <button id="_importApply" disabled style="background:var(--accent2);color:var(--bg);border:none;padding:8px 16px;border-radius:6px;cursor:not-allowed;opacity:.5;font-size:12px;font-weight:700">Restore</button>
+    </div>
+  `);
+
+  const fileInput = bd.querySelector('#_file');
+  const ta        = bd.querySelector('#_importTA');
+  const preview   = bd.querySelector('#_preview');
+  const applyBtn  = bd.querySelector('#_importApply');
+  const drop      = bd.querySelector('#_drop');
+  let validRaw = null;
+
+  function setPreview(state2, msg) {
+    preview.style.display = 'block';
+    const c = state2 === 'ok' ? 'var(--accent2)' : '#ff7a7a';
+    preview.style.border = '1px solid ' + c;
+    preview.style.color = c;
+    preview.innerHTML = msg;
+  }
+  function evaluate(raw) {
+    validRaw = null;
+    applyBtn.disabled = true; applyBtn.style.cursor = 'not-allowed'; applyBtn.style.opacity = '.5';
+    if(!raw || !raw.trim()) { preview.style.display = 'none'; return; }
+    const v = _validateBackup(raw);
+    if(!v.ok) { setPreview('err', '⚠ ' + v.error); return; }
+    validRaw = raw;
+    applyBtn.disabled = false; applyBtn.style.cursor = 'pointer'; applyBtn.style.opacity = '1';
+    setPreview('ok', `✓ Valid backup — <b>${v.summary.tags}</b> tasks, <b>${v.summary.topics}</b> topics${v.summary.exportedAt ? ' · saved ' + v.summary.exportedAt : ''}.<br><span style="color:var(--text-dim)">Your current data will be replaced (you can undo right after).</span>`);
+  }
+
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files && fileInput.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = () => { ta.value = reader.result; evaluate(reader.result); drop.querySelector('span:nth-child(2)').textContent = f.name; };
+    reader.onerror = () => setPreview('err', 'Could not read that file.');
+    reader.readAsText(f);
+  });
+  ta.addEventListener('input', () => evaluate(ta.value));
+  ['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = 'var(--accent2)'; drop.style.background = 'var(--surface2)'; }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = 'var(--border)'; drop.style.background = 'transparent'; }));
+  drop.addEventListener('drop', e => {
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = () => { ta.value = reader.result; evaluate(reader.result); drop.querySelector('span:nth-child(2)').textContent = f.name; };
+    reader.readAsText(f);
+  });
+
+  bd.querySelector('#_importCancel').addEventListener('click', () => bd.remove());
+  applyBtn.addEventListener('click', () => {
+    if(!validRaw) return;
+    bd.remove();
+    applyImport(validRaw);
+  });
+
+  // Convenience: pre-fill from clipboard if it already holds a backup.
+  if(navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(text => {
+      if(text && _validateBackup(text).ok && !ta.value) { ta.value = text; evaluate(text); }
+    }).catch(() => {});
   }
 }
 
-function showCopyFallback(json) {
-  const bd = document.createElement('div');
-  bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9100;display:flex;align-items:center;justify-content:center';
-  bd.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;width:480px;max-width:92vw">
-    <div style="font-weight:700;margin-bottom:10px">📋 Copy this data</div>
-    <textarea readonly style="width:100%;height:150px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box">${json}</textarea>
-    <div style="text-align:right;margin-top:10px"><button onclick="this.closest('div[style]').remove()" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px">Close</button></div>
-  </div>`;
-  document.body.appendChild(bd);
-  bd.querySelector('textarea').select();
-}
-
-function pasteData() {
-  const bd = document.createElement('div');
-  bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9100;display:flex;align-items:center;justify-content:center';
-  bd.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;width:480px;max-width:92vw">
-    <div style="font-weight:700;margin-bottom:6px;color:var(--accent2)">📥 Import Data</div>
-    <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Paste exported data below. Works with any previous version (v5, v6, v7).</div>
-    <textarea id="_importTA" style="width:100%;height:160px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:11px;resize:none;box-sizing:border-box" placeholder='Paste JSON here…'></textarea>
-    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
-      <button id="_importCancel" style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:12px">Cancel</button>
-      <button id="_importApply" style="background:var(--accent2);color:var(--bg);border:none;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700">Apply</button>
-    </div>
-  </div>`;
-  document.body.appendChild(bd);
-  bd.querySelector('#_importCancel').addEventListener('click', () => bd.remove());
-  bd.querySelector('#_importApply').addEventListener('click', () => {
-    const raw = bd.querySelector('#_importTA').value.trim();
-    bd.remove();
-    if(!raw) return;
-    applyImport(raw);
-  });
-  // Try to read clipboard automatically
-  navigator.clipboard.readText().then(text => {
-    bd.querySelector('#_importTA').value = text;
-  }).catch(() => {});
+// Validate a raw backup string without mutating state. Returns
+// { ok, error?, summary?:{tags,topics,exportedAt} }.
+function _validateBackup(raw) {
+  let parsed;
+  try { parsed = JSON.parse(raw); }
+  catch(e) { return { ok: false, error: 'Not valid JSON — check you copied the whole file.' }; }
+  let tags;
+  if(Array.isArray(parsed)) tags = parsed;                 // legacy v5 (bare array)
+  else if(parsed && Array.isArray(parsed.tags)) tags = parsed.tags;
+  else return { ok: false, error: 'This file is not an Eisenhower Matrix backup.' };
+  const exportedAt = (parsed && parsed._exportedAt) ? new Date(parsed._exportedAt).toLocaleDateString() : '';
+  return { ok: true, summary: { tags: tags.length, topics: (parsed && parsed.topics ? parsed.topics.length : 0), exportedAt } };
 }
 
 function applyImport(raw) {
   let parsed;
   try { parsed = JSON.parse(raw); } catch(e) { showToast(tr('toast.invalidJson')); return; }
+
+  // Resilience: snapshot the current data BEFORE overwriting, so a mistaken
+  // restore can be undone in one click.
+  const _preImportSnapshot = localStorage.getItem(STORAGE_KEY);
 
   // Accept both versioned envelope { _v, tags, userName, todayItems }
   // and flat arrays from v5/v6 (array of tags directly)
@@ -6737,7 +7025,36 @@ function applyImport(raw) {
   renderTopicRail();
   renderAddBarTopics();
   renderMotto();
-  showToast(tr('toast.imported'));
+  showUndoToast(tr('toast.imported'), _preImportSnapshot);
+}
+
+// Toast with an Undo button — restores the snapshot captured before an import.
+function showUndoToast(msg, snapshot) {
+  const old = document.getElementById('_undoToast');
+  if(old) old.remove();
+  const t = document.createElement('div');
+  t.id = '_undoToast';
+  t.style.cssText = 'position:fixed;bottom:20px;right:20px;display:flex;align-items:center;gap:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:10px 14px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.4)';
+  const span = document.createElement('span'); span.textContent = msg;
+  t.appendChild(span);
+  if(snapshot != null) {
+    const btn = document.createElement('button');
+    btn.textContent = 'Undo';
+    btn.style.cssText = 'background:var(--accent2);color:var(--bg);border:none;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700';
+    btn.addEventListener('click', () => {
+      try { localStorage.setItem(STORAGE_KEY, snapshot); } catch(e) {}
+      loadData();
+      applyLanguageFromProfile(); I18n.applyI18n();
+      renderMatrix(); renderCurrentTab(); renderDeadlineBar();
+      renderTopicRail(); renderAddBarTopics(); renderMotto();
+      t.remove();
+      showToast('Restore undone — your previous data is back.');
+    });
+    t.appendChild(btn);
+  }
+  document.body.appendChild(t);
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.remove(), 10000);
 }
 
 function showToast(msg) {
