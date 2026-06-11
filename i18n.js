@@ -228,6 +228,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
       'pd.import': 'Import Data',
       'pd.themeDark': 'Dark Mode',
       'pd.themeLight': 'Light Mode',
+      'pd.themes': 'Themes',
       'pd.info': 'Information',
       'profile.settings': 'Profile Settings',
       'profile.jobTitle': 'What do you do?',
@@ -300,11 +301,16 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
       'eod.praise.strong': '🎯 You nailed the important stuff today. That\'s how momentum builds.',
       'eod.nothingToday': 'Nothing planned for today!',
       'info.title': '✨ Eisenhower Matrix',
-      'info.version': '🔢 Version 2.0',
-      'info.builtAi': '🤖 Built with Claude Sonnet 4.6',
-      'info.builtIde': '⌨️ Built in Cursor',
+      'info.version': '🔢 Version 2.0.0',
+      'info.builtAi': '🤖 Built with Claude',
+      'info.builtIde': '⌨️ Built in Cursor & Cowork',
       'info.builder': '👩‍💻 Builder: Angela Pai 🌸✨💫',
       'info.lastUpdated': '🗓 Last updated: {date}',
+      'info.whatsNewHdr': "✦ What's new",
+      'info.whatsNew1': '🎨 Four themes: Midnight, City-Pop, Techy & Classical',
+      'info.whatsNew2': '🧲 Tasks snap to the grid; drag topics to reorder priority',
+      'info.whatsNew3': '💾 File-based backup & restore with one-click undo',
+      'info.whatsNew4': '📣 Share your day to X, Threads, Facebook, LINE & more',
       'info.tagline': '🌃 Stay focused, stay fabulous.',
       'info.storage': '💾 Your tasks are saved locally in your browser.',
       'info.close': 'Close',
@@ -390,6 +396,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': '匯入資料',
   'pd.themeDark': '深色模式',
   'pd.themeLight': '淺色模式',
+  'pd.themes': '主題',
   'pd.info': '資訊',
   'profile.settings': '個人檔案設定',
   'profile.jobTitle': '你目前的工作是什麼？',
@@ -462,7 +469,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 今天重要的事你都完成了。動能就是這樣累積起來的。',
   'eod.nothingToday': '今天還沒有規劃任務！',
   'info.title': '✨ 艾森豪矩陣',
-  'info.version': '🔢 版本 2.0',
+  'info.version': '🔢 版本 2.0.0',
   'info.builtAi': '🤖 使用 Claude Sonnet 4.6 建置',
   'info.builtIde': '⌨️ 於 Cursor 開發',
   'info.builder': '👩‍💻 開發者：Angela Pai 🌸✨💫',
@@ -551,6 +558,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': '导入数据',
   'pd.themeDark': '深色模式',
   'pd.themeLight': '浅色模式',
+  'pd.themes': '主题',
   'pd.info': '信息',
   'profile.settings': '个人资料设置',
   'profile.jobTitle': '你目前的工作是什么？',
@@ -623,7 +631,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 今天重要的事你都完成了。动能就是这样累积起来的。',
   'eod.nothingToday': '今天还没有规划任务！',
   'info.title': '✨ 艾森豪矩阵',
-  'info.version': '🔢 版本 2.0',
+  'info.version': '🔢 版本 2.0.0',
   'info.builtAi': '🤖 使用 Claude Sonnet 4.6 构建',
   'info.builtIde': '⌨️ 在 Cursor 开发',
   'info.builder': '👩‍💻 开发者：Angela Pai 🌸✨💫',
@@ -712,6 +720,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': 'データをインポート',
   'pd.themeDark': 'ダークモード',
   'pd.themeLight': 'ライトモード',
+  'pd.themes': 'テーマ',
   'pd.info': '情報',
   'profile.settings': 'プロフィール設定',
   'profile.jobTitle': '今のお仕事は？',
@@ -784,7 +793,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 今日の大事なことをしっかり片づけました。勢いはこうやって生まれます。',
   'eod.nothingToday': '今日の予定はまだありません！',
   'info.title': '✨ アイゼンハワー・マトリックス',
-  'info.version': '🔢 バージョン 2.0',
+  'info.version': '🔢 バージョン 2.0.0',
   'info.builtAi': '🤖 Claude Sonnet 4.6 で構築',
   'info.builtIde': '⌨️ Cursor で開発',
   'info.builder': '👩‍💻 制作者：Angela Pai 🌸✨💫',
@@ -873,6 +882,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': 'Impor Data',
   'pd.themeDark': 'Mode Gelap',
   'pd.themeLight': 'Mode Terang',
+  'pd.themes': 'Tema',
   'pd.info': 'Informasi',
   'profile.settings': 'Pengaturan Profil',
   'profile.jobTitle': 'Apa pekerjaanmu saat ini?',
@@ -945,7 +955,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 Hal penting hari ini sudah kamu bereskan. Begitulah momentum dibangun.',
   'eod.nothingToday': 'Belum ada rencana untuk hari ini!',
   'info.title': '✨ Matriks Eisenhower',
-  'info.version': '🔢 Versi 2.0',
+  'info.version': '🔢 Versi 2.0.0',
   'info.builtAi': '🤖 Dibangun dengan Claude Sonnet 4.6',
   'info.builtIde': '⌨️ Dibangun di Cursor',
   'info.builder': '👩‍💻 Pembuat: Angela Pai 🌸✨💫',
@@ -1034,6 +1044,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': 'Daten importieren',
   'pd.themeDark': 'Dunkelmodus',
   'pd.themeLight': 'Hellmodus',
+  'pd.themes': 'Themen',
   'pd.info': 'Informationen',
   'profile.settings': 'Profileinstellungen',
   'profile.jobTitle': 'Was machst du beruflich?',
@@ -1106,7 +1117,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 Die wichtigen Dinge hast du heute erledigt. So entsteht Momentum.',
   'eod.nothingToday': 'Für heute ist nichts geplant!',
   'info.title': '✨ Eisenhower-Matrix',
-  'info.version': '🔢 Version 2.0',
+  'info.version': '🔢 Version 2.0.0',
   'info.builtAi': '🤖 Erstellt mit Claude Sonnet 4.6',
   'info.builtIde': '⌨️ Entwickelt in Cursor',
   'info.builder': '👩‍💻 Entwicklerin: Angela Pai 🌸✨💫',
@@ -1195,6 +1206,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'pd.import': 'Importar datos',
   'pd.themeDark': 'Modo oscuro',
   'pd.themeLight': 'Modo claro',
+  'pd.themes': 'Temas',
   'pd.info': 'Información',
   'profile.settings': 'Ajustes del perfil',
   'profile.jobTitle': '¿A qué te dedicas?',
@@ -1267,7 +1279,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   'eod.praise.strong': '🎯 Hoy completaste lo importante. Así se construye el impulso.',
   'eod.nothingToday': '¡Nada planificado para hoy!',
   'info.title': '✨ Matriz de Eisenhower',
-  'info.version': '🔢 Versión 2.0',
+  'info.version': '🔢 Versión 2.0.0',
   'info.builtAi': '🤖 Creado con Claude Sonnet 4.6',
   'info.builtIde': '⌨️ Desarrollado en Cursor',
   'info.builder': '👩‍💻 Creadora: Angela Pai 🌸✨💫',
@@ -1424,13 +1436,11 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
   }
 
   function updateThemeBtnsI18n() {
-    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     const pdItem = document.getElementById('pdTheme');
     if (pdItem) {
       const lbl = pdItem.querySelector('.pd-label');
-      const key = isDark ? 'pd.themeDark' : 'pd.themeLight';
-      if (lbl) { lbl.setAttribute('data-i18n', key); lbl.textContent = t(key); }
-      else { pdItem.textContent = t(key); }
+      if (lbl) { lbl.setAttribute('data-i18n', 'pd.themes'); lbl.textContent = t('pd.themes'); }
+      else { pdItem.textContent = t('pd.themes'); }
     }
   }
 

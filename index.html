@@ -56,6 +56,54 @@
       --q4: rgba(107,114,128,.07);
     }
 
+    /* ═══ TECHY — cyber / terminal neon on near-black ═════════════════════ */
+    [data-theme="techy"] {
+      --bg: #05070d;
+      --surface: #0a0f1a;
+      --surface2: #0f1626;
+      --surface3: #152033;
+      --border: #1f3554;
+      --text: #d7f7ff;
+      --text-dim: #5fa6c9;
+      --accent:  #00E5FF;   /* electric cyan */
+      --accent2: #39FF14;   /* terminal green */
+      --accent3: #FF2BD6;   /* hot magenta */
+      --accent4: #7CFFCB;
+      --lavender: #00E5FF;
+      --mint: #39FF14;
+      --accent-glow:  rgba(0,229,255,.28);
+      --accent2-glow: rgba(57,255,20,.22);
+      --accent3-glow: rgba(255,43,214,.22);
+      --q1: rgba(255,43,214,.20);
+      --q2: rgba(57,255,20,.16);
+      --q3: rgba(0,229,255,.12);
+      --q4: rgba(31,53,84,.12);
+    }
+
+    /* ═══ CLASSICAL — warm ink, gold & sage, library-quiet ════════════════ */
+    [data-theme="classical"] {
+      --bg: #1b1812;
+      --surface: #262219;
+      --surface2: #302a20;
+      --surface3: #3b3429;
+      --border: #4a4233;
+      --text: #f3ead6;
+      --text-dim: #b6a886;
+      --accent:  #C9A227;   /* antique gold */
+      --accent2: #8FB99A;   /* sage green */
+      --accent3: #B0413E;   /* burgundy */
+      --accent4: #D9B36A;
+      --lavender: #C9A227;
+      --mint: #8FB99A;
+      --accent-glow:  rgba(201,162,39,.22);
+      --accent2-glow: rgba(143,185,154,.18);
+      --accent3-glow: rgba(176,65,62,.20);
+      --q1: rgba(176,65,62,.18);
+      --q2: rgba(143,185,154,.16);
+      --q3: rgba(201,162,39,.12);
+      --q4: rgba(74,66,51,.12);
+    }
+
     /* Light-mode element overrides for hardcoded colours */
     [data-theme="light"] body   { color-scheme: light; }
     [data-theme="light"] #header {
@@ -1202,6 +1250,34 @@
     .today-topic-group.collapsed .today-topic-head { margin-bottom: 0; }
     .today-topic-group.collapsed .today-list,
     .today-topic-group.collapsed .today-add-row { display: none; }
+    /* Theme picker */
+    .theme-opts { display: flex; flex-direction: column; gap: 8px; }
+    .theme-opt {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left;
+      color: var(--text); transition: border-color .15s, background .15s;
+    }
+    .theme-opt:hover { border-color: var(--accent3); background: var(--surface3); }
+    .theme-opt.active { border-color: var(--accent2); box-shadow: 0 0 0 1px var(--accent2) inset; }
+    .theme-sw { display: inline-flex; gap: 3px; flex-shrink: 0; }
+    .theme-sw i { width: 14px; height: 22px; border-radius: 3px; display: block; box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset; }
+    .theme-opt-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .theme-opt-text b { font-size: 13px; font-weight: 700; }
+    .theme-opt-text span { font-size: 11px; color: var(--text-dim); }
+    .theme-check { color: var(--accent2); font-weight: 700; width: 14px; text-align: center; flex-shrink: 0; }
+
+    /* Topic reorder via header grip */
+    .today-topic-drag {
+      flex-shrink: 0; cursor: grab; color: var(--text-dim);
+      font-size: 14px; line-height: 1; padding: 0 2px;
+      user-select: none; opacity: .55; transition: opacity .15s, color .15s;
+    }
+    .today-topic-drag:hover { opacity: 1; color: var(--accent2); }
+    .today-topic-drag:active { cursor: grabbing; }
+    .today-topic-group.topic-dragging { opacity: .45; }
+    .today-topic-group.topic-reorder-before { box-shadow: 0 -3px 0 0 var(--accent2); }
+    .today-topic-group.topic-reorder-after  { box-shadow: 0 3px 0 0 var(--accent2); }
     .today-topic-emoji {
       background: var(--surface3); border: 1px solid var(--border);
       border-radius: 8px; cursor: pointer;
@@ -2496,8 +2572,8 @@
     <span class="pd-label" data-i18n="pd.import">Import Data</span>
   </div>
   <div class="pd-item" id="pdTheme">
-    <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg></span>
-    <span class="pd-label" data-i18n="pd.themeDark">Dark Mode</span>
+    <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c1 0 1.6-.8 1.6-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.1 0-.9.7-1.6 1.6-1.6H15a4 4 0 0 0 4-4c0-4.2-3.1-8.4-7-8.4Z"/><circle cx="7.7" cy="11.6" r="1" fill="currentColor" stroke="none"/><circle cx="10.4" cy="7.7" r="1" fill="currentColor" stroke="none"/><circle cx="14.4" cy="7.7" r="1" fill="currentColor" stroke="none"/><circle cx="16.4" cy="11.4" r="1" fill="currentColor" stroke="none"/></svg></span>
+    <span class="pd-label" data-i18n="pd.themes">Themes</span>
   </div>
   <div class="pd-item" id="pdInfoBtn">
     <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="0.6" fill="currentColor" stroke="none"/></svg></span>
@@ -2683,11 +2759,17 @@
   <div class="modal">
     <h2 data-i18n="info.title">✨ Eisenhower Matrix</h2>
     <p style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">──────────────────────</p>
-    <p data-i18n="info.version">🔢 Version 2.0</p>
-    <p data-i18n="info.builtAi">🤖 Built with Claude Sonnet 4.6</p>
-    <p data-i18n="info.builtIde">⌨️ Built in Cursor</p>
+    <p data-i18n="info.version">🔢 Version 2.0.0</p>
+    <p data-i18n="info.builtAi">🤖 Built with Claude</p>
+    <p data-i18n="info.builtIde">⌨️ Built in Cursor & Cowork</p>
     <p data-i18n="info.builder">👩‍💻 Builder: Angela Pai 🌸✨💫</p>
     <p id="infoDate">🗓 Last updated: 2026/04/23 00:00</p>
+    <p style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; margin-bottom: 8px;">──────────────────────</p>
+    <p data-i18n="info.whatsNewHdr" style="font-weight:700;color:var(--accent2)">✦ What's new</p>
+    <p data-i18n="info.whatsNew1">🎨 Four themes: Midnight, City-Pop, Techy & Classical</p>
+    <p data-i18n="info.whatsNew2">🧲 Tasks snap to the grid; drag topics to reorder priority</p>
+    <p data-i18n="info.whatsNew3">💾 File-based backup & restore with one-click undo</p>
+    <p data-i18n="info.whatsNew4">📣 Share your day to X, Threads, Facebook, LINE & more</p>
     <p style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">──────────────────────</p>
     <p data-i18n="info.tagline">🌃 Stay focused, stay fabulous.</p>
     <p data-i18n="info.storage">💾 Your tasks are saved locally in your browser.</p>
@@ -3090,13 +3172,52 @@ function saveProfileFields() {
   document.documentElement.setAttribute('data-theme', saved);
 })();
 
-function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  const next   = isDark ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ei_theme', next);
+// Available colour schemes. Dark is the default (:root); the rest are
+// data-theme overrides. Swatches = [background, primary accent, secondary].
+const THEMES = [
+  { id:'dark',      label:'Midnight',       hint:'Deep-space default',     sw:['#12162e','#D94CFF','#4FF0D1'] },
+  { id:'light',     label:'City-Pop',       hint:'Bright pastel',          sw:['#F7F9FF','#7A6FF0','#5B7CFA'] },
+  { id:'techy',     label:'Techy',          hint:'Cyber neon terminal',    sw:['#05070d','#00E5FF','#39FF14'] },
+  { id:'classical', label:'Classical',      hint:'Ink, gold & sage',       sw:['#1b1812','#C9A227','#8FB99A'] }
+];
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') || 'dark';
+}
+function setTheme(name) {
+  const valid = THEMES.some(t => t.id === name) ? name : 'dark';
+  document.documentElement.setAttribute('data-theme', valid);
+  localStorage.setItem('ei_theme', valid);
   updateThemeBtns();
-  updateProfileAvatar();
+  if(typeof updateProfileAvatar === 'function') updateProfileAvatar();
+  if(typeof renderPmCompletionChart === 'function') renderPmCompletionChart();
+  // Re-skin task tags (and their list dots) to the new theme's palette.
+  if(typeof renderMatrix === 'function') renderMatrix();
+  if(typeof renderCurrentTab === 'function') renderCurrentTab();
+  if(typeof renderDeadlineBar === 'function') renderDeadlineBar();
+}
+// Back-compat: a couple of call sites may still call toggleTheme().
+function toggleTheme() {
+  setTheme(currentTheme() === 'light' ? 'dark' : 'light');
+}
+
+function openThemePicker() {
+  const cur = currentTheme();
+  const rows = THEMES.map(t => `
+    <button class="theme-opt${t.id === cur ? ' active' : ''}" data-theme-id="${t.id}">
+      <span class="theme-sw">${t.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span>
+      <span class="theme-opt-text"><b>${t.label}</b><span>${t.hint}</span></span>
+      <span class="theme-check">${t.id === cur ? '✓' : ''}</span>
+    </button>`).join('');
+  const bd = _modalShell(`
+    <div style="font-weight:700;font-size:15px;margin-bottom:4px;color:var(--accent3)">🎨 Themes</div>
+    <div style="font-size:12.5px;color:var(--text-dim);margin-bottom:14px">Pick a colour scheme — your choice is saved on this device.</div>
+    <div class="theme-opts">${rows}</div>
+    <div style="text-align:right;margin-top:14px"><button id="_themeClose" style="background:none;color:var(--text-dim);border:none;cursor:pointer;font-size:12px">Close</button></div>
+  `);
+  bd.querySelectorAll('[data-theme-id]').forEach(btn => {
+    btn.addEventListener('click', () => { setTheme(btn.dataset.themeId); bd.remove(); });
+  });
+  bd.querySelector('#_themeClose').addEventListener('click', () => bd.remove());
 }
 
 function updateThemeBtns() {
@@ -3111,6 +3232,40 @@ const PALETTE = [
   '#8FFFD1','#FF9060','#60BFFF','#FFD060','#A060FF',
   '#FF6090','#40E0C0','#E060FF','#60FF80','#FFA0B8'
 ];
+
+// Per-theme tag palettes. Tags keep a stable hue *slot* (their position in the
+// base PALETTE), and that slot is recoloured from the active theme's palette —
+// so every task tag re-skins when the theme changes, no data migration needed.
+const THEME_PALETTES = {
+  dark: PALETTE,
+  light: [
+    '#7A6FF0','#5B7CFA','#E052CF','#FF6EC7','#2BB3A3','#F2994A',
+    '#9B51E0','#2D9CDB','#EB5757','#27AE60','#BB6BD9','#F2C94C',
+    '#3C8DBC','#C0398B','#3FAE6B','#D9803F'
+  ],
+  techy: [
+    '#00E5FF','#39FF14','#FF2BD6','#7CFFCB','#18A0FB','#B5FF3A',
+    '#FF4FD8','#00FFC6','#5CE1E6','#A0FF1A','#FF6AC2','#28F5B0',
+    '#36D1FF','#9DFF2E','#FF49C0','#3DF0E0'
+  ],
+  classical: [
+    '#C9A227','#8FB99A','#B0413E','#6E7F5B','#A6794C','#4E6E81',
+    '#9C6B3F','#7C8C76','#B08968','#5B6C8F','#A03E3E','#8A8B5C',
+    '#C58B3C','#6E8B7A','#9E5C3E','#7A7F95'
+  ]
+};
+function _hashStr(s) {
+  let h = 0; s = String(s);
+  for(let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+// Resolve a tag's display colour for the *current* theme.
+function tagColor(tag) {
+  const pal = THEME_PALETTES[currentTheme()] || PALETTE;
+  let idx = PALETTE.indexOf(tag && tag.color);     // keep the tag's original hue slot
+  if(idx < 0) idx = _hashStr(tag ? (tag.id || tag.text || '') : '');
+  return pal[idx % pal.length];
+}
 
 // ── Wikipedia REST API — portrait loader ──────────────────────────────────
 const WIKI_PAGES = {
@@ -3382,6 +3537,8 @@ let _editTopicNameId = null;
 // Collapsed state for the read-only "Unassigned" group (real topics store this
 // on the topic object so it persists; Unassigned is session-only).
 let _unassignedCollapsed = false;
+// Topic currently being drag-reordered via its header grip (null when idle).
+let _topicDragId = null;
 
 // Small dropdown menu (Rename / Delete) anchored to the ⋮ button — modelled on openTagActionMenu.
 function openTopicMenu(id, anchor) {
@@ -3927,7 +4084,7 @@ function setupEventListeners() {
   pdAction('pdDNA',     showAnalysisModal);
   pdAction('pdCopy',    copyData);
   pdAction('pdImport',  pasteData);
-  pdAction('pdTheme',   toggleTheme);
+  pdAction('pdTheme',   openThemePicker);
   pdAction('pdInfoBtn', () => { updateInfoDate(); I18n.applyI18n(); openModal('infoModal'); });
 
   // Menu close on outside click
@@ -4993,7 +5150,7 @@ function createTagEl(tag) {
   el.id = `tag-${tag.id}`;
   el.tabIndex = 0; // focusable for keyboard / non-hover affordances
 
-  const color = tag.color || PALETTE[0];
+  const color = tagColor(tag) || tag.color || PALETTE[0];
   el.style.background = color;
   el.style.borderColor = color + '55';
   el.style.boxShadow = `0 2px 10px ${color}55`;
@@ -5565,10 +5722,60 @@ function buildTopicGroup(topic, items) {
   caret.setAttribute('aria-hidden', 'true');
   head.appendChild(caret);
 
-  // Clicking the header (anywhere but the emoji / menu / name editor) toggles.
+  // Drag handle → reorder topic priority (real topics only).
+  if(topic) {
+    const grip = document.createElement('span');
+    grip.className = 'today-topic-drag';
+    grip.textContent = '⠿';
+    grip.title = 'Drag to reorder';
+    grip.draggable = true;
+    grip.setAttribute('aria-label', 'Drag to reorder topic');
+    grip.addEventListener('click', e => e.stopPropagation());
+    grip.addEventListener('dragstart', e => {
+      _topicDragId = topic.id;
+      group.classList.add('topic-dragging');
+      try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'topic:' + topic.id); } catch(_) {}
+      e.stopPropagation();
+    });
+    grip.addEventListener('dragend', () => {
+      _topicDragId = null;
+      document.querySelectorAll('.today-topic-group').forEach(g =>
+        g.classList.remove('topic-dragging', 'topic-reorder-before', 'topic-reorder-after'));
+    });
+    head.appendChild(grip);
+
+    // The group is a drop target for topic-reorder (distinct from task-filing,
+    // which is driven by a dragging .today-item card).
+    const isTopicDrag = () => _topicDragId && _topicDragId !== topic.id && !document.querySelector('.today-item.dragging');
+    group.addEventListener('dragover', e => {
+      if(!isTopicDrag()) return;
+      e.preventDefault();
+      const r = group.getBoundingClientRect();
+      const after = (e.clientY - r.top) > r.height / 2;
+      group.classList.toggle('topic-reorder-after', after);
+      group.classList.toggle('topic-reorder-before', !after);
+    });
+    group.addEventListener('dragleave', e => {
+      if(!group.contains(e.relatedTarget)) group.classList.remove('topic-reorder-before', 'topic-reorder-after');
+    });
+    group.addEventListener('drop', e => {
+      if(!isTopicDrag()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const r = group.getBoundingClientRect();
+      const after = (e.clientY - r.top) > r.height / 2;
+      const dragId = _topicDragId;
+      _topicDragId = null;
+      group.classList.remove('topic-reorder-before', 'topic-reorder-after');
+      _reorderTopics(dragId, topic.id, after);
+    });
+  }
+
+  // Clicking the header (anywhere but the emoji / menu / name editor / grip) toggles.
   head.addEventListener('click', e => {
     if(e.target.closest('.today-topic-emoji') ||
        e.target.closest('.today-topic-menu-btn') ||
+       e.target.closest('.today-topic-drag') ||
        e.target.closest('.today-topic-name-input')) return;
     const willCollapse = !group.classList.contains('collapsed');
     group.classList.toggle('collapsed', willCollapse);
@@ -5887,7 +6094,7 @@ function renderActiveTab(container) {
     const taskDiv = document.createElement('div');
     taskDiv.style.cssText = 'display:flex;align-items:center;gap:6px';
     const dot = document.createElement('div');
-    dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${tag.color};flex-shrink:0`;
+    dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${tagColor(tag)};flex-shrink:0`;
     const taskText = document.createElement('span');
     taskText.textContent = tag.text; taskText.style.flex = '1';
     const noteBtn = makeListNoteBtn(tag, () => renderCurrentTab(), () => togglePreview());
@@ -6243,7 +6450,7 @@ function renderArchivedTab(container) {
       item.addEventListener('mouseleave', () => item.style.background = '');
 
       const dot = document.createElement('div');
-      dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${tag.color||'#888'};flex-shrink:0`;
+      dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${tagColor(tag)||'#888'};flex-shrink:0`;
 
       const nameEl = document.createElement('span');
       nameEl.style.cssText = 'flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
@@ -6395,7 +6602,7 @@ function renderPickTasksList() {
     dot.style.width = '8px';
     dot.style.height = '8px';
     dot.style.borderRadius = '50%';
-    dot.style.backgroundColor = tag.color || '#8888ff';
+    dot.style.backgroundColor = tagColor(tag) || '#8888ff';
     dot.style.flexShrink = '0';
 
     const text = document.createElement('span');

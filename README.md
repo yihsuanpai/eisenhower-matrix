@@ -34,16 +34,19 @@ The principle is deceptively simple. Most days are spent reacting to things that
 ## Features
 
 ### 🎯 Free-Float Matrix Canvas
-Drag tasks anywhere on the canvas. Their exact X/Y position encodes urgency (further right = more urgent) and importance (further up = more important). You're not bucketing into rigid cells — you're expressing precise relative priority, and the layout reflects it.
+Drag tasks anywhere on the canvas. Their X/Y position encodes urgency (further right = more urgent) and importance (further up = more important), and each task **snaps to the nearest vertical gridline** as you move it, so the board stays tidy and tasks line up into clean priority columns.
 
 ### 🗂 Topic Organizer
-Group related tasks under custom **topics** with their own emoji and name. File a task simply by dragging it onto a topic, reorder topics to taste, and **collapse any topic box** to keep the workspace focused. Each topic shows a live done/total count so progress is visible at a glance.
+Group related tasks under custom **topics** with their own emoji and name. File a task by dragging it onto a topic, **drag the topic boxes by their handle to reorder priority**, and **collapse any topic box** to keep the workspace focused. Each topic shows a live done/total count so progress is visible at a glance.
 
 ### 🔀 Work / Private Separation
 Tag every task as **Work** or **Private**, then switch between three matrix views — **All Tasks**, **Work**, and **Private** — to keep professional and personal priorities cleanly separated on the same canvas. Any task can be flipped between the two at any time.
 
 ### ✦ Today Tab — Daily Commitment
 Decide what you're actually finishing today. Pick tasks from your active list, organise them by topic, and end the day with **"Call it a day"** — a summary of your completion rate, remaining work, and a well-earned note of recognition. Unfinished tasks carry forward automatically.
+
+### 📣 Share Your Day
+From the day's-end summary, share a ready-made caption — *"I completed 4 of 6 tasks in 5 hours today. What a day! 💪"* plus a random pep-talk quote — to **X, Threads, Facebook, and LINE VOOM** via native share links, or copy it for **Instagram, Discord, and Slack**.
 
 ### 📋 Sortable Active Task Table
 Every column in the **Active** tab is sortable — task name, quadrant, urgency, importance, creation date, and deadline. One click to sort, another to reverse. **Done** and **Archived** tabs keep completed and shelved work out of the way but never lost.
@@ -55,7 +58,7 @@ Set a hard deadline on any task. Within 48 hours of it, a live HH:MM:SS countdow
 Every task carries freeform notes. A note glyph appears on the task tag whenever notes exist; one click opens the editor. Notes travel with the task across every view.
 
 ### ⋮ Contextual Task Menu
-Hover any matrix tag for quick actions, or open the **⋮** menu for the full set: **Note · Done · Move (Work ↔ Private) · Assign to topic · Delete**.
+On desktop, hover a matrix tag for quick actions; on touch devices, tap a tag to reveal them. The **⋮** menu holds the full set: **Rename · Note · Done · Move (Work ↔ Private) · Assign to topic · Delete**.
 
 ### ⚡ Work DNA Analysis
 Answer eight behavioural questions for a personalised work-pattern profile: your archetype (Visionary, Optimizer, Connector, Craftsman, or Architect), the kind of company built for your talent, and the well-known leader whose working style most resembles yours. Results are cached and shareable to X, Threads, Facebook, or Instagram.
@@ -66,8 +69,11 @@ A fully localised UI in English, Traditional Chinese (`zh-TW`), Simplified Chine
 ### 🌠 Micro-Animations & Celebrations
 Small, motivating rewards for action: neon confetti bursting from your cursor when you complete a task, and a cascade of particles from both corners of the screen when you close out a day.
 
-### 🌗 Light / Dark Mode
-One click in the profile menu toggles a deep-space dark palette and a city-pop pastel light mode. Your choice persists across sessions.
+### 🎨 Four Themes
+Open **Themes** in the profile menu to choose from four colour schemes: **Midnight** (deep-space dark), **City-Pop** (bright pastel light), **Techy** (cyber-neon terminal), and **Classical** (warm ink, gold & sage). Your choice persists across sessions.
+
+### 💾 Backup & Restore
+Export a portable backup file in one click, then restore it later — on any device or browser — by choosing the file or dragging it in. Imports are validated with a live preview and protected by a one-click **Undo**.
 
 ### 👤 Profile & Stats
 The profile modal shows your usage stats — days active, tasks created, completion rate — alongside editable fields: job title, one-year vision, nationality, gender, date of birth, and language.
