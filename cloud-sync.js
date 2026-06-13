@@ -250,6 +250,7 @@
     .eis-nudge button{flex-shrink:0}
     .eis-nudge .go{background:linear-gradient(135deg,var(--accent3),var(--accent));color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer}
     .eis-nudge .x{background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:2px 4px;line-height:1}
+    @media (max-width:768px){ .eis-nudge{ bottom: calc(64px + env(safe-area-inset-bottom)); } }  /* clear the mobile bottom nav */
     @keyframes eisUp{from{transform:translateY(120%)}to{transform:none}}
     @media (max-width:480px){
       .eis-bd{align-items:flex-end;padding:0}
