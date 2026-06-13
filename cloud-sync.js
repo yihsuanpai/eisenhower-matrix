@@ -66,21 +66,33 @@
     if (!c) { hideMenuItem(); return; }   // no developer-baked keys → users never see "Sync"
     try { await loadSDK(); } catch (e) { console.warn('[sync] offline / SDK unavailable'); return; }
     try {
-      sb = window.supabase.createClient(c.url, c.key, { auth: { persistSession: true, autoRefreshToken: true } });
+      sb = window.supabase.createClient(c.url, c.key, { auth: {
+        persistSession: true, autoRefreshToken: true,
+        // Disable navigator.locks coordination. A held lock (stale session / another
+        // tab) was deadlocking getSession(), which froze every sync op AND the Sync
+        // modal (it hung on "Checking…", so no sign-in/out ever appeared).
+        lock: function (name, acquireTimeout, fn) { return fn(); }
+      } });
       ready = true;
       sb.auth.onAuthStateChange(() => updateBadge());
-      const { data: { session } } = await sb.auth.getSession();
-      if (session) { setStatus('Syncing…'); await reconcile(); }   // reload → pull latest from cloud
+      if (currentUser()) { setStatus('Syncing…'); await reconcile(); }   // reload → pull latest from cloud
       else { maybeNudge(); }
       updateBadge();
     } catch (e) { console.warn('[sync] init error', e); ready = false; }
   }
 
-  async function currentUser() {
+  // Read the user straight from the persisted session in localStorage. This never
+  // calls the auth lock, so it can't hang — unlike getUser()/getSession(), whose
+  // navigator.locks deadlock was freezing all sync and the Sync modal.
+  function currentUser() {
     if (!ready) return null;
-    // Read the locally-stored session (instant, offline-safe). getUser() makes a
-    // network round-trip that can stall and freeze every sync op, so we avoid it.
-    try { const { data } = await sb.auth.getSession(); return data && data.session ? data.session.user : null; } catch (e) { return null; }
+    try {
+      const k = Object.keys(localStorage).find(x => /^sb-.*-auth-token$/.test(x));
+      if (!k) return null;
+      const s = JSON.parse(localStorage.getItem(k) || 'null');
+      const u = s && (s.user || (s.currentSession && s.currentSession.user));
+      return u && u.id ? u : null;
+    } catch (e) { return null; }
   }
 
   // ---- auth (email one-time code) -----------------------------------------
