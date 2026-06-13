@@ -19,7 +19,7 @@
   const DEFAULT_ANON = 'sb_publishable_URhRKuYRARreTXkUAqeY9w_pGT78vKz';   // public/client-safe key
 
   const STORAGE_KEY = 'eisenhower_v7';
-  const LS_CFG = 'ei_sync_cfg', LS_MTIME = 'ei_local_mtime', LS_META = 'ei_sync_meta', LS_DIRTY = 'ei_sync_dirty';
+  const LS_CFG = 'ei_sync_cfg', LS_MTIME = 'ei_local_mtime', LS_META = 'ei_sync_meta', LS_DIRTY = 'ei_sync_dirty', LS_LOCAL = 'ei_local_board';
   const TABLE = 'boards';
   const SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
@@ -41,6 +41,8 @@
   function markDirty() { try { localStorage.setItem(LS_DIRTY, '1'); } catch (e) {} }
   function clearDirty() { try { localStorage.removeItem(LS_DIRTY); } catch (e) {} }
   function isDirty() { return localStorage.getItem(LS_DIRTY) === '1'; }
+  // Snapshot of the board shown while logged out, so sign-out can restore "local only".
+  function backupLocal() { try { localStorage.setItem(LS_LOCAL, localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {} }
 
   // ---- SDK loader ----------------------------------------------------------
   function loadSDK() {
@@ -76,7 +78,9 @@
 
   async function currentUser() {
     if (!ready) return null;
-    try { const { data } = await sb.auth.getUser(); return data ? data.user : null; } catch (e) { return null; }
+    // Read the locally-stored session (instant, offline-safe). getUser() makes a
+    // network round-trip that can stall and freeze every sync op, so we avoid it.
+    try { const { data } = await sb.auth.getSession(); return data && data.session ? data.session.user : null; } catch (e) { return null; }
   }
 
   // ---- auth (email one-time code) -----------------------------------------
@@ -89,11 +93,21 @@
     if (!ready) throw new Error('Sync not configured');
     const { error } = await sb.auth.verifyOtp({ email: email.trim(), token: token.trim(), type: 'email' });
     if (error) throw error;
-    await reconcile();                     // first thing after login: pull latest from cloud
+    backupLocal();                         // keep the logged-out (local-only) board to restore on sign-out
+    clearDirty();                          // pre-login edits belong to the local board, not this account
+    await reconcile();                     // first thing after login: pull this account's data from the cloud
     updateBadge();
   }
   async function signOut() {
     if (ready) { try { await sb.auth.signOut(); } catch (e) {} }
+    clearTimeout(pushTimer);
+    const backup = localStorage.getItem(LS_LOCAL);     // restore the logged-out / local-only board
+    if (backup !== null) {
+      localStorage.setItem(STORAGE_KEY, backup);
+      localStorage.removeItem(LS_LOCAL);
+      stampLocal(); rerender();                        // show local data immediately, no reload needed
+    }
+    clearDirty();
     setStatus(''); updateBadge();
   }
 
@@ -138,11 +152,14 @@
   async function reconcile() {
     const user = await currentUser(); if (!user) return;
     setStatus('Syncing…'); updateBadge();
-    if (isDirty()) { await push(); return; }           // unsynced local edits → upload them, don't clobber
+    if (isDirty()) {                                   // flush unsynced local edits up first…
+      await push();
+      if (isDirty()) { updateBadge(); return; }        // …push failed → keep local, don't let remote clobber it
+    }
     const { data, error } = await sb.from(TABLE).select('data, updated_at').eq('user_id', user.id).maybeSingle();
     if (error) { setStatus('Sync error'); console.warn('[sync] reconcile', error); updateBadge(); return; }
     if (!data) { await push(); return; }               // nothing in the cloud yet → seed it from this device
-    applyRemote(data.data);                            // adopt the cloud copy + re-render
+    applyRemote(data.data);                            // adopt the authoritative cloud copy + re-render
     clearDirty();                                      // applyRemote's re-render may flag dirty; we're in sync
     setMeta({ lastPulledAt: new Date().toISOString(), remoteUpdatedAt: data.updated_at });
     setStatus('Synced'); updateBadge();
@@ -153,13 +170,18 @@
     if (!obj || typeof obj !== 'object') return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
     stampLocal();
+    rerender();
+  }
+
+  // Reload the running app from localStorage and repaint the whole UI.
+  function rerender() {
     try {
       if (typeof window.loadData === 'function') window.loadData();
       if (typeof window.applyLanguageFromProfile === 'function') window.applyLanguageFromProfile();
       if (window.I18n && I18n.applyI18n) I18n.applyI18n();
       ['renderMatrix','renderTopicRail','renderCurrentTab','renderDeadlineBar','renderAddBarTopics','renderMotto','updateMoodBtn','updateProfileAvatar','updateThemeBtns']
         .forEach(fn => { if (typeof window[fn] === 'function') window[fn](); });
-    } catch (e) { console.warn('[sync] applyRemote render', e); }
+    } catch (e) { console.warn('[sync] rerender', e); }
   }
 
   // ---- status badge in the profile dropdown -------------------------------
