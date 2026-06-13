@@ -19,7 +19,7 @@
   const DEFAULT_ANON = 'sb_publishable_URhRKuYRARreTXkUAqeY9w_pGT78vKz';   // public/client-safe key
 
   const STORAGE_KEY = 'eisenhower_v7';
-  const LS_CFG = 'ei_sync_cfg', LS_MTIME = 'ei_local_mtime', LS_META = 'ei_sync_meta';
+  const LS_CFG = 'ei_sync_cfg', LS_MTIME = 'ei_local_mtime', LS_META = 'ei_sync_meta', LS_DIRTY = 'ei_sync_dirty';
   const TABLE = 'boards';
   const SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
@@ -37,6 +37,10 @@
   function setMeta(p) { localStorage.setItem(LS_META, JSON.stringify(Object.assign(getMeta(), p))); }
   function stampLocal() { localStorage.setItem(LS_MTIME, Date.now().toString()); }
   function localMtime() { return parseInt(localStorage.getItem(LS_MTIME) || '0', 10); }
+  // "dirty" = this device has local edits not yet confirmed in the cloud.
+  function markDirty() { try { localStorage.setItem(LS_DIRTY, '1'); } catch (e) {} }
+  function clearDirty() { try { localStorage.removeItem(LS_DIRTY); } catch (e) {} }
+  function isDirty() { return localStorage.getItem(LS_DIRTY) === '1'; }
 
   // ---- SDK loader ----------------------------------------------------------
   function loadSDK() {
@@ -64,7 +68,7 @@
       ready = true;
       sb.auth.onAuthStateChange(() => updateBadge());
       const { data: { session } } = await sb.auth.getSession();
-      if (session) { setStatus('Syncing…'); await pull(); }
+      if (session) { setStatus('Syncing…'); await reconcile(); }   // reload → pull latest from cloud
       else { maybeNudge(); }
       updateBadge();
     } catch (e) { console.warn('[sync] init error', e); ready = false; }
@@ -85,7 +89,7 @@
     if (!ready) throw new Error('Sync not configured');
     const { error } = await sb.auth.verifyOtp({ email: email.trim(), token: token.trim(), type: 'email' });
     if (error) throw error;
-    await pull();                          // first thing after login: reconcile
+    await reconcile();                     // first thing after login: pull latest from cloud
     updateBadge();
   }
   async function signOut() {
@@ -96,6 +100,7 @@
   // ---- sync core (last-write-wins) ----------------------------------------
   function notifyChange() {            // called by saveData()
     stampLocal();
+    markDirty();                       // local change not yet pushed to the cloud
     if (!ready) return;
     clearTimeout(pushTimer);
     pushTimer = setTimeout(() => { push(); }, 1500);   // debounce bursts of edits
@@ -111,7 +116,7 @@
       { onConflict: 'user_id' }
     );
     if (error) { setStatus('Sync error'); console.warn('[sync] push', error); }
-    else { setMeta({ lastPushedAt: now, remoteUpdatedAt: now }); setStatus('Synced'); }
+    else { clearDirty(); setMeta({ lastPushedAt: now, remoteUpdatedAt: now }); setStatus('Synced'); }
     updateBadge();
   }
 
@@ -124,6 +129,23 @@
     if (remoteT >= localMtime()) { applyRemote(data.data); setMeta({ lastPulledAt: new Date().toISOString(), remoteUpdatedAt: data.updated_at }); setStatus('Synced'); }
     else { await push(); }                             // local is newer → upload
     updateBadge();
+  }
+
+  // Explicit sync — runs on page load and on the "Sync now" button.
+  // The cloud is the source of truth here, so the device adopts the cloud copy.
+  // The only exception: if this device has edits that never reached the cloud
+  // (offline, or saved <2s before reload), we upload those first so nothing is lost.
+  async function reconcile() {
+    const user = await currentUser(); if (!user) return;
+    setStatus('Syncing…'); updateBadge();
+    if (isDirty()) { await push(); return; }           // unsynced local edits → upload them, don't clobber
+    const { data, error } = await sb.from(TABLE).select('data, updated_at').eq('user_id', user.id).maybeSingle();
+    if (error) { setStatus('Sync error'); console.warn('[sync] reconcile', error); updateBadge(); return; }
+    if (!data) { await push(); return; }               // nothing in the cloud yet → seed it from this device
+    applyRemote(data.data);                            // adopt the cloud copy + re-render
+    clearDirty();                                      // applyRemote's re-render may flag dirty; we're in sync
+    setMeta({ lastPulledAt: new Date().toISOString(), remoteUpdatedAt: data.updated_at });
+    setStatus('Synced'); updateBadge();
   }
 
   // Adopt a remote blob into the running app + re-render everything.
@@ -317,7 +339,7 @@
     sheet.querySelector('.eis-close').addEventListener('click', closeSheet);
     sheet.querySelector('#eis-now').addEventListener('click', async () => {
       const b = sheet.querySelector('#eis-now'); b.disabled = true; b.textContent = 'Syncing…';
-      await pull(); renderSignedIn(sheet, user);
+      await reconcile(); renderSignedIn(sheet, user);
     });
     sheet.querySelector('#eis-out').addEventListener('click', async () => { await signOut(); closeSheet(); });
   }
@@ -341,7 +363,9 @@
 
   function friendly(e) {
     const m = (e && (e.message || e.error_description || e.msg)) ? (e.message || e.error_description || e.msg) : String(e);
-    if (/rate|limit|429/i.test(m)) return 'Too many attempts — wait a minute and try again.';
+    if (/rate|limit|429|too many/i.test(m)) return 'Too many requests — the email service is over its hourly limit. Please wait a while and try again.';
+    if (/sending (confirmation|recovery|magic|the )?email|error sending|smtp|email provider|unexpected_failure/i.test(m))
+      return 'Couldn\'t send the email right now — the mail service is unavailable or over its limit. Please try again later.';
     if (/invalid|expired|token/i.test(m)) return 'That code didn\'t work. Check it or resend.';
     if (/network|fetch|Failed to/i.test(m)) return 'No connection. Check your internet and retry.';
     return m;
@@ -367,5 +391,5 @@
   }
 
   // ---- public API ----------------------------------------------------------
-  window.CloudSync = { init, notifyChange, push, pull, sendCode, verifyCode, signOut, status, isConfigured, saveCfg, openModal };
+  window.CloudSync = { init, notifyChange, push, pull, reconcile, sendCode, verifyCode, signOut, status, isConfigured, saveCfg, openModal };
 })();
