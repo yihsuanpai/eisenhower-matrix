@@ -229,6 +229,7 @@ es: { title: '⚡ Análisis Work DNA', loading: 'Leyendo patrones en tus tareas 
       'pd.themeDark': 'Dark Mode',
       'pd.themeLight': 'Light Mode',
       'pd.themes': 'Themes',
+      'pd.sync': 'Sync',
       'pd.info': 'Information',
       'profile.settings': 'Profile Settings',
       'profile.jobTitle': 'What do you do?',

@@ -2550,6 +2550,7 @@
 <body>
 <script src="i18n.js"></script>
 <script src="countries.js"></script>
+<script src="cloud-sync.js"></script>
 
 <!-- HEADER: ✦ | greeting | clock | mood | profile-avatar -->
 <div id="header">
@@ -2596,6 +2597,10 @@
   <div class="pd-item" id="pdImport">
     <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11"/><path d="M8 10l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
     <span class="pd-label" data-i18n="pd.import">Import Data</span>
+  </div>
+  <div class="pd-item" id="pdSync">
+    <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-7.5-4"/><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 7.5 4"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/></svg></span>
+    <span class="pd-label" data-i18n="pd.sync">Sync</span>
   </div>
   <div class="pd-item" id="pdTheme">
     <span class="pd-ico"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c1 0 1.6-.8 1.6-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.1 0-.9.7-1.6 1.6-1.6H15a4 4 0 0 0 4-4c0-4.2-3.1-8.4-7-8.4Z"/><circle cx="7.7" cy="11.6" r="1" fill="currentColor" stroke="none"/><circle cx="10.4" cy="7.7" r="1" fill="currentColor" stroke="none"/><circle cx="14.4" cy="7.7" r="1" fill="currentColor" stroke="none"/><circle cx="16.4" cy="11.4" r="1" fill="currentColor" stroke="none"/></svg></span>
@@ -3485,6 +3490,9 @@ function init() {
 
   // Greeting auto-rotation every 5 min
   setInterval(() => { rotateGreeting(); }, 5 * 60 * 1000);
+
+  // Optional cloud sync (no-op unless configured + online). Safe if absent.
+  if(window.CloudSync && CloudSync.init) CloudSync.init();
 }
 
 function applyUserName(name) {
@@ -3685,7 +3693,10 @@ function closeEmojiPicker() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem('ei_local_mtime', Date.now().toString());   // for sync conflict resolution
   pushNativeStats();   // keep the iOS widget's shared store fresh (no-op in browsers)
+  pushNativeState();   // hand full state to the iOS shell for automatic iCloud sync
+  if(window.CloudSync && CloudSync.notifyChange) CloudSync.notifyChange();  // optional web cloud push
 }
 
 function genId() {
@@ -4119,6 +4130,7 @@ function setupEventListeners() {
   pdAction('pdCopy',    copyData);
   pdAction('pdImport',  pasteData);
   pdAction('pdTheme',   openThemePicker);
+  pdAction('pdSync',    () => { if(window.CloudSync) CloudSync.openModal(); });
   pdAction('pdInfoBtn', () => { updateInfoDate(); I18n.applyI18n(); openModal('infoModal'); });
 
   // Menu close on outside click
@@ -6903,8 +6915,39 @@ function pushNativeStats() {
     });
   } catch(e) {}
 }
+// Hand the full task state to the native shell so it can sync via iCloud
+// (automatic, no login). Inert in browsers.
+function pushNativeState() {
+  if(!_nativeReady()) return;
+  try {
+    _native('state', {
+      blob: localStorage.getItem(STORAGE_KEY) || '{}',
+      mtime: Date.now()
+    });
+  } catch(e) {}
+}
+
+// Called by the iOS shell when iCloud delivers data from another device.
+// Adopts it only if it's newer than what we have, then re-renders.
+window.__eiApplyRemoteState = function(blob, mtime) {
+  try {
+    if(!blob) return;
+    const localM = parseInt(localStorage.getItem('ei_local_mtime') || '0', 10);
+    if(mtime && mtime < localM) return;            // ours is newer → keep it
+    const obj = (typeof blob === 'string') ? JSON.parse(blob) : blob;
+    if(!obj || typeof obj !== 'object') return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    localStorage.setItem('ei_local_mtime', String(mtime || Date.now()));
+    if(typeof window.loadData === 'function') window.loadData();
+    if(typeof window.applyLanguageFromProfile === 'function') window.applyLanguageFromProfile();
+    if(window.I18n && I18n.applyI18n) I18n.applyI18n();
+    ['renderMatrix','renderTopicRail','renderCurrentTab','renderDeadlineBar','renderAddBarTopics','renderMotto','updateMoodBtn','updateProfileAvatar','updateThemeBtns']
+      .forEach(fn => { if(typeof window[fn] === 'function') window[fn](); });
+  } catch(e) {}
+};
+
 // Let the Swift side trigger an initial sync once the web view finishes loading.
-window.__eiNativeSync = function() { nativeTheme(); pushNativeStats(); };
+window.__eiNativeSync = function() { nativeTheme(); pushNativeStats(); pushNativeState(); };
 
 function _copyShareText(text, platform) {
   const dest = {
