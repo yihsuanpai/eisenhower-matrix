@@ -81,27 +81,53 @@
     }
 
     /* ═══ CLASSICAL — warm ink, gold & sage, library-quiet ════════════════ */
+    /* ═══ CLASSICAL — Romantic salon (Chopin & Liszt): velvet aubergine,
+       candlelight gold, dusty rose & amethyst on ivory ════════════════════ */
     [data-theme="classical"] {
-      --bg: #1b1812;
-      --surface: #262219;
-      --surface2: #302a20;
-      --surface3: #3b3429;
-      --border: #4a4233;
-      --text: #f3ead6;
-      --text-dim: #b6a886;
-      --accent:  #C9A227;   /* antique gold */
-      --accent2: #8FB99A;   /* sage green */
-      --accent3: #B0413E;   /* burgundy */
-      --accent4: #D9B36A;
-      --lavender: #C9A227;
-      --mint: #8FB99A;
-      --accent-glow:  rgba(201,162,39,.22);
-      --accent2-glow: rgba(143,185,154,.18);
-      --accent3-glow: rgba(176,65,62,.20);
-      --q1: rgba(176,65,62,.18);
-      --q2: rgba(143,185,154,.16);
-      --q3: rgba(201,162,39,.12);
-      --q4: rgba(74,66,51,.12);
+      --bg: #1C1322;
+      --surface: #261A2E;
+      --surface2: #312239;
+      --surface3: #3E2C46;
+      --border: #503A58;
+      --text: #F3E7E9;       /* warm ivory / blush */
+      --text-dim: #B79CB0;   /* dusty mauve */
+      --accent:  #C77B92;    /* dusty rose */
+      --accent2: #D6B36A;    /* candlelight gold */
+      --accent3: #9A6FB8;    /* amethyst velvet */
+      --accent4: #B5879E;    /* antique rose */
+      --lavender: #9A6FB8;
+      --mint: #D6B36A;
+      --accent-glow:  rgba(199,123,146,.22);
+      --accent2-glow: rgba(214,179,106,.18);
+      --accent3-glow: rgba(154,111,184,.20);
+      --q1: rgba(199,123,146,.20);
+      --q2: rgba(214,179,106,.14);
+      --q3: rgba(154,111,184,.16);
+      --q4: rgba(80,58,88,.14);
+    }
+
+    /* ═══ VINTAGE NOIR JAZZ — smoky speakeasy: brass, teal & oxblood ═══════ */
+    [data-theme="noir"] {
+      --bg: #14110D;
+      --surface: #1D1810;
+      --surface2: #261F16;
+      --surface3: #322A1E;
+      --border: #45392A;
+      --text: #EFE4CC;
+      --text-dim: #A6957A;
+      --accent:  #C8A24B;   /* brass gold */
+      --accent2: #5FA39A;   /* smoky teal */
+      --accent3: #B5544E;   /* oxblood */
+      --accent4: #D9A066;   /* amber */
+      --lavender: #C8A24B;
+      --mint: #5FA39A;
+      --accent-glow:  rgba(200,162,75,.22);
+      --accent2-glow: rgba(95,163,154,.18);
+      --accent3-glow: rgba(181,84,78,.20);
+      --q1: rgba(181,84,78,.18);
+      --q2: rgba(95,163,154,.16);
+      --q3: rgba(200,162,75,.12);
+      --q4: rgba(69,57,42,.14);
     }
 
     /* Light-mode element overrides for hardcoded colours */
@@ -3178,7 +3204,8 @@ const THEMES = [
   { id:'dark',      label:'Midnight',       hint:'Deep-space default',     sw:['#12162e','#D94CFF','#4FF0D1'] },
   { id:'light',     label:'City-Pop',       hint:'Bright pastel',          sw:['#F7F9FF','#7A6FF0','#5B7CFA'] },
   { id:'techy',     label:'Techy',          hint:'Cyber neon terminal',    sw:['#05070d','#00E5FF','#39FF14'] },
-  { id:'classical', label:'Classical',      hint:'Ink, gold & sage',       sw:['#1b1812','#C9A227','#8FB99A'] }
+  { id:'classical', label:'Classical',      hint:'Romantic salon — rose & gold', sw:['#1C1322','#C77B92','#D6B36A'] },
+  { id:'noir',      label:'Vintage Noir Jazz', hint:'Smoky brass & teal',  sw:['#14110D','#C8A24B','#5FA39A'] }
 ];
 function currentTheme() {
   return document.documentElement.getAttribute('data-theme') || 'dark';
@@ -3194,6 +3221,7 @@ function setTheme(name) {
   if(typeof renderMatrix === 'function') renderMatrix();
   if(typeof renderCurrentTab === 'function') renderCurrentTab();
   if(typeof renderDeadlineBar === 'function') renderDeadlineBar();
+  nativeTheme(valid);   // sync iOS status bar / chrome (no-op in browsers)
 }
 // Back-compat: a couple of call sites may still call toggleTheme().
 function toggleTheme() {
@@ -3249,9 +3277,14 @@ const THEME_PALETTES = {
     '#36D1FF','#9DFF2E','#FF49C0','#3DF0E0'
   ],
   classical: [
-    '#C9A227','#8FB99A','#B0413E','#6E7F5B','#A6794C','#4E6E81',
-    '#9C6B3F','#7C8C76','#B08968','#5B6C8F','#A03E3E','#8A8B5C',
-    '#C58B3C','#6E8B7A','#9E5C3E','#7A7F95'
+    '#C77B92','#D6B36A','#9A6FB8','#B5879E','#A85C7A','#C9A24B',
+    '#7E5B9E','#D08AA0','#B98AAE','#8C6FA8','#CDA06A','#A56B86',
+    '#6E5A8C','#D9A2B4','#C08A5E','#8A6E9C'
+  ],
+  noir: [
+    '#C8A24B','#5FA39A','#B5544E','#D9A066','#9B7FB0','#7F9A5E',
+    '#C57B57','#6E8CA0','#CB8A3E','#A86A6A','#8FA98C','#B98AAE',
+    '#D4A84F','#5C9E94','#B56A50','#8C86B0'
   ]
 };
 function _hashStr(s) {
@@ -3652,6 +3685,7 @@ function closeEmojiPicker() {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  pushNativeStats();   // keep the iOS widget's shared store fresh (no-op in browsers)
 }
 
 function genId() {
@@ -5483,6 +5517,7 @@ function resolveTag(id) {
     tag.resolvedAt = tag.resolved ? new Date().toISOString() : null;
     if (tag.resolved) {
       triggerTaskConfetti();
+      nativeHaptic('success');   // iOS shell only — no-op in browsers
     }
     saveData();
     renderMatrix();
@@ -6819,6 +6854,9 @@ function _platformName(p) {
 // caption to the clipboard and open the destination so the user can paste.
 function shareDay(platform) {
   const text   = _dayShareText || buildDayShareText();
+  // Inside the iOS shell, every button routes to the native share sheet, which
+  // already covers X / Threads / Facebook / LINE / Instagram / Discord / Slack.
+  if(platform !== 'copy' && nativeShare(text)) return;
   const enc    = encodeURIComponent(text);
   const encUrl = encodeURIComponent(SHARE_APP_URL);
   const open   = u => window.open(u, '_blank', 'noopener,noreferrer');
@@ -6830,6 +6868,43 @@ function shareDay(platform) {
     default:         _copyShareText(text, platform);   // instagram / discord / slack / copy
   }
 }
+
+// ============= NATIVE iOS BRIDGE =============
+// All of this is inert in a normal browser (the message handler only exists
+// inside the WKWebView shell), so it never affects the web experience.
+function _nativeReady() {
+  return !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.eisenhower);
+}
+function _native(type, payload) {
+  if(!_nativeReady()) return false;
+  try { window.webkit.messageHandlers.eisenhower.postMessage(Object.assign({ type }, payload || {})); return true; }
+  catch(e) { return false; }
+}
+function nativeHaptic(kind) { _native('haptic', { kind: kind || 'success' }); }
+function nativeTheme(id)    { _native('theme',  { id: id || (typeof currentTheme === 'function' ? currentTheme() : 'dark') }); }
+function nativeShare(text)  { return _native('share', { text: text }); }
+// Push a compact today-summary to the shared store the Home Screen widget reads.
+function pushNativeStats() {
+  if(!_nativeReady()) return;
+  try {
+    const items = state.todayItems || [];
+    const committed = items.length;
+    const doneTags = items
+      .map(ti => (state.tags || []).find(t => t.id === ti.tagId))
+      .filter(t => t && t.resolved);
+    const completed = doneTags.length;
+    const percent = committed ? Math.round((completed / committed) * 100) : 0;
+    const nextDo = (state.tags || []).find(t => !t.resolved && !t.archived && quadrantKey(t) === 'q1');
+    _native('stats', {
+      committed, completed, percent,
+      nextDo: nextDo ? nextDo.text : '',
+      theme: (typeof currentTheme === 'function' ? currentTheme() : 'dark'),
+      updatedAt: new Date().toISOString()
+    });
+  } catch(e) {}
+}
+// Let the Swift side trigger an initial sync once the web view finishes loading.
+window.__eiNativeSync = function() { nativeTheme(); pushNativeStats(); };
 
 function _copyShareText(text, platform) {
   const dest = {
