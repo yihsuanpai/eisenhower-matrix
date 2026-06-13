@@ -15,8 +15,8 @@
   'use strict';
 
   // ---- Paste your project values here to ship them with the app (optional) --
-  const DEFAULT_URL  = '';   // e.g. 'https://abcd1234.supabase.co'
-  const DEFAULT_ANON = '';   // e.g. 'eyJhbGciOi...'  (the public "anon" key)
+  const DEFAULT_URL  = 'https://cpvgjqljzxrldczgzspe.supabase.co';
+  const DEFAULT_ANON = 'sb_publishable_URhRKuYRARreTXkUAqeY9w_pGT78vKz';   // public/client-safe key
 
   const STORAGE_KEY = 'eisenhower_v7';
   const LS_CFG = 'ei_sync_cfg', LS_MTIME = 'ei_local_mtime', LS_META = 'ei_sync_meta';
