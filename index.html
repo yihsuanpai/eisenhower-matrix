@@ -2820,7 +2820,23 @@
       min-height: 40px;
       cursor: default;
     }
-    .today-allrow .today-text { flex: 1 1 auto; min-width: 0; }
+    .today-allrow .today-text { flex: 1 1 auto; min-width: 0; cursor: text; }
+    .today-rename-input {
+      flex: 1 1 auto; min-width: 0;
+      font: inherit; font-size: 16px; color: var(--text);
+      background: var(--surface2); border: 1px solid var(--accent2);
+      border-radius: 6px; padding: 3px 7px; outline: none;
+      box-shadow: 0 0 0 3px var(--accent2-glow);
+    }
+    .today-allremove {
+      flex-shrink: 0;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-dim); font-size: 20px; line-height: 1;
+      padding: 4px 6px; border-radius: 8px;
+      min-width: 32px; min-height: 32px;
+      transition: color .15s, background .15s;
+    }
+    .today-allremove:hover { color: #ff7a7a; background: var(--surface2); }
     .today-allrow:hover {
       border-color: var(--accent2);
     }
@@ -6158,11 +6174,62 @@ function appendTodayFlatList(container) {
     const text = document.createElement('div');
     text.className = 'today-text';
     text.textContent = item.renamedText || tag.text;
+    text.title = 'Tap to rename';
+
+    // Inline rename — tap/click the name to edit it in place. Saves to the
+    // underlying tag.text (so the matrix + every view + the cloud all update),
+    // mirroring the topic-card rename behaviour.
+    function beginRename() {
+      if(row.querySelector('.today-rename-input')) return;
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'today-rename-input';
+      inp.maxLength = 100;
+      inp.value = item.renamedText || tag.text;
+      text.replaceWith(inp);
+      inp.focus(); inp.select();
+      let done = false;
+      const commit = (save) => {
+        if(done) return; done = true;
+        const v = inp.value.trim();
+        if(save && v && v !== (item.renamedText || tag.text)) {
+          tag.text = v.slice(0, 100);   // rename the underlying task
+          item.renamedText = '';        // drop any Today-only alias so all views stay in sync
+          saveData();                   // persist + trigger cloud push
+          renderCurrentTab();           // refresh the list with the new name
+          if(typeof renderMatrix === 'function') renderMatrix();        // update the matrix pill too
+          if(typeof renderDeadlineBar === 'function') renderDeadlineBar();
+        } else {
+          inp.replaceWith(text);        // no change → restore the label, no re-render
+        }
+      };
+      inp.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter')  { e.preventDefault(); commit(true); }
+        else if(e.key === 'Escape') { e.preventDefault(); commit(false); }
+      });
+      inp.addEventListener('blur', () => commit(true));
+    }
+    text.addEventListener('click', (e) => { e.stopPropagation(); beginRename(); });
+
+    // Remove this task from today's plan (the task itself stays in the matrix).
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'today-allremove';
+    removeBtn.innerHTML = '×';
+    removeBtn.title = 'Remove from today';
+    removeBtn.setAttribute('aria-label', 'Remove from today');
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.todayItems = state.todayItems.filter(ti => ti !== item);
+      saveData();                 // persist + trigger cloud push
+      renderCurrentTab();
+    });
 
     row.appendChild(drag);
     row.appendChild(check);
     row.appendChild(badge);
     row.appendChild(text);
+    row.appendChild(removeBtn);
     list.appendChild(row);
   });
 

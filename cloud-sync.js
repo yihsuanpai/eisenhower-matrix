@@ -78,6 +78,22 @@
       if (currentUser()) { setStatus('Syncing…'); await reconcile(); }   // reload → pull latest from cloud
       else { maybeNudge(); }
       updateBadge();
+
+      // Auto-pull the latest whenever this device regains focus / visibility /
+      // network — so switching between phone, iPad and laptop shows up-to-date
+      // data WITHOUT a manual reload or tapping "Sync now". (Edits still push live.)
+      if (!window.__eiSyncAutoHooked) {
+        window.__eiSyncAutoHooked = true;
+        let _rcTimer = null;
+        const scheduleReconcile = () => {
+          if (!ready || !currentUser()) return;
+          clearTimeout(_rcTimer);
+          _rcTimer = setTimeout(() => { reconcile(); }, 400);   // debounce bursts of focus events
+        };
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleReconcile(); });
+        window.addEventListener('focus', scheduleReconcile);
+        window.addEventListener('online', scheduleReconcile);
+      }
     } catch (e) { console.warn('[sync] init error', e); ready = false; }
   }
 
