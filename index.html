@@ -6195,36 +6195,40 @@ function attachFlatRowDrag(handle, row, list) {
 
   function onMove(e) {
     if(!dragging) return;
-    e.preventDefault();
+    e.preventDefault();                         // keep the list/page from scrolling mid-drag
     const after = getDragAfterElement(list, e.clientY);
     if(after == null) {
-      list.appendChild(row);
+      if(list.lastElementChild !== row) list.appendChild(row);
     } else if(after !== row) {
       list.insertBefore(row, after);
     }
   }
 
-  function onUp(e) {
+  function end(e) {
     if(!dragging) return;
     dragging = false;
     row.classList.remove('dragging');
     try { handle.releasePointerCapture(e.pointerId); } catch(err){}
-    handle.removeEventListener('pointermove', onMove);
-    handle.removeEventListener('pointerup', onUp);
-    handle.removeEventListener('pointercancel', onUp);
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', end);
+    document.removeEventListener('pointercancel', end);
     commitFlatOrder(list);
   }
 
   handle.addEventListener('pointerdown', (e) => {
     // Primary button / touch only.
     if(e.button != null && e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
     dragging = true;
     row.classList.add('dragging');
+    // setPointerCapture helps touch; but mouse has NO implicit capture, so the
+    // old handle-only listeners never received pointermove once the cursor left
+    // the handle. Listening on document makes reorder work on every device.
     try { handle.setPointerCapture(e.pointerId); } catch(err){}
-    handle.addEventListener('pointermove', onMove);
-    handle.addEventListener('pointerup', onUp);
-    handle.addEventListener('pointercancel', onUp);
-    e.preventDefault();
+    document.addEventListener('pointermove', onMove, { passive: false });
+    document.addEventListener('pointerup', end);
+    document.addEventListener('pointercancel', end);
   });
 }
 
