@@ -2757,6 +2757,20 @@
         margin: 0 auto;
       }
     }
+    /* Matrix pill sizing + clamp half-widths. The base `.tag{width:150px}` is
+       declared after the old responsive rules, so it wins everywhere and the
+       per-size widths never applied. These later rules restore them and expose
+       the half-width vars used by renderMatrix's clamp() so a pill never spills
+       off the canvas edge (which was cutting off the START of task names). */
+    #matrixCanvas { --pill-half: 76px; --pill-halfv: 16px; }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .tag { width: 130px !important; }
+      #matrixCanvas { --pill-half: 67px; }
+    }
+    @media (max-width: 768px) {
+      .tag { width: 118px !important; font-size: 11px !important; padding: 0 8px !important; height: 30px !important; }
+      #matrixCanvas { --pill-half: 61px; }
+    }
     /* ===== /X-DEVICE REDESIGN v2 ===== */
 
     /* ===== TODAY — COMPLETE FLAT LIST (above topic groups) ===== */
@@ -5356,8 +5370,13 @@ function renderMatrix() {
     return true;                           // 'overview' → show all
   }).forEach(tag => {
     const el = createTagEl(tag);
-    el.style.left = Math.max(2, Math.min(98, tag.x)) + '%';
-    el.style.top  = Math.max(2, Math.min(98, tag.y)) + '%';
+    // Keep the WHOLE pill inside the canvas so the start of every name stays
+    // visible. Pills are centred via translate(-50%), so clamp the centre by half
+    // the pill size (CSS vars --pill-half / --pill-halfv, set per breakpoint).
+    const _lx = Math.max(2, Math.min(98, tag.x));
+    const _ly = Math.max(2, Math.min(98, tag.y));
+    el.style.left = `clamp(var(--pill-half, 76px), ${_lx}%, calc(100% - var(--pill-half, 76px)))`;
+    el.style.top  = `clamp(var(--pill-halfv, 16px), ${_ly}%, calc(100% - var(--pill-halfv, 16px)))`;
     canvas.appendChild(el);
   });
   renderTopicRail();
