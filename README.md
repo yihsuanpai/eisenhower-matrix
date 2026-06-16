@@ -104,4 +104,4 @@ To back up, use **Copy Data** in the profile menu; to restore, use **Import Data
 
 ## Version
 
-`Ver. 2.2.0` — actively developed with [Claude](https://www.anthropic.com/claude) and [Cursor](https://www.cursor.com/).
+`Ver. 2.3.0` — actively developed with [Claude](https://www.anthropic.com/claude) and [Cursor](https://www.cursor.com/).
