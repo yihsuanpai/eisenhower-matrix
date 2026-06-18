@@ -1790,62 +1790,96 @@
 
     /* ── Profile modal — personal dashboard ───────────────── */
     .pm-modal.pm-dash {
-      max-width: 640px !important; width: 92vw;
-      padding: 26px 26px 24px !important;
+      max-width: 600px !important; width: 92vw;
+      padding: 30px 30px 26px !important;
       display: block !important; text-align: left;
-      position: relative; max-height: 88vh; overflow-y: auto;
+      position: relative; max-height: 90vh; overflow-y: auto;
     }
     /* IDENTITY header */
     .pm-id {
-      display: flex; align-items: center; gap: 16px;
-      padding-right: 28px;
+      display: flex; align-items: center; gap: 18px;
+      padding-right: 30px;
     }
     .pm-id-text { min-width: 0; }
     #pmAvatarWrap {
-      width: 70px; height: 70px; border-radius: 50%; overflow: hidden;
+      width: 76px; height: 76px; border-radius: 50%; overflow: hidden;
       flex-shrink: 0;
       border: 3px solid transparent;
       background: linear-gradient(var(--surface2),var(--surface2)) padding-box,
-                  linear-gradient(135deg,var(--accent3),var(--accent)) border-box;
-      box-shadow: 0 0 16px var(--accent-glow);
+                  linear-gradient(135deg,var(--accent3),var(--accent2),var(--accent)) border-box;
+      box-shadow: 0 0 0 1px var(--border), 0 0 22px var(--accent-glow);
     }
     #pmAvatarWrap img { width:100%; height:100%; object-fit:contain; display:block; }
-    #pmName  { font-size:19px; font-weight:800; margin:0 0 2px; line-height:1.15; }
-    .pm-id-role  { font-size:12.5px; color:var(--accent2); font-weight:600; margin:0 0 3px; }
+    #pmName  { font-size:21px; font-weight:800; margin:0 0 3px; line-height:1.15; letter-spacing:-.3px; }
+    .pm-id-role  { font-size:13px; color:var(--accent2); font-weight:600; margin:0 0 4px; line-height:1.2; }
     .pm-id-role:empty { display:none; }
-    .pm-id-since { font-size:11px; color:var(--text-dim); margin:0; }
+    .pm-id-since { font-size:11.5px; color:var(--text-dim); margin:0; font-weight:500; }
 
-    /* ARCHETYPE badge / CTA */
-    .pm-archetype-row { margin-top:16px; }
-    .pm-archetype-row:empty { display:none; }
-    .pm-arch-badge {
-      display:inline-flex; align-items:center; gap:9px;
-      padding:8px 14px; border-radius:999px;
-      background:var(--surface2); border:1px solid var(--border);
-      font-size:12.5px; font-weight:700; line-height:1;
-      box-shadow:0 0 0 1px var(--arch-color,transparent) inset;
+    /* small-caps section label (shared) */
+    .pm-card-title {
+      font-size:11px; font-weight:700; letter-spacing:.7px; text-transform:uppercase;
+      color:var(--text-dim); margin:0 0 14px;
     }
-    .pm-arch-badge .pm-arch-emoji { font-size:16px; }
-    .pm-arch-badge .pm-arch-label { color:var(--arch-color,var(--text)); }
-    .pm-arch-badge .pm-arch-rarity { color:var(--text-dim); font-weight:600; font-size:11px; }
+
+    /* HERO STRIP (archetype hero or discover CTA) */
+    .pm-hero {
+      margin-top:2px; border-radius:16px;
+      background:var(--surface2); border:1px solid var(--border);
+      padding:18px 18px 16px; overflow:hidden; position:relative;
+    }
+    .pm-hero.has-archetype {
+      background:
+        radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--arch-color, var(--accent2)) 16%, transparent), transparent 60%),
+        var(--surface2);
+    }
+    /* ARCHETYPE hero content */
+    .pm-archetype-row { display:flex; align-items:center; gap:15px; }
+    .pm-archetype-row:empty { display:none; }
+    .pm-arch-medallion {
+      width:52px; height:52px; flex-shrink:0; border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:27px; line-height:1;
+      background:color-mix(in srgb, var(--arch-color, var(--accent2)) 18%, var(--surface3));
+      box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--arch-color, var(--accent2)) 45%, transparent),
+                 0 4px 16px color-mix(in srgb, var(--arch-color, var(--accent2)) 22%, transparent);
+    }
+    .pm-arch-meta { min-width:0; display:flex; flex-direction:column; gap:4px; }
+    .pm-arch-label {
+      font-size:18px; font-weight:800; line-height:1.1; letter-spacing:-.2px;
+      color:var(--arch-color, var(--text));
+    }
+    .pm-arch-rarity {
+      align-self:flex-start;
+      font-size:10.5px; font-weight:700; letter-spacing:.3px;
+      color:var(--text-dim); padding:3px 9px; border-radius:999px;
+      background:var(--surface3); border:1px solid var(--border);
+    }
+    /* DISCOVER (empty) hero */
+    .pm-discover { text-align:left; }
+    .pm-discover-title {
+      font-size:17px; font-weight:800; color:var(--text);
+      line-height:1.25; letter-spacing:-.2px; margin-bottom:6px;
+    }
+    .pm-discover-sub {
+      font-size:12.5px; color:var(--text-dim); line-height:1.5; margin-bottom:14px;
+    }
     .pm-arch-cta {
       display:inline-flex; align-items:center; gap:7px;
-      padding:9px 16px; border-radius:999px; cursor:pointer;
+      padding:11px 20px; border-radius:12px; cursor:pointer;
       background:linear-gradient(135deg,var(--accent3),var(--accent));
-      color:#fff; border:none; font-size:12.5px; font-weight:700;
-      box-shadow:0 4px 14px var(--accent-glow); transition:transform .12s, box-shadow .12s;
+      color:#fff; border:none; font-size:13px; font-weight:700; font-family:inherit;
+      box-shadow:0 6px 18px var(--accent-glow); transition:transform .12s, box-shadow .12s, filter .12s;
     }
-    .pm-arch-cta:hover { transform:translateY(-1px); box-shadow:0 6px 18px var(--accent-glow); }
+    .pm-arch-cta:hover { transform:translateY(-1px); box-shadow:0 9px 24px var(--accent-glow); filter:brightness(1.05); }
     .pm-arch-cta:active { transform:translateY(0); }
 
-    /* NARRATIVE lead-in */
+    /* NARRATIVE lead-in (sits under the archetype inside the hero) */
     .pm-narrative {
-      margin:15px 0 0; padding:11px 14px;
-      border-left:3px solid var(--accent2);
-      background:var(--surface2); border-radius:0 8px 8px 0;
-      font-size:13px; font-style:italic; line-height:1.5; color:var(--text);
+      margin:13px 0 0; padding:0;
+      font-size:13px; font-style:italic; line-height:1.55; color:var(--text); opacity:.92;
     }
     .pm-narrative:empty { display:none; }
+    .pm-hero.is-empty .pm-narrative { display:none; }
 
     /* LOW-DATA nudge */
     .pm-lowdata {
@@ -1856,73 +1890,101 @@
 
     /* CAPABILITY tiles */
     .pm-tiles {
-      display:grid; grid-template-columns:repeat(4,1fr); gap:9px;
-      margin-top:18px;
+      display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+      margin-top:20px;
     }
     .pm-tile {
       background:var(--surface2); border:1px solid var(--border);
-      border-radius:12px; padding:13px 8px; text-align:center;
-      transition:border-color .15s, transform .08s;
+      border-radius:14px; padding:15px 8px 13px; text-align:center;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+      transition:border-color .15s, transform .12s, box-shadow .15s;
     }
-    .pm-tile:hover { border-color:var(--accent2); }
+    .pm-tile:hover { border-color:var(--accent2); transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.18); }
     .pm-tile-num {
-      font-size:23px; font-weight:800; color:var(--accent2);
-      line-height:1.05; letter-spacing:-.5px;
+      font-size:26px; font-weight:800; color:var(--accent2);
+      line-height:1; letter-spacing:-.8px;
     }
     .pm-tile-lbl {
-      font-size:10px; color:var(--text-dim); margin-top:5px;
-      letter-spacing:.3px; font-weight:600; text-transform:uppercase;
+      font-size:9.5px; color:var(--text-dim);
+      letter-spacing:.5px; font-weight:700; text-transform:uppercase;
     }
     .pm-tile-wide { display:none; }            /* shown only when there's a 5th metric */
     .pm-tiles.has-throughput { grid-template-columns:repeat(5,1fr); }
-    .pm-tiles.has-throughput .pm-tile-wide { display:block; }
+    .pm-tiles.has-throughput .pm-tile-wide { display:flex; }
 
-    /* INSIGHTS columns */
+    /* INSIGHTS columns (strengths / growth) */
     .pm-insights {
       display:grid; grid-template-columns:1fr 1fr; gap:14px;
-      margin-top:20px;
+      margin-top:22px;
+    }
+    .pm-insight-col {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:14px; padding:15px 15px 16px;
     }
     .pm-insight-head {
-      font-size:12px; font-weight:800; letter-spacing:.3px;
-      margin-bottom:9px;
+      font-size:12.5px; font-weight:800; letter-spacing:.2px;
+      margin-bottom:12px;
     }
     .pm-strengths .pm-insight-head { color:var(--accent2); }
     .pm-growth   .pm-insight-head { color:#E9A23B; }
     [data-theme="light"] .pm-growth .pm-insight-head { color:#C77A1A; }
-    .pm-insight-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+    .pm-insight-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+    .pm-insight-list:empty::after {
+      content:'—'; color:var(--text-dim); opacity:.5; font-size:12px;
+    }
     .pm-insight-list li {
-      background:var(--surface2); border:1px solid var(--border);
-      border-radius:9px; padding:9px 11px; font-size:12px; line-height:1.4;
+      background:var(--surface3); border:1px solid var(--border);
+      border-radius:10px; padding:10px 12px; font-size:12px; line-height:1.45;
     }
     .pm-strengths .pm-insight-list li { border-left:3px solid var(--accent2); }
     .pm-growth   .pm-insight-list li { border-left:3px solid #E9A23B; }
     [data-theme="light"] .pm-growth .pm-insight-list li { border-left-color:#C77A1A; }
     .pm-ins-title { font-weight:700; color:var(--text); display:block; }
-    .pm-ins-evidence { color:var(--text-dim); display:block; margin-top:2px; }
-    .pm-ins-tip { color:var(--text-dim); display:block; margin-top:4px; font-style:italic; opacity:.92; }
+    .pm-ins-evidence { color:var(--text-dim); display:block; margin-top:3px; }
+    .pm-ins-tip { color:var(--text-dim); display:block; margin-top:5px; font-style:italic; opacity:.92; }
+
+    /* WORK-DNA hand-off CTA */
+    .pm-dna-cta {
+      width:100%; margin-top:24px;
+      display:flex; align-items:center; justify-content:center; gap:9px;
+      padding:14px 18px; border-radius:14px; cursor:pointer; font-family:inherit;
+      background:linear-gradient(135deg,var(--accent3),var(--accent));
+      color:#fff; border:none; font-size:13.5px; font-weight:700; letter-spacing:.2px;
+      box-shadow:0 6px 20px var(--accent-glow);
+      transition:transform .12s, box-shadow .12s, filter .12s;
+    }
+    .pm-dna-cta:hover { transform:translateY(-1px); box-shadow:0 10px 26px var(--accent-glow); filter:brightness(1.05); }
+    .pm-dna-cta:active { transform:translateY(0); }
+    .pm-dna-cta-arrow { font-size:15px; transition:transform .15s; }
+    .pm-dna-cta:hover .pm-dna-cta-arrow { transform:translateX(3px); }
 
     /* TRUST line */
     .pm-trust {
-      margin:18px 0 0; font-size:10.5px; color:var(--text-dim);
+      margin:16px 0 2px; font-size:10.5px; color:var(--text-dim);
       text-align:center; opacity:.85;
     }
 
     /* hidden legacy stat holders */
     .pm-legacy-stats { display:none !important; }
 
-    /* TABS — General / Insights */
+    /* TABS — General / Insights (segmented control) */
     .pm-tabs {
-      display:flex; gap:4px; margin-top:18px; margin-bottom:18px;
-      border-bottom:1px solid var(--border);
+      display:flex; gap:4px; margin-top:22px; margin-bottom:22px;
+      padding:4px; border-radius:12px;
+      background:var(--surface2); border:1px solid var(--border);
     }
     .pm-tab {
-      flex:1; min-height:44px; padding:12px 8px;
-      background:none; border:none; cursor:pointer; font-family:inherit;
-      color:var(--text-dim); font-size:13px; font-weight:600; letter-spacing:.3px;
-      border-bottom:2px solid transparent; transition:color .15s, border-color .15s;
+      flex:1; min-height:40px; padding:9px 8px;
+      background:none; border:none; border-radius:9px; cursor:pointer; font-family:inherit;
+      color:var(--text-dim); font-size:13px; font-weight:700; letter-spacing:.2px;
+      transition:color .15s, background .15s, box-shadow .15s;
     }
     .pm-tab:hover { color:var(--text); }
-    .pm-tab.active { color:var(--accent2); border-bottom-color:var(--accent2); }
+    .pm-tab.active {
+      color:var(--accent2);
+      background:var(--surface3);
+      box-shadow:inset 0 0 0 1px var(--border), 0 2px 8px rgba(0,0,0,.16);
+    }
 
     /* PANELS */
     .pm-panel { display:none; }
@@ -1933,32 +1995,40 @@
       color:var(--text-dim); margin:0 0 12px;
     }
 
+    /* GENERAL — grouped settings cards */
+    .pm-card {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:16px; padding:18px 18px 6px; margin-bottom:16px;
+    }
+    .pm-card:last-of-type { margin-bottom:0; }
+
     .pm-chart-section {
-      margin-top:20px; width:100%; position:relative;
+      margin-top:24px; width:100%; position:relative;
     }
     .pm-chart-label {
-      font-size:10px; font-weight:600; color:var(--text-dim);
-      margin-bottom:4px; letter-spacing:.3px;
+      font-size:10.5px; font-weight:700; color:var(--text-dim);
+      margin-bottom:8px; letter-spacing:.4px; text-transform:uppercase;
     }
     .pm-completion-chart {
       display:block; width:100%; height:80px;
     }
     .pm-completion-empty {
-      font-size:9px; color:var(--text-dim); line-height:1.3;
+      font-size:10px; color:var(--text-dim); line-height:1.4;
       padding:8px 4px; min-height:80px;
       display:flex; align-items:center; justify-content:center;
-      text-align:center; border-radius:6px;
+      text-align:center; border-radius:10px;
       background:var(--surface2); border:1px dashed var(--border);
     }
     .pm-nationality-wrap { position:relative; }
-    .pm-save-wrap { position:relative; margin-top:6px; }
+    .pm-save-wrap { position:relative; margin-top:18px; }
+    .pm-save-btn { width:100%; }
     .pm-save-toast {
-      position:absolute; bottom:calc(100% + 8px); left:50%;
+      position:absolute; bottom:calc(100% + 10px); left:50%;
       transform:translateX(-50%);
       background:var(--surface3); color:var(--text);
       border:1px solid var(--accent2);
-      padding:6px 12px; border-radius:6px; font-size:11px;
-      box-shadow:0 4px 12px rgba(0,0,0,.35);
+      padding:7px 14px; border-radius:8px; font-size:11.5px; font-weight:600;
+      box-shadow:0 4px 14px rgba(0,0,0,.35);
       opacity:0; pointer-events:none; transition:opacity .25s;
       white-space:nowrap; z-index:5;
     }
@@ -1967,52 +2037,68 @@
       background:#EEF3FF; border-color:#5B7CFA; color:#2D2F3A;
     }
     .pm-close-btn {
-      position:absolute; top:10px; right:14px;
+      position:absolute; top:12px; right:16px;
       background:none; border:none; color:var(--text-dim);
-      cursor:pointer; font-size:22px; line-height:1;
-      transition:color .15s; z-index:10;
+      cursor:pointer; font-size:24px; line-height:1;
+      width:32px; height:32px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      transition:color .15s, background .15s; z-index:10;
     }
-    .pm-close-btn:hover { color:var(--accent3); }
-    /* Right-side form */
+    .pm-close-btn:hover { color:var(--accent3); background:var(--surface2); }
+    /* Form fields */
     .pm-section-title {
       font-size:13px; font-weight:700; color:var(--accent2);
       margin-bottom:14px; letter-spacing:.3px; text-transform:uppercase;
     }
-    .pm-field { margin-bottom:13px; }
+    .pm-field { margin-bottom:14px; }
     .pm-label {
       display:block; font-size:11px; font-weight:600;
-      color:var(--text-dim); margin-bottom:5px; letter-spacing:.3px;
+      color:var(--text-dim); margin-bottom:6px; letter-spacing:.3px;
     }
     .pm-input {
-      width:100%; background:var(--surface2); color:var(--text);
-      border:1px solid var(--border); border-radius:6px;
-      padding:8px 10px; font-size:12.5px; outline:none;
+      width:100%; min-height:44px; background:var(--surface3); color:var(--text);
+      border:1px solid var(--border); border-radius:10px;
+      padding:10px 12px; font-size:13px; outline:none;
       transition:border-color .15s, box-shadow .15s; font-family:inherit;
       box-sizing:border-box;
     }
-    .pm-input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-glow); }
-    .pm-textarea { min-height:72px; resize:vertical; line-height:1.5; }
+    .pm-input::placeholder { color:var(--text-dim); opacity:.7; }
+    .pm-input:focus { border-color:var(--accent2); box-shadow:0 0 0 3px var(--accent2-glow); }
+    .pm-textarea { min-height:80px; resize:vertical; line-height:1.55; }
     .pm-select { cursor:pointer; }
-    .pm-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    [data-theme="light"] .pm-left { background:#DCE4FF; border-color:#B8CAFE; }
-    [data-theme="light"] .pm-input { background:#EEF3FF; border-color:#B8CAFE; color:#2D2F3A; }
-    [data-theme="light"] .pm-input:focus { border-color:#7A6FF0; }
+    .pm-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    [data-theme="light"] .pm-card { background:#E6ECFF; border-color:#C6D3FE; }
+    [data-theme="light"] .pm-hero { background:#E6ECFF; border-color:#C6D3FE; }
+    [data-theme="light"] .pm-tabs { background:#E6ECFF; border-color:#C6D3FE; }
+    [data-theme="light"] .pm-tab.active { background:#F7F9FF; }
+    [data-theme="light"] .pm-tile,
+    [data-theme="light"] .pm-insight-col { background:#E6ECFF; border-color:#C6D3FE; }
+    [data-theme="light"] .pm-insight-list li { background:#F2F5FF; border-color:#C6D3FE; }
+    [data-theme="light"] .pm-input { background:#F2F5FF; border-color:#C6D3FE; color:#2D2F3A; }
+    [data-theme="light"] .pm-input:focus { border-color:#5B7CFA; box-shadow:0 0 0 3px rgba(91,124,250,.18); }
     [data-theme="light"] .pm-section-title { color:#5B7CFA; }
     [data-theme="light"] .pm-label { color:#6B6F85; }
+    [data-theme="light"] .pm-card-title { color:#6B6F85; }
 
-    /* ── Profile dashboard — phone layout ─────────────────── */
+    /* ── Profile dashboard — phone layout (bottom sheet) ──── */
     @media (max-width: 560px) {
       .pm-modal.pm-dash {
         width: 100% !important; max-width: 100% !important;
-        padding: 22px 18px 24px !important; max-height: 92vh;
+        border-radius: 20px 20px 0 0;
+        padding: 24px 18px calc(24px + env(safe-area-inset-bottom)) !important;
+        max-height: 92vh;
       }
+      .pm-id { gap:14px; padding-right:34px; }
+      #pmAvatarWrap { width:64px; height:64px; }
+      #pmName { font-size:19px; }
       .pm-tiles { grid-template-columns:repeat(2,1fr); }
       .pm-tiles.has-throughput { grid-template-columns:repeat(2,1fr); }
       .pm-tiles.has-throughput .pm-tile-wide { grid-column:span 2; }
-      .pm-insights { grid-template-columns:1fr; gap:16px; }
-      #pmName { font-size:18px; }
-      .pm-tabs { margin-top:16px; margin-bottom:14px; }
+      .pm-insights { grid-template-columns:1fr; gap:14px; }
+      .pm-tabs { margin-top:18px; margin-bottom:18px; }
       .pm-tab { font-size:14px; }
+      .pm-arch-medallion { width:48px; height:48px; font-size:24px; }
+      .pm-arch-label { font-size:16.5px; }
     }
     /* ── Neon grid lines ─────────────────────────────────── */
     #matrixCanvas::after {
@@ -2301,48 +2387,43 @@
       color: #4FF0D1; margin-bottom: 12px; margin-top: 22px;
     }
     [data-theme="light"] .ana-section-title { color: #5B7CFA; }
-    .ana-general-text {
-      font-size: 13.5px; line-height: 1.75; color: rgba(255,255,255,.85);
-      background: rgba(255,255,255,.04); border-radius: 10px; padding: 16px;
-    }
-    [data-theme="light"] .ana-general-text { color: #2D2F3A; background: rgba(122,111,240,.06); }
+    .ana-general-text { color: var(--text); }
 
-    /* Company cards */
+    /* Company cards (section 5 — "just for fun", demoted) */
     .ana-companies { display: flex; gap: 12px; flex-wrap: wrap; }
     .ana-company-card {
       flex: 1; min-width: 160px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      background: var(--surface2); border: 1px solid var(--border);
       border-radius: 12px; padding: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;
-      transition: border-color .15s;
+      transition: border-color .15s, transform .15s;
     }
-    .ana-company-card:hover { border-color: #4FF0D1; }
+    .ana-company-card:hover { border-color: var(--accent2); transform: translateY(-1px); }
     .ana-company-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; background: white; padding: 4px; }
-    .ana-company-name { font-size: 13px; font-weight: 700; color: #fff; }
-    .ana-company-reason { font-size: 11.5px; color: rgba(255,255,255,.6); text-align: center; line-height: 1.5; }
-    [data-theme="light"] .ana-company-card { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
-    [data-theme="light"] .ana-company-name { color: #2D2F3A; }
-    [data-theme="light"] .ana-company-reason { color: #6B6F85; }
+    .ana-company-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .ana-company-reason { font-size: 11.5px; color: var(--text-dim); text-align: center; line-height: 1.5; }
 
-    /* Celebrity cards */
-    .ana-celebs { display: flex; gap: 14px; flex-wrap: wrap; }
+    /* Celebrity cards (section 5 — "just for fun", demoted) */
+    .ana-celebs { display: flex; gap: 12px; flex-wrap: wrap; }
     .ana-celeb-card {
       flex: 1; min-width: 200px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      background: var(--surface2); border: 1px solid var(--border);
       border-radius: 12px; padding: 14px; display: flex; gap: 14px; align-items: flex-start;
+      transition: border-color .15s, transform .15s;
     }
+    .ana-celeb-card:hover { border-color: var(--accent); transform: translateY(-1px); }
     .ana-celeb-photo {
       width: 64px; height: 64px; flex-shrink: 0; border-radius: 10px;
-      object-fit: cover; object-position: center top; border: 2px solid rgba(217,76,255,.4);
+      object-fit: cover; object-position: center top;
+      border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
       background: var(--surface3);
     }
     .ana-celeb-fb { width:64px; height:64px; flex-shrink:0; border-radius:10px;
       display:flex; align-items:center; justify-content:center; font-size:24px;
-      background: rgba(255,255,255,.08); border: 2px solid rgba(217,76,255,.4); }
-    .ana-celeb-name { font-size: 13px; font-weight: 700; color: #FF6EC7; margin-bottom: 4px; }
-    .ana-celeb-reason { font-size: 11.5px; color: rgba(255,255,255,.65); line-height: 1.5; }
-    [data-theme="light"] .ana-celeb-card { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
+      color: var(--text);
+      background: var(--surface3); border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+    .ana-celeb-name { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    .ana-celeb-reason { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; }
     [data-theme="light"] .ana-celeb-name { color: #7A6FF0; }
-    [data-theme="light"] .ana-celeb-reason { color: #6B6F85; }
 
     /* Share buttons */
     .ana-share-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
@@ -2363,40 +2444,20 @@
     .ana-redo-btn:hover { border-color: #4FF0D1; color: #4FF0D1; }
     [data-theme="light"] .ana-redo-btn { border-color: rgba(122,111,240,.3); color: #6B6F85; }
 
-    /* DNA character — left column of analysis card */
+    /* Profile prose panel (section 2) — calm editorial surface */
     .ana-general-wrap {
-      display: flex; align-items: flex-start;
-      background: rgba(255,255,255,.04);
-      border-radius: 10px; overflow: hidden;
-      border-left: 3px solid #D94CFF;
-      gap: 0;
-    }
-    [data-theme="light"] .ana-general-wrap { background: rgba(122,111,240,.06); border-color: #7A6FF0; }
-    .ana-char-img {
-      flex: 0 0 auto;
-      width: 120px;               /* fixed display width */
-      height: auto;               /* preserves original 200×213 ratio */
-      object-fit: contain;
-      object-position: top center;
-      opacity: 0.92;              /* near-full opacity, clean look */
-      align-self: flex-end;       /* face floats toward bottom-left */
-      pointer-events: none;
-      display: block;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      overflow: hidden;
     }
     .ana-text-panel {
-      flex: 1; padding: 14px 14px 14px 12px;
-      font-size: 13.5px; line-height: 1.75;
-      color: rgba(255,255,255,.85);
+      padding: 16px 18px;
+      font-size: 14px; line-height: 1.78;
+      color: var(--text);
       min-width: 0;
     }
-    [data-theme="light"] .ana-text-panel { color: #2D2F3A; }
-    /* Stat badge */
-    .ana-stat-badge {
-      display: inline-block; margin-top: 10px; padding: 5px 12px;
-      background: rgba(79,240,209,.12); border: 1px solid rgba(79,240,209,.3);
-      border-radius: 20px; font-size: 12px; color: #4FF0D1; font-weight: 600;
-    }
-    [data-theme="light"] .ana-stat-badge { background: rgba(91,124,250,.1); border-color: rgba(91,124,250,.3); color: #5B7CFA; }
 
     /* ── Loading sub-steps ─────────────────────────────────────── */
     .ana-load-steps { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
@@ -2410,133 +2471,196 @@
     @keyframes anaLoadStep { from{opacity:0;transform:translateY(4px)} to{opacity:.85;transform:translateY(0)} }
     [data-theme="light"] .ana-load-step { color: #8A8FA5; }
 
-    /* ── Results hero ──────────────────────────────────────────── */
+    /* ── SECTION 1 — Results hero (archetype as identity) ────────── */
     .ana-result-hero {
-      text-align: center; padding: 22px 18px 20px; margin-bottom: 6px;
-      border-radius: 14px;
-      background: radial-gradient(120% 120% at 50% 0%, rgba(217,76,255,.18), rgba(79,240,209,.05) 55%, transparent 80%);
-      border: 1px solid rgba(255,255,255,.08);
+      position: relative; text-align: center;
+      padding: 30px 22px 26px; margin-bottom: 4px;
+      border-radius: 18px;
+      background:
+        radial-gradient(130% 120% at 50% -10%, var(--accent-glow, rgba(217,76,255,.18)), transparent 62%),
+        var(--surface2);
+      border: 1px solid var(--border);
+      overflow: hidden;
     }
-    .ana-hero-kicker { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 6px; }
+    /* soft accent hairline along the top edge */
+    .ana-result-hero::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      opacity: .85;
+    }
+    .ana-hero-char {
+      display: block; width: 92px; height: auto; margin: 0 auto 12px;
+      object-fit: contain; object-position: center;
+      filter: drop-shadow(0 6px 18px var(--accent-glow, rgba(217,76,255,.25)));
+      pointer-events: none;
+    }
+    .ana-hero-kicker {
+      font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 8px; font-weight: 600;
+    }
     .ana-hero-label {
-      font-size: 34px; font-weight: 800; letter-spacing: .5px; line-height: 1.1;
-      background: linear-gradient(90deg,#D94CFF,#4FF0D1,#FF6EC7);
+      font-size: 36px; font-weight: 800; letter-spacing: .3px; line-height: 1.08;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .ana-hero-rarity { margin-top: 10px; font-size: 12px; color: #4FF0D1; font-weight: 600; }
-    [data-theme="light"] .ana-result-hero { border-color: rgba(122,111,240,.18); background: radial-gradient(120% 120% at 50% 0%, rgba(122,111,240,.16), rgba(91,124,250,.05) 55%, transparent 80%); }
-    [data-theme="light"] .ana-hero-kicker { color: #8A8FA5; }
-    [data-theme="light"] .ana-hero-label { background: linear-gradient(90deg,#7A6FF0,#5B7CFA,#FF6EC7); -webkit-background-clip: text; background-clip: text; }
-    [data-theme="light"] .ana-hero-rarity { color: #5B7CFA; }
+    .ana-hero-rarity { margin-top: 14px; }
+    .ana-rarity-pill {
+      display: inline-block; padding: 5px 13px; border-radius: 999px;
+      font-size: 11.5px; font-weight: 600; letter-spacing: .2px;
+      color: var(--accent2);
+      background: color-mix(in srgb, var(--accent2) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent2) 32%, transparent);
+    }
+    .ana-hero-intro {
+      margin-top: 16px; max-width: 30ch; margin-left: auto; margin-right: auto;
+      font-size: 14px; line-height: 1.6; color: var(--text);
+      opacity: .92;
+    }
+    /* legacy theme fallbacks kept so dark/light stay crisp */
+    [data-theme="light"] .ana-rarity-pill { color: #5B7CFA; background: rgba(91,124,250,.1); border-color: rgba(91,124,250,.3); }
 
-    /* ── Signal panel ──────────────────────────────────────────── */
+    /* ── SECTION 2 evidence — Signal panel (real task data) ──────── */
     .ana-signal {
-      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px; padding: 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px;
     }
-    [data-theme="light"] .ana-signal { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
-    .ana-signal-empty { font-size: 12.5px; line-height: 1.7; color: rgba(255,255,255,.6); }
-    [data-theme="light"] .ana-signal-empty { color: #6B6F85; }
-    .ana-signal-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ana-signal-empty { font-size: 12.5px; line-height: 1.7; color: var(--text-dim); }
+    .ana-signal-chips { display: flex; gap: 10px; flex-wrap: wrap; }
     .ana-signal-chip {
-      flex: 1; min-width: 78px; text-align: center; padding: 11px 8px; border-radius: 10px;
-      background: rgba(217,76,255,.08); border: 1px solid rgba(217,76,255,.18);
+      flex: 1; min-width: 78px; text-align: center; padding: 13px 8px; border-radius: 12px;
+      background: var(--surface3); border: 1px solid var(--border);
     }
-    [data-theme="light"] .ana-signal-chip { background: rgba(122,111,240,.08); border-color: rgba(122,111,240,.2); }
-    .ana-chip-val { font-size: 20px; font-weight: 800; color: #4FF0D1; line-height: 1.1; }
-    .ana-chip-key { font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: rgba(255,255,255,.5); margin-top: 4px; }
+    .ana-chip-val { font-size: 22px; font-weight: 800; color: var(--accent2); line-height: 1.1; }
+    .ana-chip-key { font-size: 10px; letter-spacing: .6px; text-transform: uppercase; color: var(--text-dim); margin-top: 5px; }
     [data-theme="light"] .ana-chip-val { color: #5B7CFA; }
-    [data-theme="light"] .ana-chip-key { color: #8A8FA5; }
-    .ana-signal-mix { margin-top: 16px; }
-    .ana-mix-title { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 8px; }
-    [data-theme="light"] .ana-mix-title { color: #8A8FA5; }
-    .ana-mix-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
-    .ana-mix-label { font-size: 11.5px; color: rgba(255,255,255,.7); width: 64px; flex-shrink: 0; }
-    [data-theme="light"] .ana-mix-label { color: #2D2F3A; }
-    .ana-mix-track { flex: 1; height: 8px; border-radius: 5px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .ana-signal-mix { margin-top: 18px; }
+    .ana-mix-title { font-size: 10.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+    .ana-mix-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ana-mix-label { font-size: 11.5px; color: var(--text); width: 64px; flex-shrink: 0; }
+    .ana-mix-track { flex: 1; height: 9px; border-radius: 6px; background: var(--surface3); overflow: hidden; }
     [data-theme="light"] .ana-mix-track { background: rgba(0,0,0,.07); }
-    .ana-mix-fill { height: 100%; border-radius: 5px; transition: width .5s ease; }
+    .ana-mix-fill { height: 100%; border-radius: 6px; transition: width .6s cubic-bezier(.22,.61,.36,1); }
     .ana-mix-fill.q1 { background: linear-gradient(90deg,#D94CFF,#FF6EC7); }
     .ana-mix-fill.q2 { background: linear-gradient(90deg,#4FF0D1,#7CFF9B); }
     .ana-mix-fill.q3 { background: linear-gradient(90deg,#60BFFF,#5B7CFA); }
     .ana-mix-fill.q4 { background: linear-gradient(90deg,#FF9060,#FFD060); }
-    .ana-mix-pct { font-size: 11px; color: rgba(255,255,255,.55); width: 34px; text-align: right; flex-shrink: 0; }
-    [data-theme="light"] .ana-mix-pct { color: #6B6F85; }
+    .ana-mix-pct { font-size: 11px; color: var(--text-dim); width: 34px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
     .ana-signal-insight {
-      margin-top: 14px; padding: 11px 14px; border-radius: 10px;
-      background: rgba(79,240,209,.08); border-left: 3px solid #4FF0D1;
-      font-size: 12.5px; line-height: 1.6; color: rgba(255,255,255,.85);
+      margin-top: 16px; padding: 12px 15px; border-radius: 12px;
+      background: color-mix(in srgb, var(--accent2) 9%, transparent);
+      border-left: 3px solid var(--accent2);
+      font-size: 12.5px; line-height: 1.65; color: var(--text);
     }
-    [data-theme="light"] .ana-signal-insight { background: rgba(91,124,250,.08); border-left-color: #5B7CFA; color: #2D2F3A; }
+    [data-theme="light"] .ana-signal-insight { background: rgba(91,124,250,.08); border-left-color: #5B7CFA; }
 
-    /* ── Intimate, by-name narrative quote (top of results) ──────── */
+    /* ── Intimate, by-name narrative quote (top of section 2) ────── */
     .ana-quote {
       position: relative;
-      margin: 0 0 14px; padding: 14px 18px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(217,76,255,.10), rgba(79,240,209,.07));
-      border: 1px solid rgba(255,255,255,.08);
-      border-left: 3px solid var(--accent2, #4FF0D1);
-      font-size: 14px; line-height: 1.7; font-style: italic;
-      color: rgba(255,255,255,.9);
+      margin: 0 0 16px; padding: 18px 20px 18px 22px;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      font-size: 15px; line-height: 1.72; font-style: italic;
+      color: var(--text);
     }
     .ana-quote-mark {
-      font-style: normal; font-weight: 800; font-size: 18px;
-      color: var(--accent2, #4FF0D1); opacity: .8;
-    }
-    [data-theme="light"] .ana-quote {
-      background: linear-gradient(135deg, rgba(122,111,240,.09), rgba(91,124,250,.06));
-      border-color: rgba(122,111,240,.18); border-left-color: #5B7CFA; color: #2D2F3A;
+      font-style: normal; font-weight: 800; font-size: 19px;
+      color: var(--accent2); opacity: .85;
     }
     [data-theme="light"] .ana-quote-mark { color: #5B7CFA; }
 
-    /* ── Strengths & growth breakdown ────────────────────────────── */
-    .ana-breakdown { margin-top: 14px; }
+    /* ── SECTION 3 — Strengths & growth breakdown (confident, kind) ─ */
+    .ana-breakdown { margin-top: 4px; }
     .ana-breakdown-soft {
-      padding: 13px 16px; border-radius: 12px;
-      background: rgba(233,162,59,.08); border: 1px solid rgba(233,162,59,.22);
-      font-size: 13px; line-height: 1.6; color: rgba(255,255,255,.75);
+      padding: 14px 16px; border-radius: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 3px solid #E9A23B;
+      font-size: 13px; line-height: 1.6; color: var(--text-dim);
     }
-    [data-theme="light"] .ana-breakdown-soft { color: #6B6F85; }
-    .ana-bd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ana-bd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .ana-bd-col {
-      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
-      border-radius: 12px; padding: 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 16px 18px;
     }
-    [data-theme="light"] .ana-bd-col { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); }
     .ana-bd-head {
       font-size: 12.5px; font-weight: 700; letter-spacing: .3px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-    .ana-bd-strengths .ana-bd-head { color: var(--accent2, #4FF0D1); }
+    .ana-bd-strengths .ana-bd-head { color: var(--accent2); }
     .ana-bd-growth   .ana-bd-head { color: #E9A23B; }
+    [data-theme="light"] .ana-bd-strengths .ana-bd-head { color: #5B7CFA; }
     [data-theme="light"] .ana-bd-growth .ana-bd-head { color: #C77A1A; }
-    .ana-bd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .ana-bd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
     .ana-bd-item {
-      padding-left: 10px; border-left: 3px solid var(--accent2, #4FF0D1);
+      padding-left: 12px; border-left: 3px solid var(--accent2);
     }
+    [data-theme="light"] .ana-bd-strengths .ana-bd-item { border-left-color: #5B7CFA; }
     .ana-bd-growth .ana-bd-item { border-left-color: #E9A23B; }
     [data-theme="light"] .ana-bd-growth .ana-bd-item { border-left-color: #C77A1A; }
-    .ana-bd-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.92); line-height: 1.35; }
-    [data-theme="light"] .ana-bd-title { color: #2D2F3A; }
-    .ana-bd-evidence { font-size: 12px; line-height: 1.55; color: rgba(255,255,255,.55); margin-top: 3px; }
-    [data-theme="light"] .ana-bd-evidence { color: #6B6F85; }
+    .ana-bd-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .ana-bd-evidence { font-size: 12px; line-height: 1.55; color: var(--text-dim); margin-top: 4px; }
     .ana-bd-tip {
-      font-size: 11.5px; line-height: 1.5; color: rgba(233,162,59,.85);
-      margin-top: 4px; font-style: italic;
+      font-size: 11.5px; line-height: 1.5; color: #E9A23B;
+      margin-top: 5px; font-style: italic; opacity: .9;
     }
     [data-theme="light"] .ana-bd-tip { color: #C77A1A; }
 
-    /* ── Trust / privacy line (quiet but reassuring) ─────────────── */
+    /* ── SECTION 4 — Trust / privacy line (quiet, reassuring) ────── */
     .ana-trust {
-      margin-top: 16px; padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.07);
+      margin: 22px auto 0; max-width: 44ch; padding: 12px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
       text-align: center;
       font-size: 11px; line-height: 1.55; letter-spacing: .2px;
-      color: rgba(255,255,255,.42);
+      color: var(--text-dim);
     }
     .ana-trust:empty { display: none; }
-    [data-theme="light"] .ana-trust { border-top-color: rgba(0,0,0,.07); color: #8A8FA5; }
+
+    /* ── REPORT FRAME — sectioned "private report" rhythm ────────── */
+    .ana-report { display: flex; flex-direction: column; gap: 26px; }
+    .ana-report-sec {
+      opacity: 0;
+      animation: anaSecIn .5s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+    .ana-report-sec.ana-sec-hero      { animation-delay: .02s; }
+    .ana-report-sec.ana-sec-read      { animation-delay: .12s; }
+    .ana-report-sec.ana-sec-breakdown { animation-delay: .22s; }
+    .ana-report-sec.ana-sec-fun       { animation-delay: .34s; }
+    .ana-report-sec.ana-sec-share     { animation-delay: .42s; }
+    @keyframes anaSecIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .ana-report-sec { animation: none; opacity: 1; }
+    }
+
+    /* Section header: small-caps dim eyebrow + hairline divider */
+    .ana-sec-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .ana-sec-eyebrow {
+      flex-shrink: 0;
+      font-size: 11px; font-weight: 700; letter-spacing: 2.4px; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .ana-sec-rule { flex: 1; height: 1px; background: var(--border); }
+    /* "Just for fun" reads lighter / more playful but clearly secondary */
+    .ana-sec-eyebrow--fun {
+      color: var(--accent);
+      opacity: .85;
+    }
+
+    /* the evidence caption that ties narrative -> real numbers */
+    .ana-evidence-cap {
+      margin: 14px 0 8px;
+      font-size: 10.5px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* sub-labels inside the demoted "fun" section */
+    .ana-fun-sub {
+      font-size: 12px; font-weight: 600; letter-spacing: .3px;
+      color: var(--text); opacity: .8; margin-bottom: 10px;
+    }
+    .ana-fun-sub--mt { margin-top: 18px; }
 
     /* Question step container */
     .ana-q-single { animation: anaQIn .2s ease; }
@@ -2733,9 +2857,15 @@
       .ana-q-text { font-size: 12px !important; }
       .ana-opt { font-size: 11.5px !important; padding: 7px 10px !important; gap: 8px; }
       .ana-section-title { font-size: 10px !important; margin-top: 14px !important; margin-bottom: 8px !important; }
-      .ana-general-wrap { flex-direction: column !important; }
-      .ana-char-img { width: 70px !important; align-self: center; }
-      .ana-text-panel { padding: 10px 12px !important; font-size: 12.5px !important; }
+      .ana-report { gap: 20px !important; }
+      .ana-sec-head { gap: 10px !important; margin-bottom: 12px !important; }
+      .ana-sec-eyebrow { font-size: 10px !important; letter-spacing: 1.8px !important; }
+      .ana-hero-char { width: 76px !important; }
+      .ana-hero-intro { font-size: 12.5px !important; margin-top: 12px !important; }
+      .ana-result-hero { border-radius: 14px !important; }
+      .ana-evidence-cap { font-size: 9.5px !important; letter-spacing: 1px !important; }
+      .ana-fun-sub { font-size: 11.5px !important; }
+      .ana-text-panel { padding: 13px 14px !important; font-size: 13px !important; }
       .ana-companies { gap: 8px !important; }
       .ana-company-card { min-width: 120px !important; padding: 10px !important; }
       .ana-company-name { font-size: 12px !important; }
@@ -3549,65 +3679,76 @@
 
     <!-- TAB BAR -->
     <div class="pm-tabs" role="tablist">
-      <button class="pm-tab active" id="pmTabGeneral" role="tab" aria-selected="true" data-pmtab="general">General</button>
-      <button class="pm-tab" id="pmTabInsights" role="tab" aria-selected="false" data-pmtab="insights">Insights</button>
+      <button class="pm-tab active" id="pmTabGeneral" role="tab" aria-selected="true" data-pmtab="general" data-i18n="profile.tabGeneral">General</button>
+      <button class="pm-tab" id="pmTabInsights" role="tab" aria-selected="false" data-pmtab="insights" data-i18n="profile.tabInsights">Insights</button>
     </div>
 
     <!-- GENERAL PANEL (editable info / settings, default visible) -->
     <div class="pm-panel active" id="pmPanelGeneral" role="tabpanel" aria-labelledby="pmTabGeneral">
-      <div class="pm-panel-head" data-i18n="profile.editDetails">Profile &amp; settings</div>
-      <div class="pm-field">
-        <label class="pm-label" data-i18n="profile.jobTitle">What do you do?</label>
-        <input id="pmJobTitle" type="text" class="pm-input" data-i18n-placeholder="profile.jobPlaceholder" placeholder="Your current role or title" maxlength="80">
-      </div>
 
-      <div class="pm-field">
-        <label class="pm-label" data-i18n="profile.goals">Where do you see yourself in a year?</label>
-        <textarea id="pmGoals" class="pm-input pm-textarea" data-i18n-placeholder="profile.goalsPlaceholder" placeholder="Your vision, your goals, your next chapter…" maxlength="400"></textarea>
-      </div>
+      <!-- CARD: About you -->
+      <section class="pm-card">
+        <h3 class="pm-card-title" data-i18n="profile.aboutYou">About you</h3>
 
-      <div class="pm-field">
-        <label class="pm-label" data-i18n="profile.language">Language</label>
-        <select id="pmLanguage" class="pm-input pm-select"></select>
-      </div>
-
-      <div class="pm-row">
         <div class="pm-field">
-          <label class="pm-label" data-i18n="profile.nationality">Nationality</label>
-          <input id="pmNationality" type="text" class="pm-input" list="pmNationalityList" data-i18n-placeholder="profile.nationalityPlaceholder" placeholder="Type or pick a country…" maxlength="80" autocomplete="off">
-          <datalist id="pmNationalityList"></datalist>
+          <label class="pm-label" for="pmJobTitle" data-i18n="profile.jobTitle">What do you do?</label>
+          <input id="pmJobTitle" type="text" class="pm-input" data-i18n-placeholder="profile.jobPlaceholder" placeholder="Your current role or title" maxlength="80">
         </div>
-        <div class="pm-field">
-          <label class="pm-label" data-i18n="profile.gender">Gender</label>
-          <select id="pmGender" class="pm-input pm-select">
-            <option value="" data-i18n="profile.gender.none">Prefer not to say</option>
-            <option value="female" data-i18n="profile.gender.female">Female</option>
-            <option value="male" data-i18n="profile.gender.male">Male</option>
-            <option value="nonbinary" data-i18n="profile.gender.nonbinary">Non-binary</option>
-            <option value="other" data-i18n="profile.gender.other">Other</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="pm-field">
-        <label class="pm-label" data-i18n="profile.birthday">Date of Birth</label>
-        <input id="pmBirthday" type="date" class="pm-input" value="2000-07-22" style="color-scheme:dark">
-      </div>
+        <div class="pm-field">
+          <label class="pm-label" for="pmGoals" data-i18n="profile.goals">Where do you see yourself in a year?</label>
+          <textarea id="pmGoals" class="pm-input pm-textarea" data-i18n-placeholder="profile.goalsPlaceholder" placeholder="Your vision, your goals, your next chapter…" maxlength="400"></textarea>
+        </div>
+
+        <div class="pm-row">
+          <div class="pm-field pm-nationality-wrap">
+            <label class="pm-label" for="pmNationality" data-i18n="profile.nationality">Nationality</label>
+            <input id="pmNationality" type="text" class="pm-input" list="pmNationalityList" data-i18n-placeholder="profile.nationalityPlaceholder" placeholder="Type or pick a country…" maxlength="80" autocomplete="off">
+            <datalist id="pmNationalityList"></datalist>
+          </div>
+          <div class="pm-field">
+            <label class="pm-label" for="pmGender" data-i18n="profile.gender">Gender</label>
+            <select id="pmGender" class="pm-input pm-select">
+              <option value="" data-i18n="profile.gender.none">Prefer not to say</option>
+              <option value="female" data-i18n="profile.gender.female">Female</option>
+              <option value="male" data-i18n="profile.gender.male">Male</option>
+              <option value="nonbinary" data-i18n="profile.gender.nonbinary">Non-binary</option>
+              <option value="other" data-i18n="profile.gender.other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pm-field">
+          <label class="pm-label" for="pmBirthday" data-i18n="profile.birthday">Date of Birth</label>
+          <input id="pmBirthday" type="date" class="pm-input" value="2000-07-22" style="color-scheme:dark">
+        </div>
+      </section>
+
+      <!-- CARD: Preferences -->
+      <section class="pm-card">
+        <h3 class="pm-card-title" data-i18n="profile.preferences">Preferences</h3>
+        <div class="pm-field">
+          <label class="pm-label" for="pmLanguage" data-i18n="profile.language">Language</label>
+          <select id="pmLanguage" class="pm-input pm-select"></select>
+        </div>
+      </section>
 
       <div class="pm-save-wrap">
         <div class="pm-save-toast" id="pmSaveToast" role="status" aria-live="polite"></div>
-        <button class="modal-btn primary" id="pmSaveBtn" style="width:100%" data-i18n="profile.save">Save Profile</button>
+        <button class="modal-btn primary pm-save-btn" id="pmSaveBtn" data-i18n="profile.save">Save Profile</button>
       </div>
     </div>
 
     <!-- INSIGHTS PANEL (dashboard, hidden by default) -->
     <div class="pm-panel" id="pmPanelInsights" role="tabpanel" aria-labelledby="pmTabInsights" hidden>
 
-    <!-- ARCHETYPE BADGE / CTA -->
-    <div id="pmArchetype" class="pm-archetype-row"></div>
-
-    <!-- NARRATIVE LEAD-IN -->
-    <p id="pmNarrative" class="pm-narrative"></p>
+    <!-- HERO STRIP: archetype hero OR discover-CTA (filled by renderProfileDashboard) -->
+    <div class="pm-hero">
+      <!-- ARCHETYPE BADGE / CTA -->
+      <div id="pmArchetype" class="pm-archetype-row"></div>
+      <!-- NARRATIVE LEAD-IN -->
+      <p id="pmNarrative" class="pm-narrative"></p>
+    </div>
 
     <!-- LOW-DATA NUDGE -->
     <div id="pmLowData" class="pm-lowdata" style="display:none"></div>
@@ -3639,6 +3780,12 @@
       <canvas id="pmCompletionChart" class="pm-completion-chart" aria-label="Daily completion rate chart"></canvas>
       <div id="pmCompletionEmpty" class="pm-completion-empty" style="display:none" data-i18n="profile.chartEmpty">Close a day to track rates over time</div>
     </div>
+
+    <!-- HAND-OFF TO FULL WORK DNA -->
+    <button type="button" class="pm-dna-cta" id="pmOpenDna">
+      <span class="pm-dna-cta-txt" data-i18n="profile.openDna">Open full Work DNA</span>
+      <span class="pm-dna-cta-arrow" aria-hidden="true">→</span>
+    </button>
 
     <!-- legacy stat IDs kept for compatibility (populated, hidden) -->
     <div class="pm-legacy-stats" aria-hidden="true">
@@ -3683,40 +3830,64 @@
         </div>
       </div>
 
-      <!-- STEP 3: Results -->
-      <div id="anaStep3" class="ana-step">
-        <!-- Results header (profile label, prominent) -->
-        <div class="ana-result-hero" id="anaHero"></div>
+      <!-- STEP 3: Results — reframed as an intimate, sectioned private report -->
+      <div id="anaStep3" class="ana-step ana-report">
 
-        <div class="ana-section-title" data-i18n-ana="general">Your Profile</div>
-        <div class="ana-general-text" id="anaGeneral"></div>
+        <!-- ░ SECTION 1 — HERO: who you are at work ░ -->
+        <section class="ana-report-sec ana-sec-hero">
+          <div class="ana-result-hero" id="anaHero"></div>
+        </section>
 
-        <!-- Signal panel: real completed-task data -->
-        <div class="ana-section-title" style="margin-top:22px">Your Signal — From Your Real Task History</div>
-        <div class="ana-signal" id="anaSignal"></div>
+        <!-- ░ SECTION 2 — What I see in your work: narrative + real-data evidence ░ -->
+        <section class="ana-report-sec ana-sec-read">
+          <div class="ana-sec-head">
+            <span class="ana-sec-eyebrow" id="anaReadHead" data-i18n-ana="readHead">What I see in your work</span>
+            <span class="ana-sec-rule"></span>
+          </div>
+          <!-- intimate narrative quote + character + profile text (filled by JS) -->
+          <div class="ana-general-text" id="anaGeneral"></div>
+          <!-- the evidence: real completed-task data, sitting right under the personal read -->
+          <div class="ana-evidence-cap" id="anaEvidenceCap" data-i18n-ana="evidenceCap">Your own numbers, behind the read</div>
+          <div class="ana-signal" id="anaSignal"></div>
+        </section>
 
-        <!-- Strengths & growth breakdown (populated from computeWorkInsights) -->
-        <div class="ana-breakdown" id="anaBreakdown"></div>
+        <!-- ░ SECTION 3 — Strengths & growth edges (data-backed) ░ -->
+        <section class="ana-report-sec ana-sec-breakdown">
+          <div class="ana-sec-head">
+            <span class="ana-sec-eyebrow" id="anaBreakdownHead" data-i18n-ana="breakdownHead">Strengths &amp; growth edges</span>
+            <span class="ana-sec-rule"></span>
+          </div>
+          <div class="ana-breakdown" id="anaBreakdown"></div>
+        </section>
 
-        <div class="ana-section-title" style="margin-top:22px" data-i18n-ana="companies">Companies Built for Your Kind of Talent</div>
-        <div class="ana-companies" id="anaCompanies"></div>
-
-        <div class="ana-section-title" style="margin-top:20px" data-i18n-ana="celebs">Your Working Style Mirrors</div>
-        <div class="ana-celebs" id="anaCelebs"></div>
-
-        <div class="ana-section-title" style="margin-top:20px" data-i18n-ana="share">Share Your Results</div>
-        <div class="ana-share-row">
-          <button class="ana-share-btn" data-platform="x">𝕏&ensp;Post on X</button>
-          <button class="ana-share-btn" data-platform="threads">⊕&ensp;Threads</button>
-          <button class="ana-share-btn" data-platform="facebook">f&ensp;Facebook</button>
-          <button class="ana-share-btn" data-platform="instagram">◎&ensp;Instagram</button>
-        </div>
-        <div style="text-align:center">
-          <button class="ana-redo-btn" id="anaRedo" data-i18n-ana="redo">↺ Analyse again</button>
-        </div>
-
-        <!-- Trust / privacy reassurance -->
+        <!-- ░ SECTION 4 — Trust / privacy (quiet, after the depth) ░ -->
         <div class="ana-trust" id="anaTrust"></div>
+
+        <!-- ░ SECTION 5 — Just for fun: kindred spirits + where you'd thrive (secondary) ░ -->
+        <section class="ana-report-sec ana-sec-fun">
+          <div class="ana-sec-head ana-sec-head--fun">
+            <span class="ana-sec-eyebrow ana-sec-eyebrow--fun" id="anaFunHead" data-i18n-ana="funHead">Just for fun</span>
+            <span class="ana-sec-rule"></span>
+          </div>
+          <div class="ana-fun-sub" id="anaCelebsHead" data-i18n-ana="celebs">Kindred spirits</div>
+          <div class="ana-celebs" id="anaCelebs"></div>
+          <div class="ana-fun-sub ana-fun-sub--mt" id="anaCompaniesHead" data-i18n-ana="companies">Where you'd thrive</div>
+          <div class="ana-companies" id="anaCompanies"></div>
+        </section>
+
+        <!-- ░ SECTION 6 — Share + redo ░ -->
+        <section class="ana-report-sec ana-sec-share">
+          <div class="ana-section-title" data-i18n-ana="share">Share Your Results</div>
+          <div class="ana-share-row">
+            <button class="ana-share-btn" data-platform="x">𝕏&ensp;Post on X</button>
+            <button class="ana-share-btn" data-platform="threads">⊕&ensp;Threads</button>
+            <button class="ana-share-btn" data-platform="facebook">f&ensp;Facebook</button>
+            <button class="ana-share-btn" data-platform="instagram">◎&ensp;Instagram</button>
+          </div>
+          <div style="text-align:center">
+            <button class="ana-redo-btn" id="anaRedo" data-i18n-ana="redo">↺ Analyse again</button>
+          </div>
+        </section>
       </div>
 
     </div>
@@ -4056,19 +4227,36 @@ function renderProfileDashboard() {
   const narrEl = document.getElementById('pmNarrative');
   if(narrEl) narrEl.textContent = ins.narrative || '';
 
-  // 2) Archetype badge OR discover CTA
+  // 2) Archetype hero OR premium discover-CTA
+  const heroWrap = document.querySelector('.pm-hero');
   const archEl = document.getElementById('pmArchetype');
   if(archEl) {
     const a = getCachedArchetype();
     if(a) {
-      const rarity = (a.pct != null) ? `<span class="pm-arch-rarity">· ${a.pct}% of people</span>` : '';
+      // Archetype hero: emoji medallion + label + rarity tag, tinted by archetype colour.
+      if(heroWrap) { heroWrap.classList.add('has-archetype'); heroWrap.classList.remove('is-empty'); }
+      const rarityTxt = (a.pct != null)
+        ? ((typeof tr === 'function') ? tr('profile.rarity', { pct: a.pct }) : (a.pct + '% of people'))
+        : '';
+      const rarity = rarityTxt ? `<span class="pm-arch-rarity">${esc(rarityTxt)}</span>` : '';
       archEl.innerHTML =
-        `<span class="pm-arch-badge" style="--arch-color:${a.color}">` +
-          `<span class="pm-arch-emoji">${a.emoji}</span>` +
-          `<span class="pm-arch-label">${esc(a.label)}</span>${rarity}</span>`;
+        `<span class="pm-arch-medallion" style="--arch-color:${a.color}">${a.emoji}</span>` +
+        `<span class="pm-arch-meta">` +
+          `<span class="pm-arch-label" style="--arch-color:${a.color}">${esc(a.label)}</span>` +
+          rarity +
+        `</span>`;
     } else {
+      // Premium empty hero: invitation + prominent discover button.
+      if(heroWrap) { heroWrap.classList.add('is-empty'); heroWrap.classList.remove('has-archetype'); }
+      const heroTitle = (typeof tr === 'function') ? tr('profile.discoverHeroTitle') : 'Discover how you really work';
+      const heroSub   = (typeof tr === 'function') ? tr('profile.discoverHeroSub')   : 'A 2-minute read of your true working style — your archetype, strengths, and the teams where you thrive.';
+      const heroBtn   = (typeof tr === 'function') ? tr('profile.discoverHeroBtn')   : '✨ Discover your Work DNA';
       archEl.innerHTML =
-        `<button type="button" class="pm-arch-cta" id="pmDiscoverDna">✨ <span data-i18n="profile.discoverDna">Discover your Work DNA</span></button>`;
+        `<div class="pm-discover">` +
+          `<div class="pm-discover-title">${esc(heroTitle)}</div>` +
+          `<div class="pm-discover-sub">${esc(heroSub)}</div>` +
+          `<button type="button" class="pm-arch-cta" id="pmDiscoverDna">${esc(heroBtn)}</button>` +
+        `</div>`;
       const btn = document.getElementById('pmDiscoverDna');
       if(btn) btn.addEventListener('click', () => {
         try { closeModal('profileModal'); } catch(_){}
@@ -4122,6 +4310,16 @@ function renderProfileDashboard() {
       `<span class="pm-ins-evidence">${esc(g.evidence)}</span>` +
       (g.tip ? `<span class="pm-ins-tip">💡 ${esc(g.tip)}</span>` : '') +
       `</li>`).join('');
+  }
+
+  // 7) Hand-off CTA → full Work DNA report (bind once)
+  const dnaBtn = document.getElementById('pmOpenDna');
+  if(dnaBtn && !dnaBtn.dataset.bound) {
+    dnaBtn.dataset.bound = '1';
+    dnaBtn.addEventListener('click', () => {
+      try { closeModal('profileModal'); } catch(_){}
+      if(typeof showAnalysisModal === 'function') showAnalysisModal();
+    });
   }
 }
 
@@ -5532,13 +5730,21 @@ async function renderAnaResults(profileKey) {
   const stat = ANA_STATS[profileKey];
   const name = state.userName || 'You';
 
-  // Results hero — profile label shown prominently up top
+  // Results hero — archetype as identity (character art + big label + rarity pill)
   const hero = document.getElementById('anaHero');
   if(hero) {
+    const heroChar = getCharSrc(profileKey);
+    const heroUi   = (typeof I18n !== 'undefined' && I18n.getAnaUi) ? I18n.getAnaUi() : null;
+    const kicker   = (heroUi && heroUi.heroKicker) ? heroUi.heroKicker : 'Who you are at work';
+    const intro    = (heroUi && heroUi.heroIntro)
+      ? heroUi.heroIntro(name)
+      : `${name} — here's the shape of how you work.`;
     hero.innerHTML = `
-      <div class="ana-hero-kicker">Your Work DNA is</div>
+      ${heroChar ? `<img class="ana-hero-char" src="${heroChar}" alt="">` : ''}
+      <div class="ana-hero-kicker">${kicker}</div>
       <div class="ana-hero-label">${p.label}</div>
-      <div class="ana-hero-rarity">⚡ Only ${stat.pct}% of professionals ${stat.trait}</div>`;
+      <div class="ana-hero-rarity"><span class="ana-rarity-pill">⚡ Only ${stat.pct}% of professionals ${stat.trait}</span></div>
+      <div class="ana-hero-intro">${intro}</div>`;
   }
 
   // Personal, by-name narrative line built only from the user's own tasks.
@@ -5550,15 +5756,14 @@ async function renderAnaResults(profileKey) {
     ? `<div class="ana-quote"><span class="ana-quote-mark">“</span>${narrative}<span class="ana-quote-mark">”</span></div>`
     : '';
 
-  // General analysis with character image overlay (intimate quote sits up top)
-  const charSrc = getCharSrc(profileKey);
+  // Section 2 — the intimate read: by-name narrative quote up top, then the
+  // profile text as a calm prose panel. (Character art + rarity now live in the
+  // hero, so this block stays focused on the personal narrative.)
   document.getElementById('anaGeneral').innerHTML = `
     ${quoteHtml}
     <div class="ana-general-wrap">
-      ${charSrc ? `<img class="ana-char-img" src="${charSrc}" alt="">` : ''}
       <div class="ana-text-panel">
         ${p.text(name)}
-        <div class="ana-stat-badge">⚡ Only ${stat.pct}% of professionals ${stat.trait}</div>
       </div>
     </div>`;
 
