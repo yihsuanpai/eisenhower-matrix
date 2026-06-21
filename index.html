@@ -130,6 +130,79 @@
       --q4: rgba(69,57,42,.14);
     }
 
+    /* ═══ TOKYO SUNSET — 80s Tokyo girl city-pop: warm plum dusk, coral,
+       aqua & golden-peach sunset (Mariya/Anri album-cover energy) ═════════ */
+    [data-theme="tokyo"] {
+      --bg: #2A1730;          /* warm plum-wine twilight (NOT cold indigo) */
+      --surface: #381E3E;
+      --surface2: #46264C;
+      --surface3: #56305B;
+      --border: #784676;      /* magenta-mauve */
+      --text: #FFEFE6;        /* warm cream */
+      --text-dim: #E0A4C0;    /* dusty rose */
+      --accent:  #FF7E9D;     /* hot coral-pink (sunset) */
+      --accent2: #3FE0C5;     /* signature city-pop aqua */
+      --accent3: #FFB36B;     /* golden-peach sunset */
+      --accent4: #FFD27A;     /* warm gold */
+      --lavender: #FF7E9D;
+      --mint: #3FE0C5;
+      --accent-glow:  rgba(255,126,157,.28);
+      --accent2-glow: rgba(63,224,197,.20);
+      --accent3-glow: rgba(255,179,107,.22);
+      --q1: rgba(255,126,157,.22);
+      --q2: rgba(63,224,197,.16);
+      --q3: rgba(255,179,107,.14);
+      --q4: rgba(120,70,114,.16);
+    }
+
+    /* ═══ OXBRIDGE — dark academia: noble dark green, brass gold & parchment */
+    [data-theme="oxbridge"] {
+      --bg: #0F1E15;          /* noble dark green / racing-green black */
+      --surface: #16291D;
+      --surface2: #1D3526;
+      --surface3: #264430;
+      --border: #3A5A41;      /* forest */
+      --text: #ECE7D3;        /* parchment */
+      --text-dim: #9DB39E;    /* sage grey */
+      --accent:  #CDA94E;     /* brass / college gold */
+      --accent2: #7BB58A;     /* sage / Cambridge green */
+      --accent3: #4E8F6B;     /* deep emerald */
+      --accent4: #C9B26A;     /* pale gold */
+      --lavender: #7BB58A;
+      --mint: #4E8F6B;
+      --accent-glow:  rgba(205,169,78,.22);
+      --accent2-glow: rgba(123,181,138,.18);
+      --accent3-glow: rgba(78,143,107,.18);
+      --q1: rgba(205,169,78,.16);
+      --q2: rgba(123,181,138,.16);
+      --q3: rgba(78,143,107,.12);
+      --q4: rgba(56,87,63,.16);
+    }
+
+    /* ═══ MANEKI-NEKO — lucky cat: red lacquer with LOTS of koban gold ════ */
+    [data-theme="manekineko"] {
+      --bg: #210F0C;          /* warm red-lacquer black */
+      --surface: #311813;
+      --surface2: #3F1F17;
+      --surface3: #4E281C;
+      --border: #7A552A;      /* GOLD-brown rim (gilt edge) */
+      --text: #FFF4E0;        /* warm cream-gold */
+      --text-dim: #E0BC83;    /* gilded tan */
+      --accent:  #FFC93C;     /* bright lucky koban gold */
+      --accent2: #E84B3A;     /* vermilion red (bib/collar) */
+      --accent3: #F7DFA0;     /* champagne gold leaf */
+      --accent4: #6FB39E;     /* lucky jade pop */
+      --lavender: #FFC93C;
+      --mint: #FFD24F;
+      --accent-glow:  rgba(255,201,60,.32);   /* strong gold glow */
+      --accent2-glow: rgba(232,75,58,.20);
+      --accent3-glow: rgba(247,223,160,.22);
+      --q1: rgba(232,75,58,.20);     /* red — DO */
+      --q2: rgba(255,201,60,.20);    /* gold — SCHEDULE */
+      --q3: rgba(247,223,160,.15);   /* gold leaf */
+      --q4: rgba(122,85,42,.16);     /* gilt brown */
+    }
+
     /* Light-mode element overrides for hardcoded colours */
     [data-theme="light"] body   { color-scheme: light; }
     [data-theme="light"] #header {
@@ -575,12 +648,21 @@
     }
 
     #hdrClock {
-      font-family: "Monaco", "Courier New", monospace;
-      font-size: 11px;
-      color: #c8ccff;
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Courier New", monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent2);
+      text-shadow: 0 0 10px var(--accent2-glow);
+      font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 9px;
+      transition: background .15s, box-shadow .15s;
+      white-space: nowrap;
     }
+    #hdrClock:hover { background: var(--surface2); box-shadow: 0 0 0 1px var(--border); }
 
     .hdr-btn {
       background: var(--surface2);
@@ -1690,6 +1772,127 @@
       margin: 12px 0;
     }
 
+    /* ============= CALENDAR MODAL ============= */
+    #calendarModal .modal {
+      max-width: 880px;
+      width: min(880px, 94vw);
+    }
+    #calGrid {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .cal-month {
+      flex: 1 1 240px;
+      min-width: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .cal-month-label {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: .2px;
+    }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+    .cal-weekday {
+      color: var(--text-dim);
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 2px 0;
+    }
+    .cal-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .cal-day {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text);
+      border-radius: 7px;
+      cursor: default;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cal-day:hover {
+      background: var(--surface3);
+    }
+    .cal-day.today {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 700;
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    .cal-day.today:hover {
+      background: var(--accent);
+    }
+    .cal-dot {
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent3);
+    }
+    .cal-day.today .cal-dot {
+      background: var(--bg);
+    }
+    .cal-blank {
+      aspect-ratio: 1 / 1;
+    }
+    .cal-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .cal-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cal-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent3);
+    }
+    .cal-legend-tint {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--accent2) 40%, transparent);
+      border: 1px solid var(--border);
+    }
+    @media (max-width: 640px) {
+      #calGrid { flex-direction: column; flex-wrap: nowrap; }
+      .cal-month { flex: 1 1 auto; }
+    }
+
     .modal-item {
       padding: 10px;
       border: 1px solid var(--border);
@@ -2258,10 +2461,10 @@
       padding: 2px;
       width: min(860px, 96vw);
       max-height: 90vh;
-      background: linear-gradient(60deg,#D94CFF,#4FF0D1,#FF6EC7,#7CFF9B,#D94CFF);
+      background: linear-gradient(60deg,var(--accent),var(--accent2),var(--accent3),var(--accent4),var(--accent));
       background-size: 300% 300%;
       animation: anaBorderSpin 5s linear infinite;
-      box-shadow: 0 0 32px rgba(217,76,255,.5), 0 0 60px rgba(79,240,209,.25);
+      box-shadow: 0 0 32px color-mix(in srgb, var(--accent) 50%, transparent), 0 0 60px color-mix(in srgb, var(--accent2) 25%, transparent);
     }
     @keyframes anaBorderSpin { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
 
@@ -2307,7 +2510,7 @@
     [data-theme="light"] .ana-hdr { border-bottom-color: rgba(0,0,0,.08); }
     .ana-title {
       font-size: 18px; font-weight: 800; letter-spacing: .5px;
-      background: linear-gradient(90deg,#D94CFF,#4FF0D1,#FF6EC7);
+      background: linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -2319,7 +2522,7 @@
       background: none; border: none; color: rgba(255,255,255,.4);
       font-size: 22px; cursor: pointer; transition: color .15s; line-height:1;
     }
-    .ana-close:hover { color: #FF6EC7; }
+    .ana-close:hover { color: var(--accent3); }
     [data-theme="light"] .ana-close { color: rgba(0,0,0,.3); }
 
     /* Steps */
@@ -2338,9 +2541,9 @@
       transition: background .12s, border-color .12s;
       font-size: 12.5px; color: rgba(255,255,255,.75);
     }
-    .ana-opt:hover { background: rgba(217,76,255,.12); border-color: rgba(217,76,255,.3); }
-    .ana-opt input[type="radio"] { accent-color: #D94CFF; flex-shrink:0; width:14px; height:14px; }
-    .ana-opt.selected { background: rgba(217,76,255,.18); border-color: #D94CFF; color: #fff; }
+    .ana-opt:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+    .ana-opt input[type="radio"] { accent-color: var(--accent); flex-shrink:0; width:14px; height:14px; }
+    .ana-opt.selected { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); color: #fff; }
     [data-theme="light"] .ana-opt { background: rgba(122,111,240,.06); border-color: rgba(122,111,240,.15); color: #2D2F3A; }
     [data-theme="light"] .ana-opt:hover { background: rgba(122,111,240,.12); }
     [data-theme="light"] .ana-opt input[type="radio"] { accent-color: #7A6FF0; }
@@ -2352,19 +2555,19 @@
       flex: 1; height: 3px; border-radius: 2px;
       background: rgba(255,255,255,.1); transition: background .3s;
     }
-    .ana-prog-dot.done { background: #4FF0D1; }
-    .ana-prog-dot.active { background: #D94CFF; }
+    .ana-prog-dot.done { background: var(--accent2); }
+    .ana-prog-dot.active { background: var(--accent); }
 
     /* Analyse button */
     .ana-btn {
       width: 100%; padding: 12px; border-radius: 10px; border: none; cursor: pointer;
       font-size: 14px; font-weight: 700; letter-spacing: .5px;
-      background: linear-gradient(135deg,#D94CFF,#4FF0D1);
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
       color: #fff; margin-top: 8px;
-      box-shadow: 0 4px 20px rgba(217,76,255,.4);
+      box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 40%, transparent);
       transition: opacity .15s, box-shadow .15s;
     }
-    .ana-btn:hover { opacity: .9; box-shadow: 0 6px 28px rgba(217,76,255,.55); }
+    .ana-btn:hover { opacity: .9; box-shadow: 0 6px 28px color-mix(in srgb, var(--accent) 55%, transparent); }
     .ana-btn:disabled { opacity: .4; cursor: default; }
     [data-theme="light"] .ana-btn { background: linear-gradient(135deg,#7A6FF0,#5B7CFA); }
 
@@ -2372,11 +2575,11 @@
     .ana-loading { text-align: center; padding: 60px 20px; }
     .ana-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
     .ana-dot {
-      width: 10px; height: 10px; border-radius: 50%; background: #D94CFF;
+      width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
       animation: anaDot 1.4s ease-in-out infinite;
     }
-    .ana-dot:nth-child(2) { animation-delay: .2s; background: #4FF0D1; }
-    .ana-dot:nth-child(3) { animation-delay: .4s; background: #FF6EC7; }
+    .ana-dot:nth-child(2) { animation-delay: .2s; background: var(--accent2); }
+    .ana-dot:nth-child(3) { animation-delay: .4s; background: var(--accent3); }
     @keyframes anaDot { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
     .ana-loading-text { font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.7; max-width: 400px; margin: 0 auto; }
     [data-theme="light"] .ana-loading-text { color: #6B6F85; }
@@ -2384,7 +2587,7 @@
     /* Step 3: Results */
     .ana-section-title {
       font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      color: #4FF0D1; margin-bottom: 12px; margin-top: 22px;
+      color: var(--accent2); margin-bottom: 12px; margin-top: 22px;
     }
     [data-theme="light"] .ana-section-title { color: #5B7CFA; }
     .ana-general-text { color: var(--text); }
@@ -2434,14 +2637,14 @@
       transition: background .12s, border-color .12s;
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .ana-share-btn:hover { background: rgba(217,76,255,.2); border-color: #D94CFF; color: #fff; }
+    .ana-share-btn:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); border-color: var(--accent); color: #fff; }
     [data-theme="light"] .ana-share-btn { border-color: rgba(122,111,240,.2); background: rgba(122,111,240,.06); color: #2D2F3A; }
     .ana-redo-btn {
       background: none; border: 1px solid rgba(255,255,255,.2);
       color: rgba(255,255,255,.6); padding: 9px 18px; border-radius: 8px;
       cursor: pointer; font-size: 12px; transition: all .15s; margin-top: 14px;
     }
-    .ana-redo-btn:hover { border-color: #4FF0D1; color: #4FF0D1; }
+    .ana-redo-btn:hover { border-color: var(--accent2); color: var(--accent2); }
     [data-theme="light"] .ana-redo-btn { border-color: rgba(122,111,240,.3); color: #6B6F85; }
 
     /* Profile prose panel (section 2) — calm editorial surface */
@@ -2477,7 +2680,7 @@
       padding: 30px 22px 26px; margin-bottom: 4px;
       border-radius: 18px;
       background:
-        radial-gradient(130% 120% at 50% -10%, var(--accent-glow, rgba(217,76,255,.18)), transparent 62%),
+        radial-gradient(130% 120% at 50% -10%, var(--accent-glow, color-mix(in srgb, var(--accent) 18%, transparent)), transparent 62%),
         var(--surface2);
       border: 1px solid var(--border);
       overflow: hidden;
@@ -2491,7 +2694,7 @@
     .ana-hero-char {
       display: block; width: 92px; height: auto; margin: 0 auto 12px;
       object-fit: contain; object-position: center;
-      filter: drop-shadow(0 6px 18px var(--accent-glow, rgba(217,76,255,.25)));
+      filter: drop-shadow(0 6px 18px var(--accent-glow, color-mix(in srgb, var(--accent) 25%, transparent)));
       pointer-events: none;
     }
     .ana-hero-kicker {
@@ -2540,10 +2743,10 @@
     .ana-mix-track { flex: 1; height: 9px; border-radius: 6px; background: var(--surface3); overflow: hidden; }
     [data-theme="light"] .ana-mix-track { background: rgba(0,0,0,.07); }
     .ana-mix-fill { height: 100%; border-radius: 6px; transition: width .6s cubic-bezier(.22,.61,.36,1); }
-    .ana-mix-fill.q1 { background: linear-gradient(90deg,#D94CFF,#FF6EC7); }
-    .ana-mix-fill.q2 { background: linear-gradient(90deg,#4FF0D1,#7CFF9B); }
-    .ana-mix-fill.q3 { background: linear-gradient(90deg,#60BFFF,#5B7CFA); }
-    .ana-mix-fill.q4 { background: linear-gradient(90deg,#FF9060,#FFD060); }
+    .ana-mix-fill.q1 { background: linear-gradient(90deg,var(--accent3),var(--accent)); }
+    .ana-mix-fill.q2 { background: linear-gradient(90deg,var(--accent2),var(--accent4)); }
+    .ana-mix-fill.q3 { background: linear-gradient(90deg,var(--accent),var(--lavender)); }
+    .ana-mix-fill.q4 { background: linear-gradient(90deg,var(--text-dim),color-mix(in srgb, var(--text-dim) 55%, transparent)); }
     .ana-mix-pct { font-size: 11px; color: var(--text-dim); width: 34px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
     .ana-signal-insight {
       margin-top: 16px; padding: 12px 15px; border-radius: 12px;
@@ -2671,12 +2874,12 @@
       background: none; color: rgba(255,255,255,.6); cursor: pointer; font-size: 13px;
       transition: all .15s;
     }
-    .ana-back-btn:hover { border-color: #4FF0D1; color: #4FF0D1; }
+    .ana-back-btn:hover { border-color: var(--accent2); color: var(--accent2); }
     .ana-next-btn {
       flex: 1; padding: 11px; border-radius: 10px; border: none; cursor: pointer;
       font-size: 14px; font-weight: 700;
-      background: linear-gradient(135deg,#D94CFF,#4FF0D1);
-      color: #fff; box-shadow: 0 4px 16px rgba(217,76,255,.35);
+      background: linear-gradient(135deg,var(--accent),var(--accent2));
+      color: #fff; box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 35%, transparent);
       transition: opacity .15s; letter-spacing: .3px;
     }
     .ana-next-btn:disabled { opacity: .35; cursor: default; }
@@ -3662,6 +3865,21 @@
   </div>
 </div>
 
+<!-- CALENDAR MODAL (previous / current / next month) -->
+<div id="calendarModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 data-i18n="cal.title">🗓 Calendar</h2>
+      <button class="modal-close" id="calClose" data-i18n-title="cal.close" title="Close" aria-label="Close">×</button>
+    </div>
+    <div id="calGrid"></div>
+    <div class="cal-legend">
+      <span class="cal-legend-item"><span class="cal-legend-dot"></span><span data-i18n="cal.legendDeadline">Deadline</span></span>
+      <span class="cal-legend-item"><span class="cal-legend-tint"></span><span data-i18n="cal.legendCompletion">Daily completion</span></span>
+    </div>
+  </div>
+</div>
+
 <!-- PROFILE MODAL (two-column) -->
 <div id="profileModal" class="modal-backdrop">
   <div class="modal pm-modal pm-dash">
@@ -4349,7 +4567,10 @@ const THEMES = [
   { id:'light',     label:'City-Pop',       hint:'Bright pastel',          sw:['#F7F9FF','#7A6FF0','#5B7CFA'] },
   { id:'techy',     label:'Techy',          hint:'Cyber neon terminal',    sw:['#05070d','#00E5FF','#39FF14'] },
   { id:'classical', label:'Classical',      hint:'Romantic salon — rose & gold', sw:['#1C1322','#C77B92','#D6B36A'] },
-  { id:'noir',      label:'Vintage Noir Jazz', hint:'Smoky brass & teal',  sw:['#14110D','#C8A24B','#5FA39A'] }
+  { id:'noir',      label:'Vintage Noir Jazz', hint:'Smoky brass & teal',  sw:['#14110D','#C8A24B','#5FA39A'] },
+  { id:'tokyo',      label:'Tokyo Sunset',  hint:'80s city-pop · sunset & aqua',    sw:['#2A1730','#FF7E9D','#3FE0C5'] },
+  { id:'oxbridge',   label:'Oxbridge',      hint:'Dark academia — noble green & gold', sw:['#0F1E15','#CDA94E','#7BB58A'] },
+  { id:'manekineko', label:'Maneki-neko',   hint:'Lucky cat — red lacquer & gold',  sw:['#210F0C','#FFC93C','#E84B3A'] }
 ];
 function currentTheme() {
   return document.documentElement.getAttribute('data-theme') || 'dark';
@@ -4429,6 +4650,21 @@ const THEME_PALETTES = {
     '#C8A24B','#5FA39A','#B5544E','#D9A066','#9B7FB0','#7F9A5E',
     '#C57B57','#6E8CA0','#CB8A3E','#A86A6A','#8FA98C','#B98AAE',
     '#D4A84F','#5C9E94','#B56A50','#8C86B0'
+  ],
+  tokyo: [
+    '#FF7E9D','#3FE0C5','#FFB36B','#FFD27A','#FF5FA2','#5FE0D0',
+    '#FF9E7A','#F58FB5','#FFC25C','#52C7C0','#FF89A8','#FFAE8F',
+    '#E86FB0','#7FE6CE','#FFCF8A','#FF96C2'
+  ],
+  oxbridge: [
+    '#CDA94E','#7BB58A','#4E8F6B','#C9B26A','#D4B36A','#6FAE86',
+    '#5E9C74','#B59A4E','#8FBF9A','#C2913E','#43855F','#A8C9AE',
+    '#D9C07A','#5FA37E','#8A7A3E','#6FB394'
+  ],
+  manekineko: [
+    '#FFC93C','#E84B3A','#F7DFA0','#6FB39E','#F5B82E','#D9533C',
+    '#EBD09A','#5FA391','#FFD24F','#C7423A','#F0E0B0','#7FBFA8',
+    '#E8B020','#E05A48','#F2D27A','#69AD96'
   ]
 };
 function _hashStr(s) {
@@ -5232,6 +5468,30 @@ function setupEventListeners() {
   });
 
   document.getElementById('infoClose').addEventListener('click', () => closeModal('infoModal'));
+
+  // ── Calendar modal ────────────────────────────────────────────────────
+  const hdrClockEl = document.getElementById('hdrClock');
+  if(hdrClockEl) {
+    hdrClockEl.setAttribute('role', 'button');
+    hdrClockEl.setAttribute('tabindex', '0');
+    hdrClockEl.addEventListener('click', openCalendarModal);
+    hdrClockEl.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCalendarModal(); }
+    });
+  }
+  const calCloseBtn = document.getElementById('calClose');
+  if(calCloseBtn) calCloseBtn.addEventListener('click', () => closeModal('calendarModal'));
+  const calModalEl = document.getElementById('calendarModal');
+  if(calModalEl) {
+    calModalEl.addEventListener('click', e => {
+      if(e.target === calModalEl) closeModal('calendarModal');
+    });
+  }
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && calModalEl && calModalEl.classList.contains('active')) {
+      closeModal('calendarModal');
+    }
+  });
 
   // ── Profile dropdown ──────────────────────────────────────────────────
   const pdDrop = document.getElementById('profileDropdown');
@@ -8418,6 +8678,122 @@ function openModal(id) {
 
 function closeModal(id) {
   document.getElementById(id).classList.remove('active');
+}
+
+// ============= CALENDAR MODAL =============
+// Renders previous, current and next month into #calGrid, enriched with
+// task deadlines (state.tags[].deadline, skip resolved) and a gentle
+// productivity heatmap from state.dailyCompletion. All local dates.
+const CAL_MONTH_NAMES = ['January','February','March','April','May','June',
+  'July','August','September','October','November','December'];
+const CAL_WEEKDAYS = ['S','M','T','W','T','F','S'];
+
+// Local YYYY-MM-DD key (no UTC shift).
+function calDateKey(year, month, day) {
+  const m = String(month + 1).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
+}
+
+// Build a set of local date keys that have at least one unresolved deadline.
+function calDeadlineKeys() {
+  const keys = new Set();
+  const tags = (state && state.tags) || [];
+  tags.forEach(t => {
+    if(!t || t.resolved || !t.deadline) return;
+    const dt = new Date(t.deadline);
+    if(isNaN(dt.getTime())) return;
+    keys.add(calDateKey(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+  });
+  return keys;
+}
+
+function buildMonthEl(year, month) {
+  const wrap = document.createElement('div');
+  wrap.className = 'cal-month';
+
+  const label = document.createElement('div');
+  label.className = 'cal-month-label';
+  label.textContent = `${CAL_MONTH_NAMES[month]} ${year}`;
+  wrap.appendChild(label);
+
+  const wkRow = document.createElement('div');
+  wkRow.className = 'cal-weekdays';
+  CAL_WEEKDAYS.forEach(w => {
+    const c = document.createElement('div');
+    c.className = 'cal-weekday';
+    c.textContent = w;
+    wkRow.appendChild(c);
+  });
+  wrap.appendChild(wkRow);
+
+  const grid = document.createElement('div');
+  grid.className = 'cal-days';
+
+  const firstWeekday = new Date(year, month, 1).getDay();        // 0=Sun
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const deadlineKeys = calDeadlineKeys();
+  const completion = (state && state.dailyCompletion) || {};
+
+  const today = new Date();
+  const todayY = today.getFullYear(), todayM = today.getMonth(), todayD = today.getDate();
+
+  // Leading blanks before the 1st.
+  for(let i = 0; i < firstWeekday; i++) {
+    const b = document.createElement('div');
+    b.className = 'cal-blank';
+    grid.appendChild(b);
+  }
+
+  for(let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    cell.textContent = String(day);
+    const key = calDateKey(year, month, day);
+
+    // Subtle completion tint (light heatmap), scaled by percent.
+    const pct = completion[key];
+    if(typeof pct === 'number' && pct > 0) {
+      const mix = Math.max(0, Math.min(100, pct)) * 0.5;
+      cell.style.background = `color-mix(in srgb, var(--accent2) ${mix}%, transparent)`;
+    }
+
+    // Today gets a strong accent fill/ring (overrides tint).
+    if(year === todayY && month === todayM && day === todayD) {
+      cell.classList.add('today');
+      cell.style.background = '';
+    }
+
+    // Deadline dot for any unresolved task due that day.
+    if(deadlineKeys.has(key)) {
+      const dot = document.createElement('span');
+      dot.className = 'cal-dot';
+      cell.appendChild(dot);
+    }
+
+    grid.appendChild(cell);
+  }
+
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function openCalendarModal() {
+  const grid = document.getElementById('calGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  const today = new Date();
+  const y = today.getFullYear(), m = today.getMonth();
+  // Previous, current, next — Date handles year roll-over for month ±1.
+  const months = [
+    new Date(y, m - 1, 1),
+    new Date(y, m, 1),
+    new Date(y, m + 1, 1)
+  ];
+  months.forEach(d => grid.appendChild(buildMonthEl(d.getFullYear(), d.getMonth())));
+
+  openModal('calendarModal');
 }
 
 function showConfirm(title, msg, callback) {
