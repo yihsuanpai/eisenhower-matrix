@@ -321,7 +321,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
       'eod.praise.strong': 'You nailed the important stuff today. That\'s how momentum builds.',
       'eod.nothingToday': 'Nothing planned for today!',
       'info.title': 'Eisenhower Matrix',
-      'info.version': 'Version 2.6.0',
+      'info.version': 'Version 2.6.2',
       'info.builtAi': 'Built with Claude',
       'info.builtIde': 'Built in Cursor & Cowork',
       'info.builder': 'Builder: Angela Pai',
@@ -382,7 +382,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
       'importTasks.open': 'Import',
       'importTasks.openTitle': 'Import multiple tasks',
       'importTasks.title': 'Import tasks',
-      'importTasks.helper': 'Paste one task per line. You can also paste Name, Quadrant, Type columns from a spreadsheet.',
+      'importTasks.helper': 'Paste one task per line — or paste a task as JSON, or Name, Quadrant, Type columns from a spreadsheet.',
       'importTasks.placeholder': 'Draft the proposal\nReview budget\tSchedule\tWork\nCall the dentist\tDelegate\tPrivate',
       'importTasks.setAllQuadrant': 'Set all quadrants',
       'importTasks.setAllType': 'Set all types',
@@ -528,7 +528,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': '今天重要的事你都完成了。動能就是這樣累積起來的。',
   'eod.nothingToday': '今天還沒有規劃任務！',
   'info.title': '艾森豪矩陣',
-  'info.version': '版本 2.6.0',
+  'info.version': '版本 2.6.2',
   'info.builtAi': '使用 Claude Sonnet 4.6 建置',
   'info.builtIde': '於 Cursor 開發',
   'info.builder': '開發者：Angela Pai',
@@ -580,7 +580,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'importTasks.open': '匯入',
   'importTasks.openTitle': '一次匯入多個任務',
   'importTasks.title': '匯入任務',
-  'importTasks.helper': '每行貼上一個任務。你也可以從試算表貼上「名稱、象限、類型」欄位。',
+  'importTasks.helper': '每行貼上一個任務 — 也可以直接貼上 JSON，或從試算表貼上「名稱、象限、類型」欄位。',
   'importTasks.placeholder': '撰寫提案\n檢視預算\t安排\t工作\n預約看牙\t委派\t私人',
   'importTasks.setAllQuadrant': '全部設為象限',
   'importTasks.setAllType': '全部設為類型',
@@ -716,7 +716,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': '今天重要的事你都完成了。动能就是这样累积起来的。',
   'eod.nothingToday': '今天还没有规划任务！',
   'info.title': '艾森豪矩阵',
-  'info.version': '版本 2.6.0',
+  'info.version': '版本 2.6.2',
   'info.builtAi': '使用 Claude Sonnet 4.6 构建',
   'info.builtIde': '在 Cursor 开发',
   'info.builder': '开发者：Angela Pai',
@@ -888,7 +888,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': '今日の大事なことをしっかり片づけました。勢いはこうやって生まれます。',
   'eod.nothingToday': '今日の予定はまだありません！',
   'info.title': 'アイゼンハワー・マトリックス',
-  'info.version': 'バージョン 2.6.0',
+  'info.version': 'バージョン 2.6.2',
   'info.builtAi': 'Claude Sonnet 4.6 で構築',
   'info.builtIde': 'Cursor で開発',
   'info.builder': '制作者：Angela Pai',
@@ -1060,7 +1060,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': 'Hal penting hari ini sudah kamu bereskan. Begitulah momentum dibangun.',
   'eod.nothingToday': 'Belum ada rencana untuk hari ini!',
   'info.title': 'Matriks Eisenhower',
-  'info.version': 'Versi 2.6.0',
+  'info.version': 'Versi 2.6.2',
   'info.builtAi': 'Dibangun dengan Claude Sonnet 4.6',
   'info.builtIde': 'Dibangun di Cursor',
   'info.builder': 'Pembuat: Angela Pai',
@@ -1232,7 +1232,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': 'Die wichtigen Dinge hast du heute erledigt. So entsteht Momentum.',
   'eod.nothingToday': 'Für heute ist nichts geplant!',
   'info.title': 'Eisenhower-Matrix',
-  'info.version': 'Version 2.6.0',
+  'info.version': 'Version 2.6.2',
   'info.builtAi': 'Erstellt mit Claude Sonnet 4.6',
   'info.builtIde': 'Entwickelt in Cursor',
   'info.builder': 'Entwicklerin: Angela Pai',
@@ -1404,7 +1404,7 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   'eod.praise.strong': 'Hoy completaste lo importante. Así se construye el impulso.',
   'eod.nothingToday': '¡Nada planificado para hoy!',
   'info.title': 'Matriz de Eisenhower',
-  'info.version': 'Versión 2.6.0',
+  'info.version': 'Versión 2.6.2',
   'info.builtAi': 'Creado con Claude Sonnet 4.6',
   'info.builtIde': 'Desarrollado en Cursor',
   'info.builder': 'Creadora: Angela Pai',
@@ -1531,22 +1531,32 @@ es: { title: 'Análisis Work DNA', loading: 'Leyendo patrones en tus tareas y re
   }
 
   function applyI18n() {
+    // If a key is missing (t() returns the key unchanged), KEEP the element's
+    // existing hardcoded fallback text rather than printing the raw key name.
+    // This keeps the UI graceful even if an older/cached i18n.js is loaded.
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       if (!key) return;
-      el.textContent = t(key);
+      const v = t(key);
+      if (v !== key) el.textContent = v;
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
       const key = el.getAttribute('data-i18n-placeholder');
-      if (key) el.placeholder = t(key);
+      if (!key) return;
+      const v = t(key);
+      if (v !== key) el.placeholder = v;
     });
     document.querySelectorAll('[data-i18n-title]').forEach((el) => {
       const key = el.getAttribute('data-i18n-title');
-      if (key) el.title = t(key);
+      if (!key) return;
+      const v = t(key);
+      if (v !== key) el.title = v;
     });
     document.querySelectorAll('option[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
-      if (key) el.textContent = t(key);
+      if (!key) return;
+      const v = t(key);
+      if (v !== key) el.textContent = v;
     });
     const anaTitle = document.querySelector('.ana-title');
     if (anaTitle) anaTitle.textContent = getAnaUi().title;
